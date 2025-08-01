@@ -36,7 +36,7 @@
       height: 100vh;
       overflow: hidden;
     }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
     button {
       background: #ff4da6;
       border: none;
@@ -85,7 +85,7 @@
 
 <div id="auth" class="auth">
   <h2>Введите токен</h2>
-  <input id="tokenInput" placeholder="Токен" />
+  <input id="tokenInput" placeholder="Токен" onkeydown="if(event.key==='Enter')checkToken()"/>
   <button onclick="checkToken()">Войти</button>
 </div>
 
@@ -97,33 +97,30 @@
   <button onclick="logoutAdmin()">Выйти</button>
 </div>
 
-<div id="mainMenu" class="menu hidden">
-  <button onclick="showSubMenu('songs')">Песня</button>
-  <button onclick="playAudio('round-start.mp3')">Амонг Ас</button>
-  <button onclick="showSubMenu('videos')">Кнопка НЕ нажимать</button>
+<div id="categoryMenu" class="menu hidden">
+  <button onclick="showSubMenu('songsMenu')">Песня</button>
+  <button onclick="showSubMenu('videosMenu')">Кнопка НЕ нажимать</button>
   <button onclick="showAsal()">Мы любим Асаль</button>
+  <button onclick="cancelAll()">Отмена</button>
 </div>
 
-<div id="songs" class="submenu hidden">
+<div id="songsMenu" class="submenu hidden">
   <button onclick="playAudio('round-start.mp3')">Амонг Ас</button>
   <button onclick="playAudio('tum-tum-tum-sahur.mp3')">Тум Тум Сахур</button>
   <button onclick="playAudio('audio_2025-08-01_23-01-57.mp3')">Это не забудем Тимура</button>
-  <button onclick="goBack()">Назад в меню</button>
-  <button onclick="cancelAll()">Отмена</button>
+  <button onclick="goBackToCategories()">Назад</button>
 </div>
 
-<div id="videos" class="submenu hidden">
+<div id="videosMenu" class="submenu hidden">
   <button onclick="playVideo('oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4')">Тимур</button>
   <button onclick="playVideo('oMTvPfb7222222.mp4')">МГРР</button>
-  <button onclick="goBack()">Назад в меню</button>
-  <button onclick="cancelAll()">Отмена</button>
+  <button onclick="goBackToCategories()">Назад</button>
 </div>
 
 <div id="asal" class="submenu hidden">
   <div id="asalScreen">МЫ ЛЮБИМ АСАЛЬ</div>
   <audio id="asalAudio" src="ppol.mp3" autoplay loop></audio>
-  <button onclick="goBack()">Назад в меню</button>
-  <button onclick="cancelAll()">Отмена</button>
+  <button onclick="goBackToCategories()">Назад</button>
 </div>
 
 <video id="videoPlayer" class="hidden" controls></video>
@@ -132,15 +129,21 @@
 <script>
   const adminPass = "228";
 
-  function showSubMenu(menuId) {
-    hideAll();
-    document.getElementById(menuId).classList.remove('hidden');
+  function hideAll() {
+    document.querySelectorAll('.menu, .submenu, .auth, .admin').forEach(e => e.classList.add('hidden'));
+    cancelAll();
   }
 
-  function showAsal() {
-    hideAll();
-    document.getElementById('asal').classList.remove('hidden');
-    document.getElementById('asalAudio').play();
+  function cancelAll() {
+    const video = document.getElementById('videoPlayer');
+    video.pause();
+    video.classList.add('hidden');
+    const audio = document.getElementById('audioPlayer');
+    audio.pause();
+    audio.classList.add('hidden');
+    const asal = document.getElementById('asalAudio');
+    asal.pause();
+    asal.classList.add('hidden');
   }
 
   function playAudio(file) {
@@ -159,34 +162,33 @@
     video.play();
   }
 
-  function goBack() {
-    cancelAll();
+  function showAsal() {
     hideAll();
-    document.getElementById('mainMenu').classList.remove('hidden');
+    document.getElementById('asal').classList.remove('hidden');
+    const asal = document.getElementById('asalAudio');
+    asal.classList.remove('hidden');
+    asal.play();
   }
 
-  function cancelAll() {
-    ['videoPlayer', 'audioPlayer', 'asalAudio'].forEach(id => {
-      const el = document.getElementById(id);
-      el.pause();
-      el.currentTime = 0;
-      el.classList.add('hidden');
-    });
+  function showSubMenu(id) {
+    hideAll();
+    document.getElementById(id).classList.remove('hidden');
   }
 
-  function hideAll() {
-    document.querySelectorAll('.menu, .submenu, .auth, .admin').forEach(e => e.classList.add('hidden'));
+  function goBackToCategories() {
+    hideAll();
+    document.getElementById('categoryMenu').classList.remove('hidden');
   }
 
   async function checkToken() {
-    const token = document.getElementById('tokenInput').value;
+    const token = document.getElementById('tokenInput').value.trim();
     const { db, ref, get, remove } = window.firebaseStuff;
     const tokenRef = ref(db, `tokens/${token}`);
     const snap = await get(tokenRef);
     if (snap.exists()) {
       await remove(tokenRef);
       hideAll();
-      document.getElementById('mainMenu').classList.remove('hidden');
+      document.getElementById('categoryMenu').classList.remove('hidden');
     } else {
       alert('Неверный токен');
     }
@@ -194,7 +196,7 @@
 
   async function generateToken() {
     const { db, ref, set } = window.firebaseStuff;
-    const token = document.getElementById('newToken').value || generateRandom();
+    const token = document.getElementById('newToken').value || Math.random().toString(36).slice(2, 10);
     await set(ref(db, `tokens/${token}`), true);
     alert(`Токен создан: ${token}`);
     loadTokens();
@@ -228,10 +230,6 @@
   function logoutAdmin() {
     hideAll();
     document.getElementById('auth').classList.remove('hidden');
-  }
-
-  function generateRandom() {
-    return Math.random().toString(36).slice(2, 10);
   }
 </script>
 </body>
