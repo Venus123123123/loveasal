@@ -14,12 +14,6 @@
       align-items: center;
       height: 100vh;
       color: #fff;
-      animation: fadeIn 2s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
     }
 
     .box {
@@ -30,7 +24,6 @@
       width: 90%;
       max-width: 400px;
       text-align: center;
-      animation: fadeIn 1s ease-out;
     }
 
     input {
@@ -59,16 +52,51 @@
       display: none;
       font-size: 20px;
       margin-top: 20px;
-      animation: fadeIn 1s ease-in-out;
     }
 
     .admin-tools {
       margin-top: 30px;
       display: none;
     }
+
+    .creator-button {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #444;
+      border: none;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    #creator-auth {
+      position: absolute;
+      top: 50px;
+      right: 15px;
+      background: #222;
+      padding: 10px;
+      border-radius: 8px;
+      display: none;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    #creator-auth input {
+      width: 160px;
+      margin: 5px 0;
+    }
   </style>
 </head>
 <body>
+  <button class="creator-button" onclick="toggleCreatorAuth()">Креатор</button>
+
+  <div id="creator-auth">
+    <input type="password" id="creator-pass" placeholder="Пароль">
+    <button onclick="loginCreator()">Войти</button>
+  </div>
+
   <div class="box" id="login-box">
     <h2>Вход</h2>
     <input type="password" id="password" placeholder="Введите пароль" />
@@ -87,7 +115,8 @@
   </div>
 
   <script>
-    const validPassword = 'asal2025'; // твой пароль
+    const validPassword = 'asal2025'; // пароль обычного пользователя
+    const adminPassword = 'superasal'; // пароль креатора
     let tokens = JSON.parse(localStorage.getItem('oneTimeTokens') || '[]');
 
     function saveTokens() {
@@ -108,10 +137,8 @@
         return;
       }
 
-      // Удаляем использованный токен
       tokens = tokens.filter(t => t !== token);
       saveTokens();
-
       document.getElementById('main-content').style.display = 'block';
     }
 
@@ -126,11 +153,22 @@
       document.getElementById('token-list').innerText = 'Токены:\n' + tokens.join('\n');
     }
 
-    // Включить режим админа по URL ?admin=1
-    if (location.search.includes('admin=1')) {
-      document.getElementById('admin').style.display = 'block';
-      updateTokenList();
+    function toggleCreatorAuth() {
+      const authBox = document.getElementById('creator-auth');
+      authBox.style.display = authBox.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function loginCreator() {
+      const pass = document.getElementById('creator-pass').value;
+      if (pass === adminPassword) {
+        document.getElementById('admin').style.display = 'block';
+        updateTokenList();
+        document.getElementById('creator-auth').style.display = 'none';
+      } else {
+        alert("Неверный пароль креатора");
+      }
     }
   </script>
 </body>
 </html>
+
