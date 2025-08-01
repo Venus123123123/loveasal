@@ -20,7 +20,6 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-
     window.firebaseStuff = { db, ref, get, set, push, remove };
   </script>
   <style>
@@ -34,7 +33,7 @@
       box-sizing: border-box;
       transition: all 0.3s ease;
     }
-    body {
+    html, body {
       margin: 0;
       font-family: var(--font);
       background: var(--bg);
@@ -43,8 +42,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      overflow: hidden;
+      height: 100dvh;
+      width: 100%;
+      overflow-x: hidden;
     }
     .hidden { display: none !important; }
     button {
@@ -54,9 +54,11 @@
       padding: 10px 25px;
       margin: 10px;
       border-radius: 12px;
-      font-size: 18px;
+      font-size: 1rem;
       cursor: pointer;
       box-shadow: 0 4px 8px rgba(255, 77, 166, 0.3);
+      width: 90vw;
+      max-width: 300px;
     }
     button:hover {
       background: var(--pink-dark);
@@ -70,29 +72,33 @@
       border: 1px solid var(--pink);
       background: transparent;
       color: white;
+      width: 80vw;
+      max-width: 300px;
     }
     .menu, .submenu, .auth, .admin {
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%;
+      padding-bottom: 20px;
     }
     video, audio {
-      max-width: 90vw;
-      max-height: 70vh;
+      width: 95vw;
+      max-height: 60vh;
       margin-top: 20px;
     }
     iframe {
-      width: 90vw;
+      width: 95vw;
       height: 80vh;
       margin-top: 20px;
       border: none;
     }
     #asalScreen {
-      font-size: 3em;
+      font-size: 2.2em;
       text-align: center;
       color: var(--pink);
       animation: neon 2s ease-in-out infinite alternate;
-      letter-spacing: 3px;
+      letter-spacing: 2px;
       padding: 20px;
       text-shadow: 0 0 5px var(--pink), 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
     }
@@ -105,163 +111,133 @@
       }
     }
     #version {
-      position: absolute;
+      position: fixed;
       top: 10px;
       right: 20px;
-      font-size: 14px;
+      font-size: 13px;
       color: #888;
+      z-index: 999;
     }
     #adminBtn {
-      position: absolute;
+      position: fixed;
       top: 10px;
       left: 20px;
-      font-size: 14px;
+      font-size: 13px;
+      z-index: 999;
     }
   </style>
 </head>
 <body>
-<div id="version">v5</div>
-<button id="adminBtn" onclick="enterAdmin()">Креатор</button>
-<div id="auth" class="auth">
-  <h2>Введите токен</h2>
-  <input id="tokenInput" placeholder="Токен" onkeydown="if(event.key==='Enter')checkToken()"/>
-  <button onclick="checkToken()">Войти</button>
-</div>
-<div id="adminPanel" class="admin hidden">
-  <h3>Админка</h3>
-  <input id="newToken" placeholder="Генерировать токен" />
-  <button onclick="generateToken()">Создать</button>
-  <div id="tokenList"></div>
-  <button onclick="logoutAdmin()">Выйти</button>
-</div>
-<div id="categoryMenu" class="menu hidden">
-  <button onclick="showSubMenu('songsMenu')">Песня</button>
-  <button onclick="showSubMenu('videosMenu')">Кнопка НЕ нажимать</button>
-  <button onclick="showAsal()">Мы любим Асаль</button>
-  <button onclick="showSubMenu('gdzMenu')">ГДЗ</button>
-  <button onclick="cancelAll()">Отмена</button>
-</div>
-<div id="songsMenu" class="submenu hidden">
-  <button onclick="playAudio('round-start.mp3')">Амонг Ас</button>
-  <button onclick="playAudio('tum-tum-tum-sahur.mp3')">Тум Тум Сахур</button>
-  <button onclick="playAudio('audio_2025-08-01_23-01-57.mp3')">Это не забудем Тимура</button>
-  <button onclick="goBackToCategories()">Назад</button>
-</div>
-<div id="videosMenu" class="submenu hidden">
-  <button onclick="playVideo('oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4')">Тимур</button>
-  <button onclick="playVideo('oMTvPfb7222222.mp4')">МГРР</button>
-  <button onclick="goBackToCategories()">Назад</button>
-</div>
-<div id="gdzMenu" class="submenu hidden">
-  <button onclick="openGdz()">Workbook B1</button>
-  <button onclick="goBackToCategories()">Назад</button>
-</div>
-<div id="asal" class="submenu hidden">
-  <div id="asalScreen">МЫ ЛЮБИМ АСАЛЬ</div>
-  <audio id="asalAudio" src="ppol.mp3" autoplay loop></audio>
-  <button onclick="goBackToCategories()">Назад</button>
-</div>
-<video id="videoPlayer" class="hidden" controls></video>
-<audio id="audioPlayer" class="hidden" controls></audio>
-<iframe id="gdzFrame" class="hidden"></iframe>
-<script>
-  const adminPass = "V";
-  function hideAll() {
-    document.querySelectorAll('.menu, .submenu, .auth, .admin').forEach(e => e.classList.add('hidden'));
-    cancelAll();
-  }
-  function cancelAll() {
-    document.getElementById('videoPlayer').pause();
-    document.getElementById('videoPlayer').classList.add('hidden');
-    document.getElementById('audioPlayer').pause();
-    document.getElementById('audioPlayer').classList.add('hidden');
-    document.getElementById('asalAudio').pause();
-    document.getElementById('asalAudio').classList.add('hidden');
-    document.getElementById('gdzFrame').classList.add('hidden');
-  }
-  function playAudio(file) {
-    cancelAll();
-    const audio = document.getElementById('audioPlayer');
-    audio.src = file;
-    audio.classList.remove('hidden');
-    audio.play();
-  }
-  function playVideo(file) {
-    cancelAll();
-    const video = document.getElementById('videoPlayer');
-    video.src = file;
-    video.classList.remove('hidden');
-    video.play();
-  }
-  function openGdz() {
-    cancelAll();
-    const frame = document.getElementById('gdzFrame');
-    frame.src = 'https://rdc-cdn.lms.macmillaneducation.com/wp-content/uploads/sites/8/2014/03/Bey_B1_WBAK.pdf.pdf';
-    frame.classList.remove('hidden');
-  }
-  function showAsal() {
-    hideAll();
-    document.getElementById('asal').classList.remove('hidden');
-    const asal = document.getElementById('asalAudio');
-    asal.classList.remove('hidden');
-    asal.play();
-  }
-  function showSubMenu(id) {
-    hideAll();
-    document.getElementById(id).classList.remove('hidden');
-  }
-  function goBackToCategories() {
-    hideAll();
-    document.getElementById('categoryMenu').classList.remove('hidden');
-  }
-  async function checkToken() {
-    const token = document.getElementById('tokenInput').value.trim();
-    const { db, ref, get, remove } = window.firebaseStuff;
-    const tokenRef = ref(db, `tokens/${token}`);
-    const snap = await get(tokenRef);
-    if (snap.exists()) {
-      await remove(tokenRef);
-      hideAll();
-      document.getElementById('categoryMenu').classList.remove('hidden');
-    } else {
-      alert('Неверный токен');
-    }
-  }
-  async function generateToken() {
-    const { db, ref, set } = window.firebaseStuff;
-    const token = document.getElementById('newToken').value || Math.random().toString(36).slice(2, 10);
-    await set(ref(db, `tokens/${token}`), true);
-    alert(`Токен создан: ${token}`);
-    loadTokens();
-  }
-  async function loadTokens() {
-    const { db, ref, get } = window.firebaseStuff;
-    const snap = await get(ref(db, 'tokens'));
-    const list = document.getElementById('tokenList');
-    list.innerHTML = '<h4>Активные токены:</h4>';
-    if (snap.exists()) {
-      Object.keys(snap.val()).forEach(t => {
-        const d = document.createElement('div');
-        d.textContent = t;
-        list.appendChild(d);
+  <div id="version">v1.0.0</div>
+  <button id="adminBtn">Креатор</button>
+  <div id="asalScreen" class="hidden">МЫ ЛЮБИМ АСАЛЬ 💖</div>
+  <div class="auth">
+    <input id="tokenInput" placeholder="Введите токен" />
+    <button id="loginBtn">Войти</button>
+    <button id="muteToggle">На уроке</button>
+  </div>
+  <div class="menu hidden">
+    <button data-menu="music">Песня</button>
+    <button data-menu="video">Кнопка НЕ нажимать</button>
+    <button data-menu="asal">💖 Мы любим Асаль</button>
+    <button data-menu="gdz">ГДЗ</button>
+    <button id="logoutBtn">Выход</button>
+  </div>
+  <div class="submenu hidden" id="musicMenu">
+    <button data-audio="round-start.mp3">Амонг Ас</button>
+    <button data-audio="tum-tum-tum-sahur.mp3">Тум Тум Сахур</button>
+    <button data-audio="audio_2025-08-01_23-01-57.mp3">Это не забудем Тимура</button>
+    <button class="back">Назад в меню</button>
+  </div>
+  <div class="submenu hidden" id="videoMenu">
+    <button data-video="oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4">Тимур</button>
+    <button data-video="oMTvPfb7222222.mp4">МГРР</button>
+    <button class="back">Назад в меню</button>
+  </div>
+  <div class="submenu hidden" id="asalMenu">
+    <div id="asalText">💖 Мы любим Асаль 💖</div>
+    <button class="back">Назад в меню</button>
+  </div>
+  <div class="submenu hidden" id="gdzMenu">
+    <iframe src="https://rdc-cdn.lms.macmillaneducation.com/wp-content/uploads/sites/8/2014/03/Bey_B1_WBAK.pdf.pdf"></iframe>
+    <button class="back">Назад в меню</button>
+  </div>
+  <audio id="audio" controls class="hidden"></audio>
+  <video id="video" controls class="hidden"></video>
+  <script>
+    const tokenInput = document.getElementById('tokenInput');
+    const loginBtn = document.getElementById('loginBtn');
+    const auth = document.querySelector('.auth');
+    const menu = document.querySelector('.menu');
+    const asalScreen = document.getElementById('asalScreen');
+    const audio = document.getElementById('audio');
+    const video = document.getElementById('video');
+
+    const musicMenu = document.getElementById('musicMenu');
+    const videoMenu = document.getElementById('videoMenu');
+    const asalMenu = document.getElementById('asalMenu');
+    const gdzMenu = document.getElementById('gdzMenu');
+
+    const backButtons = document.querySelectorAll('.back');
+
+    let isMuted = false;
+    const muteBtn = document.getElementById('muteToggle');
+    muteBtn.onclick = () => {
+      isMuted = !isMuted;
+      muteBtn.innerText = isMuted ? '🔇 Звук выкл' : '🔊 Звук вкл';
+      audio.muted = isMuted;
+      video.muted = isMuted;
+    };
+
+    loginBtn.onclick = () => {
+      const token = tokenInput.value.trim();
+      if (!token) return alert('Введите токен');
+      firebaseStuff.get(firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token)).then(snapshot => {
+        if (snapshot.exists()) {
+          firebaseStuff.remove(firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token));
+          auth.classList.add('hidden');
+          menu.classList.remove('hidden');
+          asalScreen.classList.remove('hidden');
+          if (!isMuted) new Audio('ppol.mp3').play();
+        } else alert('Неверный токен');
       });
-    }
-  }
-  function enterAdmin() {
-    const pass = prompt('Пароль администратора:');
-    if (pass === adminPass) {
-      hideAll();
-      document.getElementById('adminPanel').classList.remove('hidden');
-      loadTokens();
-    } else {
-      alert('Неверный пароль');
-    }
-  }
-  function logoutAdmin() {
-    hideAll();
-    document.getElementById('auth').classList.remove('hidden');
-  }
-</script>
+    };
+
+    document.querySelectorAll('[data-menu]').forEach(btn => {
+      btn.onclick = () => {
+        menu.classList.add('hidden');
+        document.querySelectorAll('.submenu').forEach(sm => sm.classList.add('hidden'));
+        const target = btn.getAttribute('data-menu');
+        document.getElementById(target + 'Menu').classList.remove('hidden');
+      };
+    });
+
+    backButtons.forEach(btn => btn.onclick = () => {
+      document.querySelectorAll('.submenu').forEach(sm => sm.classList.add('hidden'));
+      menu.classList.remove('hidden');
+    });
+
+    document.querySelectorAll('[data-audio]').forEach(btn => {
+      btn.onclick = () => {
+        audio.src = btn.getAttribute('data-audio');
+        audio.classList.remove('hidden');
+        video.classList.add('hidden');
+        audio.play();
+      };
+    });
+
+    document.querySelectorAll('[data-video]').forEach(btn => {
+      btn.onclick = () => {
+        video.src = btn.getAttribute('data-video');
+        video.classList.remove('hidden');
+        audio.classList.add('hidden');
+        video.play();
+      };
+    });
+
+    document.getElementById('logoutBtn').onclick = () => location.reload();
+  </script>
 </body>
 </html>
+
 
