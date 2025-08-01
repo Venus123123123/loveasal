@@ -128,7 +128,7 @@
   </style>
 </head>
 <body>
-  <div id="version">v1.0.0</div>
+  <div id="version">v1.0.1</div>
   <button id="adminBtn">Креатор</button>
   <div id="asalScreen" class="hidden">МЫ ЛЮБИМ АСАЛЬ 💖</div>
   <div class="auth">
@@ -159,7 +159,7 @@
     <button class="back">Назад в меню</button>
   </div>
   <div class="submenu hidden" id="gdzMenu">
-    <iframe src="https://rdc-cdn.lms.macmillaneducation.com/wp-content/uploads/sites/8/2014/03/Bey_B1_WBAK.pdf.pdf"></iframe>
+    <iframe src="" id="gdzFrame"></iframe>
     <button class="back">Назад в меню</button>
   </div>
   <audio id="audio" controls class="hidden"></audio>
@@ -172,13 +172,13 @@
     const asalScreen = document.getElementById('asalScreen');
     const audio = document.getElementById('audio');
     const video = document.getElementById('video');
-
+    const gdzFrame = document.getElementById('gdzFrame');
     const musicMenu = document.getElementById('musicMenu');
     const videoMenu = document.getElementById('videoMenu');
     const asalMenu = document.getElementById('asalMenu');
     const gdzMenu = document.getElementById('gdzMenu');
-
     const backButtons = document.querySelectorAll('.back');
+    const adminBtn = document.getElementById('adminBtn');
 
     let isMuted = false;
     const muteBtn = document.getElementById('muteToggle');
@@ -208,6 +208,9 @@
         menu.classList.add('hidden');
         document.querySelectorAll('.submenu').forEach(sm => sm.classList.add('hidden'));
         const target = btn.getAttribute('data-menu');
+        if (target === 'gdz') {
+          gdzFrame.src = 'https://rdc-cdn.lms.macmillaneducation.com/wp-content/uploads/sites/8/2014/03/Bey_B1_WBAK.pdf.pdf';
+        }
         document.getElementById(target + 'Menu').classList.remove('hidden');
       };
     });
@@ -215,6 +218,7 @@
     backButtons.forEach(btn => btn.onclick = () => {
       document.querySelectorAll('.submenu').forEach(sm => sm.classList.add('hidden'));
       menu.classList.remove('hidden');
+      gdzFrame.src = '';
     });
 
     document.querySelectorAll('[data-audio]').forEach(btn => {
@@ -236,6 +240,12 @@
     });
 
     document.getElementById('logoutBtn').onclick = () => location.reload();
+
+    adminBtn.onclick = () => {
+      const p = prompt('Введите пароль для креатора:');
+      if (p === 'timurbarselona228') alert('Добро пожаловать, создатель! (пока без панели)');
+      else alert('Неверный пароль');
+    }
   </script>
 </body>
 </html>
