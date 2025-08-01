@@ -4,14 +4,15 @@
   <meta charset="UTF-8" />
   <title>Асаль ❤️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <style>
     body {
       margin: 0;
-      background: radial-gradient(circle at center, #111 0%, #000 100%);
+      background: #000;
       font-family: 'Segoe UI', sans-serif;
-      height: 100vh;
-      overflow: hidden;
       color: #fff;
+      overflow: hidden;
     }
 
     .box {
@@ -23,12 +24,12 @@
       max-width: 400px;
       margin: 12% auto;
       text-align: center;
-      animation: slideUp 0.8s ease-out;
+      animation: fadeIn 0.8s ease-out;
     }
 
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to   { opacity: 1; transform: translateY(0); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(1.05); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     input {
@@ -67,23 +68,21 @@
 
     #main-content {
       display: none;
+      justify-content: center;
+      align-items: center;
       position: fixed;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       width: 100vw;
       height: 100vh;
       background: black;
-      color: #ff4da6;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 48px;
+      font-size: 50px;
       font-weight: bold;
+      color: #ff4da6;
       text-shadow: 0 0 25px #ff007f;
-      animation: fadeIn 1.5s ease-in-out;
+      animation: fadeInMain 1.5s ease-in-out;
     }
 
-    @keyframes fadeIn {
+    @keyframes fadeInMain {
       from { opacity: 0; transform: scale(1.1); }
       to { opacity: 1; transform: scale(1); }
     }
@@ -156,16 +155,22 @@
     </div>
   </div>
 
-  <div id="main-content">❤️ ЛЮБИМ АСАЛЬ ❤️</div>
+  <div id="main-content">❤️ МЫ ЛЮБИМ АСАЛЬ ❤️</div>
 
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTcH3_tri2L7AHLh1e-YD-0s-QSthuE6Q",
+      authDomain: "disk-c98ee.firebaseapp.com",
+      projectId: "disk-c98ee",
+      storageBucket: "disk-c98ee.firebasestorage.app",
+      messagingSenderId: "59577059636",
+      appId: "1:59577059636:web:e98f456d054cc360747d61"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     const validPassword = 'asal2025';
     const adminPassword = 'superasal';
-    let tokens = JSON.parse(localStorage.getItem('oneTimeTokens') || '[]');
-
-    function saveTokens() {
-      localStorage.setItem('oneTimeTokens', JSON.stringify(tokens));
-    }
 
     function login() {
       const pass = document.getElementById('password').value;
@@ -176,27 +181,29 @@
         return;
       }
 
-      if (!tokens.includes(token)) {
-        alert("Неверный или использованный токен");
-        return;
-      }
-
-      tokens = tokens.filter(t => t !== token);
-      saveTokens();
-
-      document.getElementById('login-box').style.display = 'none';
-      document.getElementById('main-content').style.display = 'flex';
+      db.ref('tokens/' + token).once('value').then(snapshot => {
+        if (snapshot.exists()) {
+          db.ref('tokens/' + token).remove();
+          document.getElementById('login-box').style.display = 'none';
+          document.getElementById('main-content').style.display = 'flex';
+        } else {
+          alert("Неверный или использованный токен");
+        }
+      });
     }
 
     function generateToken() {
       const t = Math.random().toString(36).substr(2, 8).toUpperCase();
-      tokens.push(t);
-      saveTokens();
+      db.ref('tokens/' + t).set(true);
       updateTokenList();
     }
 
     function updateTokenList() {
-      document.getElementById('token-list').innerText = 'Токены:\n' + tokens.join('\n');
+      db.ref('tokens').once('value').then(snapshot => {
+        const tokens = snapshot.val() || {};
+        const list = Object.keys(tokens).join('\n');
+        document.getElementById('token-list').innerText = 'Токены:\n' + list;
+      });
     }
 
     function toggleCreatorAuth() {
@@ -208,8 +215,8 @@
       const pass = document.getElementById('creator-pass').value;
       if (pass === adminPassword) {
         document.getElementById('admin').style.display = 'block';
-        updateTokenList();
         document.getElementById('creator-auth').style.display = 'none';
+        updateTokenList();
       } else {
         alert("Неверный пароль креатора");
       }
