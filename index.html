@@ -150,7 +150,7 @@
 </head>
 <body>
   <button class="creator-button" onclick="toggleCreatorAuth()">Креатор</button>
-  <div class="version-label">v1.3.1</div>
+  <div class="version-label">v1.5.0</div>
 
   <div id="creator-auth">
     <input type="password" id="creator-pass" placeholder="Пароль креатора" onkeydown="if(event.key==='Enter') loginCreator()">
@@ -159,7 +159,6 @@
 
   <div class="box" id="login-box">
     <h2>Вход</h2>
-    <input type="password" id="password" placeholder="Введите пароль" onkeydown="if(event.key==='Enter') login()">
     <input type="text" id="token" placeholder="Введите одноразовый токен" onkeydown="if(event.key==='Enter') login()">
     <button onclick="login()">Войти</button>
 
@@ -171,6 +170,8 @@
   </div>
 
   <div id="main-content">❤️ МЫ ЛЮБИМ АСАЛЬ ❤️</div>
+
+  <audio id="asal-song" src="ppol.mp3" preload="auto"></audio>
 
   <script>
     const firebaseConfig = {
@@ -184,17 +185,10 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const validPassword = 'asal2025';
     const adminPassword = 'superasal';
 
     function login() {
-      const pass = document.getElementById('password').value;
       const token = document.getElementById('token').value.trim();
-
-      if (pass !== validPassword) {
-        alert("Неверный пароль");
-        return;
-      }
 
       db.ref('tokens/' + token).once('value').then(snapshot => {
         if (snapshot.exists()) {
@@ -203,6 +197,14 @@
           const content = document.getElementById('main-content');
           content.style.display = 'flex';
           document.body.style.overflow = 'hidden';
+
+          // Проигрывание песни
+          const song = document.getElementById('asal-song');
+          song.volume = 0.8;
+          song.play().catch(() => {
+            console.warn("Автовоспроизведение заблокировано");
+          });
+
         } else {
           alert("Неверный или использованный токен");
         }
@@ -210,7 +212,11 @@
     }
 
     function generateToken() {
-      const t = Math.random().toString(36).substr(2, 8).toUpperCase();
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      let t = '';
+      for (let i = 0; i < 7; i++) {
+        t += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
       db.ref('tokens/' + t).set(true).then(updateTokenList);
     }
 
@@ -240,3 +246,5 @@
   </script>
 </body>
 </html>
+
+
