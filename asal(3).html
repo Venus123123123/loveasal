@@ -60,28 +60,77 @@
   <div id="output"></div>
 
   <script>
-    function decode() {
-      const input = document.getElementById('inputData').value;
-      const keyStr = document.getElementById('keyInput').value;
-      const output = document.getElementById('output');
+  const firebaseConfig = {
+    apiKey: "AIzaSyBTcH3_tri2L7AHLh1e-YD-0s-QSthuE6Q",
+    authDomain: "disk-c98ee.firebaseapp.com",
+    projectId: "disk-c98ee",
+    storageBucket: "disk-c98ee.firebasestorage.app",
+    messagingSenderId: "59577059636",
+    appId: "1:59577059636:web:e98f456d054cc360747d61"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-      try {
-        const key = parseInt(keyStr);
-        if (isNaN(key)) throw 'Ключ некорректный';
+  const validPassword = 'asal2025';
+  const adminPassword = 'superasal';
 
-        const bytes = input
-          .split(',')
-          .map(b => parseInt(b.trim(), 16));
+  function login() {
+    const pass = document.getElementById('password').value;
+    const token = document.getElementById('token').value.trim();
 
-        const decoded = bytes
-          .map(b => String.fromCharCode(b ^ key))
-          .join('');
-
-        output.textContent = 'Результат: ' + decoded;
-      } catch (e) {
-        output.textContent = 'Ошибка: ' + e;
-      }
+    if (pass !== validPassword) {
+      alert("Неверный пароль");
+      return;
     }
-  </script>
+
+    db.ref('tokens/' + token).once('value').then(snapshot => {
+      if (snapshot.exists()) {
+        // удалить токен
+        db.ref('tokens/' + token).remove();
+
+        // скрыть форму
+        document.getElementById('login-box').style.display = 'none';
+
+        // показать главный контент
+        const content = document.getElementById('main-content');
+        content.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      } else {
+        alert("Неверный или использованный токен");
+      }
+    });
+  }
+
+  function generateToken() {
+    const t = Math.random().toString(36).substr(2, 8).toUpperCase();
+    db.ref('tokens/' + t).set(true).then(updateTokenList);
+  }
+
+  function updateTokenList() {
+    db.ref('tokens').once('value').then(snapshot => {
+      const tokens = snapshot.val() || {};
+      const list = Object.keys(tokens).join('\n');
+      document.getElementById('token-list').innerText = 'Токены:\n' + list;
+    });
+  }
+
+  function toggleCreatorAuth() {
+    const authBox = document.getElementById('creator-auth');
+    authBox.style.display = authBox.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function loginCreator() {
+    const pass = document.getElementById('creator-pass').value;
+    if (pass === adminPassword) {
+      document.getElementById('admin').style.display = 'block';
+      document.getElementById('creator-auth').style.display = 'none';
+      updateTokenList(); // <-- сразу показать токены
+    } else {
+      alert("Неверный пароль креатора");
+    }
+  }
+</script>
+
 </body>
 </html>
+
