@@ -81,6 +81,12 @@
       max-height: 70vh;
       margin-top: 20px;
     }
+    iframe {
+      width: 90vw;
+      height: 80vh;
+      margin-top: 20px;
+      border: none;
+    }
     #asalScreen {
       font-size: 3em;
       text-align: center;
@@ -114,7 +120,7 @@
   </style>
 </head>
 <body>
-<div id="version">v4</div>
+<div id="version">v5</div>
 <button id="adminBtn" onclick="enterAdmin()">Креатор</button>
 <div id="auth" class="auth">
   <h2>Введите токен</h2>
@@ -132,6 +138,7 @@
   <button onclick="showSubMenu('songsMenu')">Песня</button>
   <button onclick="showSubMenu('videosMenu')">Кнопка НЕ нажимать</button>
   <button onclick="showAsal()">Мы любим Асаль</button>
+  <button onclick="showSubMenu('gdzMenu')">ГДЗ</button>
   <button onclick="cancelAll()">Отмена</button>
 </div>
 <div id="songsMenu" class="submenu hidden">
@@ -145,6 +152,10 @@
   <button onclick="playVideo('oMTvPfb7222222.mp4')">МГРР</button>
   <button onclick="goBackToCategories()">Назад</button>
 </div>
+<div id="gdzMenu" class="submenu hidden">
+  <button onclick="openGdz()">Workbook B1</button>
+  <button onclick="goBackToCategories()">Назад</button>
+</div>
 <div id="asal" class="submenu hidden">
   <div id="asalScreen">МЫ ЛЮБИМ АСАЛЬ</div>
   <audio id="asalAudio" src="ppol.mp3" autoplay loop></audio>
@@ -152,8 +163,9 @@
 </div>
 <video id="videoPlayer" class="hidden" controls></video>
 <audio id="audioPlayer" class="hidden" controls></audio>
+<iframe id="gdzFrame" class="hidden"></iframe>
 <script>
-  const adminPass = "228";
+  const adminPass = "V";
   function hideAll() {
     document.querySelectorAll('.menu, .submenu, .auth, .admin').forEach(e => e.classList.add('hidden'));
     cancelAll();
@@ -165,6 +177,7 @@
     document.getElementById('audioPlayer').classList.add('hidden');
     document.getElementById('asalAudio').pause();
     document.getElementById('asalAudio').classList.add('hidden');
+    document.getElementById('gdzFrame').classList.add('hidden');
   }
   function playAudio(file) {
     cancelAll();
@@ -179,6 +192,12 @@
     video.src = file;
     video.classList.remove('hidden');
     video.play();
+  }
+  function openGdz() {
+    cancelAll();
+    const frame = document.getElementById('gdzFrame');
+    frame.src = 'https://rdc-cdn.lms.macmillaneducation.com/wp-content/uploads/sites/8/2014/03/Bey_B1_WBAK.pdf.pdf';
+    frame.classList.remove('hidden');
   }
   function showAsal() {
     hideAll();
@@ -245,4 +264,5 @@
 </script>
 </body>
 </html>
+
 
