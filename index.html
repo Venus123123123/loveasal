@@ -1,282 +1,238 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Асаль ❤️</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-  <style>
-    body {
-      margin: 0;
-      background: #000;
-      font-family: 'Segoe UI', sans-serif;
-      color: #fff;
-      overflow: hidden;
-    }
+  <meta charset="UTF-8">
+  <title>Мы любим Асаль</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getDatabase, ref, get, set, push, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-    .box {
-      background: rgba(30,30,30,0.95);
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 0 30px rgba(255, 77, 166, 0.4);
-      width: 90%;
-      max-width: 400px;
-      margin: 12% auto;
-      text-align: center;
-      animation: fadeIn 0.8s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(1.05); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      background: #333;
-      color: #fff;
-      outline: none;
-      transition: box-shadow 0.3s;
-    }
-
-    input:focus {
-      box-shadow: 0 0 8px #ff4da6;
-    }
-
-    button {
-      margin-top: 15px;
-      background: #ff4da6;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: transform 0.2s, background 0.3s;
-    }
-
-    button:hover {
-      background: #ff007f;
-      transform: scale(1.03);
-    }
-
-    #main-content {
-      display: none;
-      justify-content: center;
-      align-items: center;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: black;
-      font-size: 50px;
-      font-weight: bold;
-      color: #ff4da6;
-      text-shadow: 0 0 25px #ff007f;
-      transition: background-color 0.1s;
-    }
-
-    .admin-tools {
-      margin-top: 30px;
-      display: none;
-    }
-
-    .creator-button {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: #444;
-      border: none;
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .creator-button:hover {
-      background: #666;
-    }
-
-    #creator-auth {
-      position: absolute;
-      top: 55px;
-      right: 15px;
-      background: #222;
-      padding: 12px;
-      border-radius: 10px;
-      display: none;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-    }
-
-    #creator-auth input {
-      width: 160px;
-      margin: 5px 0;
-    }
-
-    #token-list {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #aaa;
-      white-space: pre-line;
-      text-align: left;
-    }
-
-    .version-label {
-      position: fixed;
-      top: 15px;
-      right: 90px;
-      color: #999;
-      font-size: 13px;
-      font-family: monospace;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 3px 8px;
-      border-radius: 5px;
-      z-index: 100;
-      user-select: none;
-    }
-
-    .creator-label {
-      position: fixed;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 13px;
-      color: #aaa;
-      font-family: monospace;
-    }
-  </style>
-</head>
-<body>
-  <button class="creator-button" onclick="toggleCreatorAuth()">Креатор</button>
-  <div class="version-label">v1.5.2</div>
-
-  <div id="creator-auth">
-    <input type="password" id="creator-pass" placeholder="Пароль креатора" onkeydown="if(event.key==='Enter') loginCreator()">
-    <button onclick="loginCreator()">Войти</button>
-  </div>
-
-  <div class="box" id="login-box">
-    <h2>Вход</h2>
-    <input type="text" id="token" placeholder="Введите одноразовый токен" onkeydown="if(event.key==='Enter') login()">
-    <button onclick="login()">Войти</button>
-
-    <div class="admin-tools" id="admin">
-      <h3>🔧 Генерация токена</h3>
-      <button onclick="generateToken()">Создать токен</button>
-      <div id="token-list"></div>
-    </div>
-  </div>
-
-  <div id="main-content">❤️ МЫ ЛЮБИМ АСАЛЬ ❤️</div>
-
-  <div class="creator-label">Создатель: timurbarselona228</div>
-
-  <audio id="asal-song" src="ppol.mp3" preload="auto" crossorigin="anonymous"></audio>
-
-  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBTcH3_tri2L7AHLh1e-YD-0s-QSthuE6Q",
       authDomain: "disk-c98ee.firebaseapp.com",
       projectId: "disk-c98ee",
-      storageBucket: "disk-c98ee.firebasestorage.app",
+      storageBucket: "disk-c98ee.appspot.com",
       messagingSenderId: "59577059636",
-      appId: "1:59577059636:web:e98f456d054cc360747d61"
+      appId: "1:59577059636:web:e98f456d054cc360747d61",
+      databaseURL: "https://disk-c98ee-default-rtdb.firebaseio.com"
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
 
-    const adminPassword = 'superasal';
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-    function login() {
-      const token = document.getElementById('token').value.trim();
-
-      db.ref('tokens/' + token).once('value').then(snapshot => {
-        if (snapshot.exists()) {
-          db.ref('tokens/' + token).remove();
-          document.getElementById('login-box').style.display = 'none';
-          const content = document.getElementById('main-content');
-          content.style.display = 'flex';
-          document.body.style.overflow = 'hidden';
-
-          const song = document.getElementById('asal-song');
-          song.volume = 0.8;
-          song.play().then(() => {
-            setupVisualizer(song);
-          }).catch(() => {
-            console.warn("Автовоспроизведение заблокировано");
-          });
-
-        } else {
-          alert("Неверный или использованный токен");
-        }
-      });
-    }
-
-    function generateToken() {
-      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-      let t = '';
-      for (let i = 0; i < 7; i++) {
-        t += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      db.ref('tokens/' + t).set(true).then(updateTokenList);
-    }
-
-    function updateTokenList() {
-      db.ref('tokens').once('value').then(snapshot => {
-        const tokens = snapshot.val() || {};
-        const list = Object.keys(tokens).join('\n');
-        document.getElementById('token-list').innerText = 'Токены:\n' + list;
-      });
-    }
-
-    function toggleCreatorAuth() {
-      const authBox = document.getElementById('creator-auth');
-      authBox.style.display = authBox.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function loginCreator() {
-      const pass = document.getElementById('creator-pass').value;
-      if (pass === adminPassword) {
-        document.getElementById('admin').style.display = 'block';
-        document.getElementById('creator-auth').style.display = 'none';
-        updateTokenList();
-      } else {
-        alert("Неверный пароль креатора");
-      }
-    }
-
-    function setupVisualizer(audioEl) {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const src = ctx.createMediaElementSource(audioEl);
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = 256;
-
-      src.connect(analyser);
-      analyser.connect(ctx.destination);
-
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-      const target = document.getElementById('main-content');
-
-      function animate() {
-        requestAnimationFrame(animate);
-        analyser.getByteFrequencyData(dataArray);
-        const bass = dataArray.slice(0, 10).reduce((a, b) => a + b, 0) / 10;
-        const intensity = Math.min(255, bass * 2);
-        const gray = `rgb(${intensity}, ${intensity}, ${intensity})`;
-        target.style.backgroundColor = gray;
-      }
-
-      animate();
-    }
+    window.firebaseStuff = { db, ref, get, set, push, remove };
   </script>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #000;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .hidden { display: none; }
+    button {
+      background: #ff4da6;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover { background: #ff007f; }
+    input { padding: 10px; border-radius: 8px; margin: 10px; font-size: 16px; }
+    .menu, .submenu, .auth, .admin { display: flex; flex-direction: column; align-items: center; }
+    video, audio { max-width: 90vw; max-height: 70vh; margin-top: 20px; }
+    #asalScreen {
+      font-size: 3em;
+      text-align: center;
+      color: #ff4da6;
+      text-shadow: 0 0 20px #ff007f;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { background-color: black; }
+      50% { background-color: white; color: black; }
+      100% { background-color: black; }
+    }
+    #version {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 14px;
+      color: #888;
+    }
+    #adminBtn {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+<div id="version">v3</div>
+<button id="adminBtn" onclick="enterAdmin()">Креатор</button>
+
+<div id="auth" class="auth">
+  <h2>Введите токен</h2>
+  <input id="tokenInput" placeholder="Токен" />
+  <button onclick="checkToken()">Войти</button>
+</div>
+
+<div id="adminPanel" class="admin hidden">
+  <h3>Админка</h3>
+  <input id="newToken" placeholder="Генерировать токен" />
+  <button onclick="generateToken()">Создать</button>
+  <div id="tokenList"></div>
+  <button onclick="logoutAdmin()">Выйти</button>
+</div>
+
+<div id="mainMenu" class="menu hidden">
+  <button onclick="showSubMenu('songs')">Песня</button>
+  <button onclick="playAudio('round-start.mp3')">Амонг Ас</button>
+  <button onclick="showSubMenu('videos')">Кнопка НЕ нажимать</button>
+  <button onclick="showAsal()">Мы любим Асаль</button>
+</div>
+
+<div id="songs" class="submenu hidden">
+  <button onclick="playAudio('round-start.mp3')">Амонг Ас</button>
+  <button onclick="playAudio('tum-tum-tum-sahur.mp3')">Тум Тум Сахур</button>
+  <button onclick="playAudio('audio_2025-08-01_23-01-57.mp3')">Это не забудем Тимура</button>
+  <button onclick="goBack()">Назад в меню</button>
+  <button onclick="cancelAll()">Отмена</button>
+</div>
+
+<div id="videos" class="submenu hidden">
+  <button onclick="playVideo('oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4')">Тимур</button>
+  <button onclick="playVideo('oMTvPfb7222222.mp4')">МГРР</button>
+  <button onclick="goBack()">Назад в меню</button>
+  <button onclick="cancelAll()">Отмена</button>
+</div>
+
+<div id="asal" class="submenu hidden">
+  <div id="asalScreen">МЫ ЛЮБИМ АСАЛЬ</div>
+  <audio id="asalAudio" src="ppol.mp3" autoplay loop></audio>
+  <button onclick="goBack()">Назад в меню</button>
+  <button onclick="cancelAll()">Отмена</button>
+</div>
+
+<video id="videoPlayer" class="hidden" controls></video>
+<audio id="audioPlayer" class="hidden" controls></audio>
+
+<script>
+  const adminPass = "228";
+
+  function showSubMenu(menuId) {
+    hideAll();
+    document.getElementById(menuId).classList.remove('hidden');
+  }
+
+  function showAsal() {
+    hideAll();
+    document.getElementById('asal').classList.remove('hidden');
+    document.getElementById('asalAudio').play();
+  }
+
+  function playAudio(file) {
+    cancelAll();
+    const audio = document.getElementById('audioPlayer');
+    audio.src = file;
+    audio.classList.remove('hidden');
+    audio.play();
+  }
+
+  function playVideo(file) {
+    cancelAll();
+    const video = document.getElementById('videoPlayer');
+    video.src = file;
+    video.classList.remove('hidden');
+    video.play();
+  }
+
+  function goBack() {
+    cancelAll();
+    hideAll();
+    document.getElementById('mainMenu').classList.remove('hidden');
+  }
+
+  function cancelAll() {
+    ['videoPlayer', 'audioPlayer', 'asalAudio'].forEach(id => {
+      const el = document.getElementById(id);
+      el.pause();
+      el.currentTime = 0;
+      el.classList.add('hidden');
+    });
+  }
+
+  function hideAll() {
+    document.querySelectorAll('.menu, .submenu, .auth, .admin').forEach(e => e.classList.add('hidden'));
+  }
+
+  async function checkToken() {
+    const token = document.getElementById('tokenInput').value;
+    const { db, ref, get, remove } = window.firebaseStuff;
+    const tokenRef = ref(db, `tokens/${token}`);
+    const snap = await get(tokenRef);
+    if (snap.exists()) {
+      await remove(tokenRef);
+      hideAll();
+      document.getElementById('mainMenu').classList.remove('hidden');
+    } else {
+      alert('Неверный токен');
+    }
+  }
+
+  async function generateToken() {
+    const { db, ref, set } = window.firebaseStuff;
+    const token = document.getElementById('newToken').value || generateRandom();
+    await set(ref(db, `tokens/${token}`), true);
+    alert(`Токен создан: ${token}`);
+    loadTokens();
+  }
+
+  async function loadTokens() {
+    const { db, ref, get } = window.firebaseStuff;
+    const snap = await get(ref(db, 'tokens'));
+    const list = document.getElementById('tokenList');
+    list.innerHTML = '<h4>Активные токены:</h4>';
+    if (snap.exists()) {
+      Object.keys(snap.val()).forEach(t => {
+        const d = document.createElement('div');
+        d.textContent = t;
+        list.appendChild(d);
+      });
+    }
+  }
+
+  function enterAdmin() {
+    const pass = prompt('Пароль администратора:');
+    if (pass === adminPass) {
+      hideAll();
+      document.getElementById('adminPanel').classList.remove('hidden');
+      loadTokens();
+    } else {
+      alert('Неверный пароль');
+    }
+  }
+
+  function logoutAdmin() {
+    hideAll();
+    document.getElementById('auth').classList.remove('hidden');
+  }
+
+  function generateRandom() {
+    return Math.random().toString(36).slice(2, 10);
+  }
+</script>
 </body>
 </html>
-
