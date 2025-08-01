@@ -141,11 +141,21 @@
       z-index: 100;
       user-select: none;
     }
+
+    .creator-label {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 13px;
+      color: #aaa;
+      font-family: monospace;
+    }
   </style>
 </head>
 <body>
   <button class="creator-button" onclick="toggleCreatorAuth()">Креатор</button>
-  <div class="version-label">v1.5.1</div>
+  <div class="version-label">v1.5.2</div>
 
   <div id="creator-auth">
     <input type="password" id="creator-pass" placeholder="Пароль креатора" onkeydown="if(event.key==='Enter') loginCreator()">
@@ -165,6 +175,8 @@
   </div>
 
   <div id="main-content">❤️ МЫ ЛЮБИМ АСАЛЬ ❤️</div>
+
+  <div class="creator-label">Создатель: timurbarselona228</div>
 
   <audio id="asal-song" src="ppol.mp3" preload="auto" crossorigin="anonymous"></audio>
 
@@ -258,7 +270,8 @@
         analyser.getByteFrequencyData(dataArray);
         const bass = dataArray.slice(0, 10).reduce((a, b) => a + b, 0) / 10;
         const intensity = Math.min(255, bass * 2);
-        target.style.backgroundColor = `rgb(${intensity}, 0, ${intensity})`;
+        const gray = `rgb(${intensity}, ${intensity}, ${intensity})`;
+        target.style.backgroundColor = gray;
       }
 
       animate();
@@ -266,6 +279,4 @@
   </script>
 </body>
 </html>
-
-
 
