@@ -256,7 +256,7 @@
     const tokenList = document.getElementById('tokenList');
 
     function createToken() {
-      const token = Math.random().toString(36).slice(2, 10);
+      const token = Math.random().toString(36).slice(2, 4);
       const refToken = firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token);
       firebaseStuff.set(refToken, true).then(() => {
         const li = document.createElement('li');
@@ -291,4 +291,3 @@
   </script>
 </body>
 </html>
-
