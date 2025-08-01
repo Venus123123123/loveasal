@@ -2,43 +2,90 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Асаль — любовь</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Дешифровка XOR</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background-color: #111;
-      color: #ff4da6;
+    body {
+      background: #121212;
+      color: #f0f0f0;
+      font-family: monospace;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      font-family: 'Segoe UI', sans-serif;
-      overflow: hidden;
+      padding: 40px;
     }
 
-    .text {
-      font-size: 8vw;
-      text-align: center;
-      opacity: 0;
-      animation: fadeIn 2.5s ease-in-out forwards;
-      letter-spacing: 2px;
-      text-shadow: 0 0 30px rgba(255, 77, 166, 0.4);
-      transform: translateY(20px);
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
     }
 
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    textarea, input {
+      width: 100%;
+      max-width: 600px;
+      background: #1e1e1e;
+      color: #fff;
+      border: 1px solid #333;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      border-radius: 4px;
+    }
+
+    button {
+      background: #ff4da6;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+
+    #output {
+      margin-top: 20px;
+      font-size: 18px;
+      white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
-  <div class="text">Асаль — любовь</div>
+  <h1>Дешифровка XOR</h1>
+
+  <textarea id="inputData" rows="3" placeholder="Введи байты, например: 0x2C, 0x23, 0x27"></textarea>
+  <input id="keyInput" type="text" placeholder="Ключ (например: 0x55)" />
+
+  <button onclick="decode()">Расшифровать</button>
+
+  <div id="output"></div>
+
+  <script>
+    function decode() {
+      const input = document.getElementById('inputData').value;
+      const keyStr = document.getElementById('keyInput').value;
+      const output = document.getElementById('output');
+
+      try {
+        const key = parseInt(keyStr);
+        if (isNaN(key)) throw 'Ключ некорректный';
+
+        const bytes = input
+          .split(',')
+          .map(b => parseInt(b.trim(), 16));
+
+        const decoded = bytes
+          .map(b => String.fromCharCode(b ^ key))
+          .join('');
+
+        output.textContent = 'Результат: ' + decoded;
+      } catch (e) {
+        output.textContent = 'Ошибка: ' + e;
+      }
+    }
+  </script>
 </body>
 </html>
+
+
 
 
