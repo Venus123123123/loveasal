@@ -24,10 +24,20 @@
     window.firebaseStuff = { db, ref, get, set, push, remove };
   </script>
   <style>
+    :root {
+      --pink: #ff4da6;
+      --pink-dark: #ff007f;
+      --bg: #0e0e0e;
+      --font: 'Segoe UI', sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
     body {
       margin: 0;
-      font-family: sans-serif;
-      background: #000;
+      font-family: var(--font);
+      background: var(--bg);
       color: white;
       display: flex;
       flex-direction: column;
@@ -38,31 +48,55 @@
     }
     .hidden { display: none !important; }
     button {
-      background: #ff4da6;
+      background: var(--pink);
       border: none;
       color: white;
-      padding: 10px 20px;
+      padding: 10px 25px;
       margin: 10px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 18px;
       cursor: pointer;
-      transition: 0.2s;
+      box-shadow: 0 4px 8px rgba(255, 77, 166, 0.3);
     }
-    button:hover { background: #ff007f; }
-    input { padding: 10px; border-radius: 8px; margin: 10px; font-size: 16px; }
-    .menu, .submenu, .auth, .admin { display: flex; flex-direction: column; align-items: center; }
-    video, audio { max-width: 90vw; max-height: 70vh; margin-top: 20px; }
+    button:hover {
+      background: var(--pink-dark);
+      transform: scale(1.05);
+    }
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px;
+      font-size: 16px;
+      border: 1px solid var(--pink);
+      background: transparent;
+      color: white;
+    }
+    .menu, .submenu, .auth, .admin {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    video, audio {
+      max-width: 90vw;
+      max-height: 70vh;
+      margin-top: 20px;
+    }
     #asalScreen {
       font-size: 3em;
       text-align: center;
-      color: #ff4da6;
-      text-shadow: 0 0 20px #ff007f;
-      animation: pulse 1s infinite;
+      color: var(--pink);
+      animation: neon 2s ease-in-out infinite alternate;
+      letter-spacing: 3px;
+      padding: 20px;
+      text-shadow: 0 0 5px var(--pink), 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
     }
-    @keyframes pulse {
-      0% { background-color: black; }
-      50% { background-color: white; color: black; }
-      100% { background-color: black; }
+    @keyframes neon {
+      0% {
+        text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
+      }
+      100% {
+        text-shadow: 0 0 20px var(--pink), 0 0 40px var(--pink-dark);
+      }
     }
     #version {
       position: absolute;
@@ -80,15 +114,13 @@
   </style>
 </head>
 <body>
-<div id="version">v3</div>
+<div id="version">v4</div>
 <button id="adminBtn" onclick="enterAdmin()">Креатор</button>
-
 <div id="auth" class="auth">
   <h2>Введите токен</h2>
   <input id="tokenInput" placeholder="Токен" onkeydown="if(event.key==='Enter')checkToken()"/>
   <button onclick="checkToken()">Войти</button>
 </div>
-
 <div id="adminPanel" class="admin hidden">
   <h3>Админка</h3>
   <input id="newToken" placeholder="Генерировать токен" />
@@ -96,56 +128,44 @@
   <div id="tokenList"></div>
   <button onclick="logoutAdmin()">Выйти</button>
 </div>
-
 <div id="categoryMenu" class="menu hidden">
   <button onclick="showSubMenu('songsMenu')">Песня</button>
   <button onclick="showSubMenu('videosMenu')">Кнопка НЕ нажимать</button>
   <button onclick="showAsal()">Мы любим Асаль</button>
   <button onclick="cancelAll()">Отмена</button>
 </div>
-
 <div id="songsMenu" class="submenu hidden">
   <button onclick="playAudio('round-start.mp3')">Амонг Ас</button>
   <button onclick="playAudio('tum-tum-tum-sahur.mp3')">Тум Тум Сахур</button>
   <button onclick="playAudio('audio_2025-08-01_23-01-57.mp3')">Это не забудем Тимура</button>
   <button onclick="goBackToCategories()">Назад</button>
 </div>
-
 <div id="videosMenu" class="submenu hidden">
   <button onclick="playVideo('oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4')">Тимур</button>
   <button onclick="playVideo('oMTvPfb7222222.mp4')">МГРР</button>
   <button onclick="goBackToCategories()">Назад</button>
 </div>
-
 <div id="asal" class="submenu hidden">
   <div id="asalScreen">МЫ ЛЮБИМ АСАЛЬ</div>
   <audio id="asalAudio" src="ppol.mp3" autoplay loop></audio>
   <button onclick="goBackToCategories()">Назад</button>
 </div>
-
 <video id="videoPlayer" class="hidden" controls></video>
 <audio id="audioPlayer" class="hidden" controls></audio>
-
 <script>
   const adminPass = "228";
-
   function hideAll() {
     document.querySelectorAll('.menu, .submenu, .auth, .admin').forEach(e => e.classList.add('hidden'));
     cancelAll();
   }
-
   function cancelAll() {
-    const video = document.getElementById('videoPlayer');
-    video.pause();
-    video.classList.add('hidden');
-    const audio = document.getElementById('audioPlayer');
-    audio.pause();
-    audio.classList.add('hidden');
-    const asal = document.getElementById('asalAudio');
-    asal.pause();
-    asal.classList.add('hidden');
+    document.getElementById('videoPlayer').pause();
+    document.getElementById('videoPlayer').classList.add('hidden');
+    document.getElementById('audioPlayer').pause();
+    document.getElementById('audioPlayer').classList.add('hidden');
+    document.getElementById('asalAudio').pause();
+    document.getElementById('asalAudio').classList.add('hidden');
   }
-
   function playAudio(file) {
     cancelAll();
     const audio = document.getElementById('audioPlayer');
@@ -153,7 +173,6 @@
     audio.classList.remove('hidden');
     audio.play();
   }
-
   function playVideo(file) {
     cancelAll();
     const video = document.getElementById('videoPlayer');
@@ -161,7 +180,6 @@
     video.classList.remove('hidden');
     video.play();
   }
-
   function showAsal() {
     hideAll();
     document.getElementById('asal').classList.remove('hidden');
@@ -169,17 +187,14 @@
     asal.classList.remove('hidden');
     asal.play();
   }
-
   function showSubMenu(id) {
     hideAll();
     document.getElementById(id).classList.remove('hidden');
   }
-
   function goBackToCategories() {
     hideAll();
     document.getElementById('categoryMenu').classList.remove('hidden');
   }
-
   async function checkToken() {
     const token = document.getElementById('tokenInput').value.trim();
     const { db, ref, get, remove } = window.firebaseStuff;
@@ -193,7 +208,6 @@
       alert('Неверный токен');
     }
   }
-
   async function generateToken() {
     const { db, ref, set } = window.firebaseStuff;
     const token = document.getElementById('newToken').value || Math.random().toString(36).slice(2, 10);
@@ -201,7 +215,6 @@
     alert(`Токен создан: ${token}`);
     loadTokens();
   }
-
   async function loadTokens() {
     const { db, ref, get } = window.firebaseStuff;
     const snap = await get(ref(db, 'tokens'));
@@ -215,7 +228,6 @@
       });
     }
   }
-
   function enterAdmin() {
     const pass = prompt('Пароль администратора:');
     if (pass === adminPass) {
@@ -226,7 +238,6 @@
       alert('Неверный пароль');
     }
   }
-
   function logoutAdmin() {
     hideAll();
     document.getElementById('auth').classList.remove('hidden');
@@ -234,3 +245,4 @@
 </script>
 </body>
 </html>
+
