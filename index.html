@@ -2,39 +2,50 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Доступ по паролю и токену</title>
+  <title>Асаль ❤️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       margin: 0;
-      background: linear-gradient(135deg, #1b1b1b, #000);
+      background: radial-gradient(circle at center, #111 0%, #000 100%);
       font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100vh;
+      overflow: hidden;
       color: #fff;
     }
 
     .box {
-      background: #222;
+      background: rgba(30,30,30,0.95);
       padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(255, 77, 166, 0.3);
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(255, 77, 166, 0.4);
       width: 90%;
       max-width: 400px;
+      margin: 12% auto;
       text-align: center;
+      animation: slideUp 0.8s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     input {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-top: 10px;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       font-size: 16px;
       background: #333;
       color: #fff;
+      outline: none;
+      transition: box-shadow 0.3s;
+    }
+
+    input:focus {
+      box-shadow: 0 0 8px #ff4da6;
     }
 
     button {
@@ -42,16 +53,39 @@
       background: #ff4da6;
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+      padding: 12px 20px;
+      border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    button:hover {
+      background: #ff007f;
+      transform: scale(1.03);
     }
 
     #main-content {
       display: none;
-      font-size: 20px;
-      margin-top: 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      color: #ff4da6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 48px;
+      font-weight: bold;
+      text-shadow: 0 0 25px #ff007f;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(1.1); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     .admin-tools {
@@ -72,13 +106,17 @@
       font-size: 14px;
     }
 
+    .creator-button:hover {
+      background: #666;
+    }
+
     #creator-auth {
       position: absolute;
-      top: 50px;
+      top: 55px;
       right: 15px;
       background: #222;
-      padding: 10px;
-      border-radius: 8px;
+      padding: 12px;
+      border-radius: 10px;
       display: none;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
@@ -87,36 +125,42 @@
       width: 160px;
       margin: 5px 0;
     }
+
+    #token-list {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #aaa;
+      white-space: pre-line;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
   <button class="creator-button" onclick="toggleCreatorAuth()">Креатор</button>
 
   <div id="creator-auth">
-    <input type="password" id="creator-pass" placeholder="Пароль">
+    <input type="password" id="creator-pass" placeholder="Пароль креатора" onkeydown="if(event.key==='Enter') loginCreator()">
     <button onclick="loginCreator()">Войти</button>
   </div>
 
   <div class="box" id="login-box">
     <h2>Вход</h2>
-    <input type="password" id="password" placeholder="Введите пароль" />
-    <input type="text" id="token" placeholder="Введите одноразовый токен" />
+    <input type="password" id="password" placeholder="Введите пароль" onkeydown="if(event.key==='Enter') login()">
+    <input type="text" id="token" placeholder="Введите одноразовый токен" onkeydown="if(event.key==='Enter') login()">
     <button onclick="login()">Войти</button>
-
-    <div id="main-content">
-      ✅ Доступ открыт
-    </div>
 
     <div class="admin-tools" id="admin">
       <h3>🔧 Генерация токена</h3>
       <button onclick="generateToken()">Создать токен</button>
-      <div id="token-list" style="margin-top:10px; font-size:14px; color:#aaa;"></div>
+      <div id="token-list"></div>
     </div>
   </div>
 
+  <div id="main-content">❤️ ЛЮБИМ АСАЛЬ ❤️</div>
+
   <script>
-    const validPassword = 'asal2025'; // пароль обычного пользователя
-    const adminPassword = 'superasal'; // пароль креатора
+    const validPassword = 'asal2025';
+    const adminPassword = 'superasal';
     let tokens = JSON.parse(localStorage.getItem('oneTimeTokens') || '[]');
 
     function saveTokens() {
@@ -139,7 +183,9 @@
 
       tokens = tokens.filter(t => t !== token);
       saveTokens();
-      document.getElementById('main-content').style.display = 'block';
+
+      document.getElementById('login-box').style.display = 'none';
+      document.getElementById('main-content').style.display = 'flex';
     }
 
     function generateToken() {
