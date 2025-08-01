@@ -1,40 +1,34 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Асаль — любовь</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
+    html, body {
       margin: 0;
       padding: 0;
-      background: #0d0d0d;
+      height: 100%;
+      background-color: #111;
       color: #ff4da6;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      font-family: "Segoe UI", sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       overflow: hidden;
     }
 
-    h1 {
+    .text {
       font-size: 8vw;
       text-align: center;
-      letter-spacing: 2px;
-      animation: fadeIn 3s ease-in-out forwards;
       opacity: 0;
-      text-shadow: 0 0 20px rgba(255, 77, 166, 0.6);
+      animation: fadeIn 2.5s ease-in-out forwards;
+      letter-spacing: 2px;
+      text-shadow: 0 0 30px rgba(255, 77, 166, 0.4);
+      transform: translateY(20px);
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
       to {
         opacity: 1;
         transform: translateY(0);
@@ -43,7 +37,8 @@
   </style>
 </head>
 <body>
-  <h1>Асаль — любовь</h1>
+  <div class="text">Асаль — любовь</div>
 </body>
 </html>
+
 
