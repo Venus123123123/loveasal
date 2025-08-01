@@ -132,10 +132,25 @@
       white-space: pre-line;
       text-align: left;
     }
+
+    .version-label {
+      position: fixed;
+      top: 15px;
+      right: 90px;
+      color: #999;
+      font-size: 13px;
+      font-family: monospace;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 3px 8px;
+      border-radius: 5px;
+      z-index: 100;
+      user-select: none;
+    }
   </style>
 </head>
 <body>
   <button class="creator-button" onclick="toggleCreatorAuth()">Креатор</button>
+  <div class="version-label">v1.3.1</div>
 
   <div id="creator-auth">
     <input type="password" id="creator-pass" placeholder="Пароль креатора" onkeydown="if(event.key==='Enter') loginCreator()">
@@ -185,7 +200,9 @@
         if (snapshot.exists()) {
           db.ref('tokens/' + token).remove();
           document.getElementById('login-box').style.display = 'none';
-          document.getElementById('main-content').style.display = 'flex';
+          const content = document.getElementById('main-content');
+          content.style.display = 'flex';
+          document.body.style.overflow = 'hidden';
         } else {
           alert("Неверный или использованный токен");
         }
@@ -194,8 +211,7 @@
 
     function generateToken() {
       const t = Math.random().toString(36).substr(2, 8).toUpperCase();
-      db.ref('tokens/' + t).set(true);
-      updateTokenList();
+      db.ref('tokens/' + t).set(true).then(updateTokenList);
     }
 
     function updateTokenList() {
@@ -224,4 +240,3 @@
   </script>
 </body>
 </html>
-
