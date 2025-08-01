@@ -1,23 +1,136 @@
-function decode() {
-  const input = document.getElementById('inputData').value;
-  const keyStr = document.getElementById('keyInput').value;
-  const output = document.getElementById('output');
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Доступ по паролю и токену</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #1b1b1b, #000);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+      animation: fadeIn 2s ease-out;
+    }
 
-  try {
-    const key = parseInt(keyStr);
-    if (isNaN(key)) throw 'Ключ некорректный';
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-    const bytes = input
-      .split(',')
-      .map(b => parseInt(b.trim(), 16));
+    .box {
+      background: #222;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 77, 166, 0.3);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      animation: fadeIn 1s ease-out;
+    }
 
-    const decodedBytes = bytes.map(b => b ^ key);
-    const uint8 = new Uint8Array(decodedBytes);
-    const decoded = new TextDecoder('utf-8').decode(uint8);
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      background: #333;
+      color: #fff;
+    }
 
-    output.textContent = 'Результат: ' + decoded;
-  } catch (e) {
-    output.textContent = 'Ошибка: ' + e;
-  }
-}
+    button {
+      margin-top: 15px;
+      background: #ff4da6;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
+    #main-content {
+      display: none;
+      font-size: 20px;
+      margin-top: 20px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .admin-tools {
+      margin-top: 30px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="box" id="login-box">
+    <h2>Вход</h2>
+    <input type="password" id="password" placeholder="Введите пароль" />
+    <input type="text" id="token" placeholder="Введите одноразовый токен" />
+    <button onclick="login()">Войти</button>
+
+    <div id="main-content">
+      ✅ Доступ открыт
+    </div>
+
+    <div class="admin-tools" id="admin">
+      <h3>🔧 Генерация токена</h3>
+      <button onclick="generateToken()">Создать токен</button>
+      <div id="token-list" style="margin-top:10px; font-size:14px; color:#aaa;"></div>
+    </div>
+  </div>
+
+  <script>
+    const validPassword = 'asal2025'; // твой пароль
+    let tokens = JSON.parse(localStorage.getItem('oneTimeTokens') || '[]');
+
+    function saveTokens() {
+      localStorage.setItem('oneTimeTokens', JSON.stringify(tokens));
+    }
+
+    function login() {
+      const pass = document.getElementById('password').value;
+      const token = document.getElementById('token').value.trim();
+
+      if (pass !== validPassword) {
+        alert("Неверный пароль");
+        return;
+      }
+
+      if (!tokens.includes(token)) {
+        alert("Неверный или использованный токен");
+        return;
+      }
+
+      // Удаляем использованный токен
+      tokens = tokens.filter(t => t !== token);
+      saveTokens();
+
+      document.getElementById('main-content').style.display = 'block';
+    }
+
+    function generateToken() {
+      const t = Math.random().toString(36).substr(2, 8).toUpperCase();
+      tokens.push(t);
+      saveTokens();
+      updateTokenList();
+    }
+
+    function updateTokenList() {
+      document.getElementById('token-list').innerText = 'Токены:\n' + tokens.join('\n');
+    }
+
+    // Включить режим админа по URL ?admin=1
+    if (location.search.includes('admin=1')) {
+      document.getElementById('admin').style.display = 'block';
+      updateTokenList();
+    }
+  </script>
+</body>
+</html>
