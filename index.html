@@ -26,7 +26,7 @@
     :root {
       --pink: #ff4da6;
       --pink-dark: #ff007f;
-      --bg: #0e0e0e;
+      --bg: #ffffff;
       --font: 'Segoe UI', sans-serif;
     }
     * {
@@ -37,7 +37,7 @@
       margin: 0;
       font-family: var(--font);
       background: var(--bg);
-      color: white;
+      color: black;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -71,7 +71,7 @@
       font-size: 16px;
       border: 1px solid var(--pink);
       background: transparent;
-      color: white;
+      color: black;
       width: 80vw;
       max-width: 300px;
     }
@@ -125,11 +125,25 @@
       font-size: 13px;
       z-index: 999;
     }
+    #adminPanel {
+      position: fixed;
+      top: 40px;
+      left: 20px;
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 1000;
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <div id="version">v1.0.1</div>
+  <div id="version">v1.0.2</div>
   <button id="adminBtn">Креатор</button>
+  <div id="adminPanel">
+    <button onclick="createToken()">Создать токен</button>
+    <ul id="tokenList"></ul>
+  </div>
   <div id="asalScreen" class="hidden">МЫ ЛЮБИМ АСАЛЬ 💖</div>
   <div class="auth">
     <input id="tokenInput" placeholder="Введите токен" />
@@ -181,10 +195,9 @@
     const adminBtn = document.getElementById('adminBtn');
 
     let isMuted = false;
-    const muteBtn = document.getElementById('muteToggle');
-    muteBtn.onclick = () => {
+    document.getElementById('muteToggle').onclick = () => {
       isMuted = !isMuted;
-      muteBtn.innerText = isMuted ? '🔇 Звук выкл' : '🔊 Звук вкл';
+      document.getElementById('muteToggle').innerText = isMuted ? '🔇 Звук выкл' : '🔊 Звук вкл';
       audio.muted = isMuted;
       video.muted = isMuted;
     };
@@ -208,9 +221,7 @@
         menu.classList.add('hidden');
         document.querySelectorAll('.submenu').forEach(sm => sm.classList.add('hidden'));
         const target = btn.getAttribute('data-menu');
-        if (target === 'gdz') {
-          gdzFrame.src = 'https://rdc-cdn.lms.macmillaneducation.com/wp-content/uploads/sites/8/2014/03/Bey_B1_WBAK.pdf.pdf';
-        }
+        if (target === 'gdz') gdzFrame.src = 'https://rdc-cdn.lms.macmillaneducation.com/wp-content/uploads/sites/8/2014/03/Bey_B1_WBAK.pdf.pdf';
         document.getElementById(target + 'Menu').classList.remove('hidden');
       };
     });
@@ -241,13 +252,43 @@
 
     document.getElementById('logoutBtn').onclick = () => location.reload();
 
+    const adminPanel = document.getElementById('adminPanel');
+    const tokenList = document.getElementById('tokenList');
+
+    function createToken() {
+      const token = Math.random().toString(36).slice(2, 10);
+      const refToken = firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token);
+      firebaseStuff.set(refToken, true).then(() => {
+        const li = document.createElement('li');
+        li.textContent = token;
+        tokenList.appendChild(li);
+      });
+    }
+
     adminBtn.onclick = () => {
       const p = prompt('Введите пароль для креатора:');
-      if (p === 'timurbarselona228') alert('Добро пожаловать, создатель! (пока без панели)');
-      else alert('Неверный пароль');
+      if (p === 'V') {
+        adminPanel.style.display = 'block';
+        alert('Добро пожаловать в панель создателя!');
+        firebaseStuff.get(firebaseStuff.ref(firebaseStuff.db, 'tokens')).then(snap => {
+          tokenList.innerHTML = '';
+          if (snap.exists()) {
+            Object.keys(snap.val()).forEach(token => {
+              const li = document.createElement('li');
+              li.textContent = token;
+              tokenList.appendChild(li);
+            });
+          } else {
+            const li = document.createElement('li');
+            li.textContent = 'Нет активных токенов';
+            tokenList.appendChild(li);
+          }
+        });
+      } else {
+        alert('Неверный пароль');
+      }
     }
   </script>
 </body>
 </html>
-
 
