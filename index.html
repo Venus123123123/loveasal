@@ -14,28 +14,94 @@
   }
   * {
     box-sizing: border-box;
-    transition: all 0.3s ease;
   }
   html, body {
     margin: 0; padding: 0;
     height: 100vh; width: 100vw;
     font-family: var(--font);
-    background: linear-gradient(135deg, var(--bg1), var(--bg2));
-    animation: bgshift 6s infinite alternate ease-in-out;
+    background: #000;
     color: white;
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    position: relative;
   }
-  @keyframes bgshift {
-    0% {background: linear-gradient(135deg, var(--bg1), var(--bg2));}
-    100% {background: linear-gradient(135deg, #1c1c1c, #000000);}
+  /* Starry background */
+  .stars, .stars2, .stars3 {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: transparent;
+    z-index: -1;
+  }
+  .stars {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="white"/></svg>') repeat;
+    background-size: 50px 50px;
+    opacity: 0.8;
+    filter: blur(1px);
+    animation: twinkle 8s infinite;
+  }
+  .stars2 {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="3" cy="3" r="3" fill="white"/></svg>') repeat;
+    background-size: 75px 75px;
+    opacity: 0.6;
+    filter: blur(0.5px);
+    animation: twinkle 6s infinite;
+  }
+  .stars3 {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="4" cy="4" r="4" fill="white"/></svg>') repeat;
+    background-size: 100px 100px;
+    opacity: 0.4;
+    filter: blur(0.3px);
+    animation: twinkle 4s infinite;
+  }
+  @keyframes twinkle {
+    0% { opacity: 0.4; transform: scale(0.7); }
+    50% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0.4; transform: scale(0.7); }
+  }
+  /* Animation for diving and rising */
+  .container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+  .container.visible {
+    display: flex;
+    animation: none;
+  }
+  .submenu.visible {
+    animation: dive 0.8s ease forwards;
+  }
+  .submenu:not(.visible) {
+    animation: dive-out 0.8s ease forwards;
+  }
+  .menu.visible {
+    animation: rise 0.8s ease forwards;
+  }
+  @keyframes dive {
+    0% { transform: translateY(-100vh) scale(0.7); opacity: 0; box-shadow: 0 0 20px rgba(0,0,0,0.5); backdrop-filter: brightness(0.6); }
+    100% { transform: translateY(0) scale(1); opacity: 1; box-shadow: 0 0 10px rgba(0,0,0,0.2); backdrop-filter: brightness(1); }
+  }
+  @keyframes dive-out {
+    0% { transform: translateY(0) scale(1); opacity: 1; box-shadow: 0 0 10px rgba(0,0,0,0.2); backdrop-filter: brightness(1); }
+    100% { transform: translateY(100vh) scale(0.7); opacity: 0; box-shadow: 0 0 20px rgba(0,0,0,0.5); backdrop-filter: brightness(0.6); }
+  }
+  @keyframes rise {
+    0% { transform: translateY(100vh) scale(0.7); opacity: 0; box-shadow: 0 0 20px rgba(0,0,0,0.5); backdrop-filter: brightness(0.6); }
+    100% { transform: translateY(0) scale(1); opacity: 1; box-shadow: 0 0 10px rgba(0,0,0,0.2); backdrop-filter: brightness(1); }
+  }
+  body.transitioning {
+    pointer-events: none;
   }
   #intro {
     position: fixed;
-    top:0; left:0; width: 100vw; height: 100vh;
+    top: 0; left: 0; width: 100vw; height: 100vh;
     background: black;
     color: white;
     font-size: 3em;
@@ -68,6 +134,10 @@
     background: var(--pink-dark);
     transform: scale(1.05);
   }
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
   input[type=password] {
     padding: 10px;
     border-radius: 8px;
@@ -79,20 +149,6 @@
     width: 80vw;
     max-width: 300px;
     -webkit-text-security: disc;
-  }
-  .hidden {display:none !important;}
-  .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  .container.visible {
-    opacity: 1;
-    transform: translateY(0);
   }
   #version {
     position: fixed;
@@ -120,27 +176,28 @@
     margin-bottom: 20px;
   }
   @keyframes neon {
-    0% {
-      text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
-    }
-    100% {
-      text-shadow: 0 0 20px var(--pink), 0 0 40px var(--pink-dark);
-    }
+    0% { text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink-dark); }
+    100% { text-shadow: 0 0 20px var(--pink), 0 0 40px var(--pink-dark); }
   }
   iframe {
     width: 95vw;
     height: 80vh;
-    margin-top: 20px;
+    margin: 10px auto;
     border: none;
+    display: block;
   }
   audio, video {
     width: 95vw;
     max-height: 60vh;
-    margin-top: 20px;
+    margin: 10px auto;
+    display: block;
   }
 </style>
 </head>
 <body>
+  <div class="stars"></div>
+  <div class="stars2"></div>
+  <div class="stars3"></div>
   <div id="intro">Said</div>
   <div id="version">v2.1</div>
   <button id="adminBtn">Креатор</button>
@@ -159,6 +216,7 @@
   </div>
 
   <div class="container submenu hidden" id="musicMenu">
+    <audio id="audio" controls class="hidden"></audio>
     <button data-audio="round-start.mp3">Амонг Ас</button>
     <button data-audio="tum-tum-tum-sahur.mp3">Тум Тум Сахур</button>
     <button data-audio="audio_2025-08-01_23-01-57.mp3">Это не забудем Тимура</button>
@@ -166,6 +224,7 @@
   </div>
 
   <div class="container submenu hidden" id="videoMenu">
+    <video id="video" controls class="hidden"></video>
     <button data-video="oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4">Тимур</button>
     <button data-video="oMTvPfb7222222.mp4">МГРР</button>
     <button class="back">Назад в меню</button>
@@ -180,9 +239,6 @@
     <iframe src="" id="gdzFrame" sandbox="allow-same-origin allow-scripts allow-popups" allowfullscreen></iframe>
     <button class="back">Назад в меню</button>
   </div>
-
-  <audio id="audio" controls class="hidden"></audio>
-  <video id="video" controls class="hidden"></video>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
@@ -217,14 +273,18 @@
 
   function showElement(el) {
     if (!el) return;
+    console.log('Showing element:', el.id || el.className);
     el.classList.remove('hidden');
-    setTimeout(() => el.classList.add('visible'), 10);
+    el.classList.add('visible');
+    document.body.classList.add('transitioning');
+    setTimeout(() => document.body.classList.remove('transitioning'), 800);
   }
 
   function hideElement(el) {
     if (!el) return;
+    console.log('Hiding element:', el.id || el.className);
     el.classList.remove('visible');
-    setTimeout(() => el.classList.add('hidden'), 300);
+    el.classList.add('hidden');
   }
 
   function hideElements(elements) {
@@ -232,7 +292,8 @@
   }
 
   function openMenu(menuId) {
-    hideElements(document.querySelectorAll('.submenu'));
+    console.log('Opening menu:', menuId);
+    hideElements([menu, auth, ...document.querySelectorAll('.submenu')]);
     audio.pause(); audio.classList.add('hidden'); audio.src = '';
     video.pause(); video.classList.add('hidden'); video.src = '';
     const el = document.getElementById(menuId);
@@ -242,8 +303,10 @@
   async function checkToken(token) {
     try {
       const snapshot = await get(ref(db, 'tokens/' + token));
+      console.log('Token check result:', snapshot.exists());
       return snapshot.exists();
-    } catch {
+    } catch (error) {
+      console.error('Token check error:', error);
       return false;
     }
   }
@@ -255,6 +318,7 @@
     const valid = await checkToken(token);
     loginBtn.disabled = false;
     if (valid) {
+      console.log('Login successful');
       hideElement(auth);
       showElement(menu);
     } else {
@@ -263,6 +327,7 @@
   });
 
   document.getElementById('logoutBtn').addEventListener('click', () => {
+    console.log('Logging out');
     hideElement(menu);
     hideElements(document.querySelectorAll('.submenu'));
     tokenInput.value = '';
@@ -270,7 +335,9 @@
   });
 
   menu.querySelectorAll('button[data-menu]').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      console.log('Menu button clicked:', btn.getAttribute('data-menu'));
       hideElement(menu);
       const menuId = btn.getAttribute('data-menu');
       openMenu(menuId);
@@ -278,31 +345,37 @@
   });
 
   backButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      console.log('Back button clicked');
       hideElements(document.querySelectorAll('.submenu'));
       showElement(menu);
     });
   });
 
   musicMenu.querySelectorAll('button[data-audio]').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      console.log('Audio button clicked:', btn.getAttribute('data-audio'));
       const audioFile = btn.getAttribute('data-audio');
       video.pause();
       video.classList.add('hidden');
       audio.src = audioFile;
       audio.classList.remove('hidden');
-      audio.play();
+      audio.play().catch(err => console.error('Audio playback error:', err));
     });
   });
 
   videoMenu.querySelectorAll('button[data-video]').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      console.log('Video button clicked:', btn.getAttribute('data-video'));
       const videoFile = btn.getAttribute('data-video');
       audio.pause();
       audio.classList.add('hidden');
       video.src = videoFile;
       video.classList.remove('hidden');
-      video.play();
+      video.play().catch(err => console.error('Video playback error:', err));
     });
   });
 
@@ -312,7 +385,9 @@
   };
 
   gdzMenu.querySelectorAll('button[data-gdzkey]').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      console.log('GDZ button clicked:', btn.getAttribute('data-gdzkey'));
       const key = btn.getAttribute('data-gdzkey');
       if (gdzUrls[key]) {
         gdzFrame.src = gdzUrls[key];
@@ -399,6 +474,5 @@
     }, 3000);
   });
 </script>
-
 </body>
 </html>
