@@ -1,136 +1,301 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!DOCTYPE html><html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Дешифровка XOR</title>
+  <title>Мы любим Асаль</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getDatabase, ref, get, set, push, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";const firebaseConfig = {
+  apiKey: "AIzaSyBTcH3_tri2L7AHLh1e-YD-0s-QSthuE6Q",
+  authDomain: "disk-c98ee.firebaseapp.com",
+  projectId: "disk-c98ee",
+  storageBucket: "disk-c98ee.appspot.com",
+  messagingSenderId: "59577059636",
+  appId: "1:59577059636:web:e98f456d054cc360747d61",
+  databaseURL: "https://disk-c98ee-default-rtdb.firebaseio.com"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+window.firebaseStuff = { db, ref, get, set, push, remove };
+
+  </script>
   <style>
-    body {
-      background: #121212;
-      color: #f0f0f0;
-      font-family: monospace;
+    :root {
+      --pink: #ff4da6;
+      --pink-dark: #ff007f;
+      --bg: #000000;
+      --font: 'Segoe UI', sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+    html, body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 40px;
-    }
-
-    h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-
-    textarea, input {
+      justify-content: center;
+      height: 100dvh;
       width: 100%;
-      max-width: 600px;
-      background: #1e1e1e;
-      color: #fff;
-      border: 1px solid #333;
-      padding: 10px;
-      margin-bottom: 10px;
-      font-size: 14px;
-      border-radius: 4px;
+      overflow-x: hidden;
     }
-
+    .hidden { display: none !important; }
     button {
-      background: #ff4da6;
-      color: #fff;
-      padding: 10px 20px;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 4px;
-      margin-top: 10px;
-    }
+      transform: translateY(50px);
+      opacity: 0;
+      animation: rise 0.5s forwards;
+    }@keyframes rise {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 
-    #output {
-      margin-top: 20px;
-      font-size: 18px;
-      white-space: pre-wrap;
-    }
+  background: var(--pink);
+  border: none;
+  color: white;
+  padding: 10px 25px;
+  margin: 10px;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(255, 77, 166, 0.3);
+  width: 90vw;
+  max-width: 300px;
+}
+button:hover {
+  background: var(--pink-dark);
+  transform: scale(1.05);
+}
+input {
+  padding: 10px;
+  border-radius: 8px;
+  margin: 10px;
+  font-size: 16px;
+  border: 1px solid var(--pink);
+  background: transparent;
+  color: black;
+  width: 80vw;
+  max-width: 300px;
+}
+.menu, .submenu, .auth, .admin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 20px;
+}
+video, audio {
+  width: 95vw;
+  max-height: 60vh;
+  margin-top: 20px;
+}
+iframe {
+  width: 95vw;
+  height: 80vh;
+  margin-top: 20px;
+  border: none;
+}
+#asalScreen {
+  font-size: 2.2em;
+  text-align: center;
+  color: var(--pink);
+  animation: neon 2s ease-in-out infinite alternate;
+  letter-spacing: 2px;
+  padding: 20px;
+  text-shadow: 0 0 5px var(--pink), 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
+}
+@keyframes neon {
+  0% {
+    text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
+  }
+  100% {
+    text-shadow: 0 0 20px var(--pink), 0 0 40px var(--pink-dark);
+  }
+}
+#version {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  font-size: 13px;
+  color: #888;
+  z-index: 999;
+}
+#adminBtn {
+  position: fixed;
+  top: 10px;
+  left: 20px;
+  font-size: 13px;
+  z-index: 999;
+}
+#adminPanel {
+  position: fixed;
+  top: 40px;
+  left: 20px;
+  background: rgba(255,255,255,0.1);
+  padding: 10px;
+  border-radius: 8px;
+  z-index: 1000;
+  display: none;
+}
+
   </style>
 </head>
 <body>
-  <h1>Дешифровка XOR</h1>
-
-  <textarea id="inputData" rows="3" placeholder="Введи байты, например: 0x2C, 0x23, 0x27"></textarea>
-  <input id="keyInput" type="text" placeholder="Ключ (например: 0x55)" />
-
-  <button onclick="decode()">Расшифровать</button>
-
-  <div id="output"></div>
-
+  <div id="version">v1.0.2</div>
+  <button id="adminBtn">Креатор</button>
+  <div id=\"adminPanel\" class="hidden">
+    <button onclick="createToken()">Создать токен</button>
+    <ul id="tokenList"></ul>
+  <button class="back" onclick="adminPanel.classList.add('hidden'); auth.classList.remove('hidden');">Назад</button>
+  </div>
+  <div id="asalScreen" class="hidden">МЫ ЛЮБИМ АСАЛЬ 💖</div>
+  <div class="auth">
+    <input id="tokenInput" placeholder="Введите токен" />
+    <button id="loginBtn">Войти</button>
+    <button id="muteToggle">На уроке</button>
+  </div>
+  <div class="menu hidden">
+    <button data-menu="music">Песня</button>
+    <button data-menu="video">Кнопка НЕ нажимать</button>
+    <button data-menu="asal">💖 Мы любим Асаль</button>
+    <button data-menu="gdz">ГДЗ</button>
+    <button id="logoutBtn">Выход</button>
+  </div>
+  <div class="submenu hidden" id="musicMenu">
+    <button data-audio="round-start.mp3">Амонг Ас</button>
+    <button data-audio="tum-tum-tum-sahur.mp3">Тум Тум Сахур</button>
+    <button data-audio="audio_2025-08-01_23-01-57.mp3">Это не забудем Тимура</button>
+    <button class="back">Назад в меню</button>
+  </div>
+  <div class="submenu hidden" id="videoMenu">
+    <button data-video="oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4">Тимур</button>
+    <button data-video="oMTvPfb7222222.mp4">МГРР</button>
+    <button class="back">Назад в меню</button>
+  </div>
+  <div class="submenu hidden" id="asalMenu">
+    <div id="asalText">💖 Мы любим Асаль 💖</div>
+    <button class="back">Назад в меню</button>
+  </div>
+  <div class="submenu hidden" id="gdzMenu">
+    <iframe src="" id="gdzFrame" allow="fullscreen" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>
+    <button class="back">Назад в меню</button>
+  </div>
+  <audio id="audio" controls class="hidden"></audio>
+  <video id="video" controls class="hidden"></video>
   <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBTcH3_tri2L7AHLh1e-YD-0s-QSthuE6Q",
-    authDomain: "disk-c98ee.firebaseapp.com",
-    projectId: "disk-c98ee",
-    storageBucket: "disk-c98ee.firebasestorage.app",
-    messagingSenderId: "59577059636",
-    appId: "1:59577059636:web:e98f456d054cc360747d61"
+    const tokenInput = document.getElementById('tokenInput');
+    const loginBtn = document.getElementById('loginBtn');
+    const auth = document.querySelector('.auth');
+    const menu = document.querySelector('.menu');
+    const asalScreen = document.getElementById('asalScreen');
+    const audio = document.getElementById('audio');
+    const video = document.getElementById('video');
+    const gdzFrame = document.getElementById('gdzFrame');
+    const musicMenu = document.getElementById('musicMenu');
+    const videoMenu = document.getElementById('videoMenu');
+    const asalMenu = document.getElementById('asalMenu');
+    const gdzMenu = document.getElementById('gdzMenu');
+    const backButtons = document.querySelectorAll('.back');
+    const adminBtn = document.getElementById('adminBtn');let isMuted = false;
+document.getElementById('muteToggle').onclick = () => {
+  isMuted = !isMuted;
+  document.getElementById('muteToggle').innerText = isMuted ? '🔇 Звук выкл' : '🔊 Звук вкл';
+  audio.muted = isMuted;
+  video.muted = isMuted;
+};
+
+loginBtn.onclick = () => {
+  const token = tokenInput.value.trim();
+  if (!token) return alert('Введите токен');
+  firebaseStuff.get(firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token)).then(snapshot => {
+    if (snapshot.exists()) {
+      firebaseStuff.remove(firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token));
+      auth.classList.add('hidden');
+      menu.classList.remove('hidden');
+      asalScreen.classList.remove('hidden');
+      if (!isMuted) new Audio('ppol.mp3').play();
+    } else alert('Неверный токен');
+  });
+};
+
+document.querySelectorAll('[data-menu]').forEach(btn => {
+  btn.onclick = () => {
+    menu.classList.add('hidden');
+    document.querySelectorAll('.submenu').forEach(sm => sm.classList.add('hidden'));
+    const target = btn.getAttribute('data-menu');
+    if (target === 'gdz') gdzFrame.src = 'https://rdc-cdn.lms.macmillaneducation.com/wp-content/uploads/sites/8/2014/03/Bey_B1_WBAK.pdf.pdf';
+    document.getElementById(target + 'Menu').classList.remove('hidden');
   };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+});
 
-  const validPassword = 'asal2025';
-  const adminPassword = 'superasal';
+backButtons.forEach(btn => btn.onclick = () => {
+  document.querySelectorAll('.submenu').forEach(sm => sm.classList.add('hidden'));
+  menu.classList.remove('hidden');
+  gdzFrame.src = '';
+});
 
-  function login() {
-    const pass = document.getElementById('password').value;
-    const token = document.getElementById('token').value.trim();
+document.querySelectorAll('[data-audio]').forEach(btn => {
+  btn.onclick = () => {
+    audio.src = btn.getAttribute('data-audio');
+    audio.classList.remove('hidden');
+    video.classList.add('hidden');
+    audio.play();
+  };
+});
 
-    if (pass !== validPassword) {
-      alert("Неверный пароль");
-      return;
-    }
+document.querySelectorAll('[data-video]').forEach(btn => {
+  btn.onclick = () => {
+    video.src = btn.getAttribute('data-video');
+    video.classList.remove('hidden');
+    audio.classList.add('hidden');
+    video.play();
+  };
+});
 
-    db.ref('tokens/' + token).once('value').then(snapshot => {
-      if (snapshot.exists()) {
-        // удалить токен
-        db.ref('tokens/' + token).remove();
+document.getElementById('logoutBtn').onclick = () => location.reload();
 
-        // скрыть форму
-        document.getElementById('login-box').style.display = 'none';
+const adminPanel = document.getElementById('adminPanel');
+const tokenList = document.getElementById('tokenList');
 
-        // показать главный контент
-        const content = document.getElementById('main-content');
-        content.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+function createToken() {
+  const token = Math.random().toString(36).slice(2, 4);
+  const refToken = firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token);
+  firebaseStuff.set(refToken, true).then(() => {
+    const li = document.createElement('li');
+    li.textContent = token;
+    tokenList.appendChild(li);
+  });
+}
+
+adminBtn.onclick = () => {
+  const p = prompt('Введите пароль для креатора:');
+  if (p === 'V') {
+    adminPanel.classList.remove('hidden'); auth.classList.add('hidden'); menu.classList.add('hidden');
+    alert('Добро пожаловать в панель создателя!');
+    firebaseStuff.get(firebaseStuff.ref(firebaseStuff.db, 'tokens')).then(snap => {
+      tokenList.innerHTML = '';
+      if (snap.exists()) {
+        Object.keys(snap.val()).forEach(token => {
+          const li = document.createElement('li');
+          li.textContent = token;
+          tokenList.appendChild(li);
+        });
       } else {
-        alert("Неверный или использованный токен");
+        const li = document.createElement('li');
+        li.textContent = 'Нет активных токенов';
+        tokenList.appendChild(li);
       }
     });
+  } else {
+    alert('Неверный пароль');
   }
+}
 
-  function generateToken() {
-    const t = Math.random().toString(36).substr(2, 8).toUpperCase();
-    db.ref('tokens/' + t).set(true).then(updateTokenList);
-  }
-
-  function updateTokenList() {
-    db.ref('tokens').once('value').then(snapshot => {
-      const tokens = snapshot.val() || {};
-      const list = Object.keys(tokens).join('\n');
-      document.getElementById('token-list').innerText = 'Токены:\n' + list;
-    });
-  }
-
-  function toggleCreatorAuth() {
-    const authBox = document.getElementById('creator-auth');
-    authBox.style.display = authBox.style.display === 'none' ? 'block' : 'none';
-  }
-
-  function loginCreator() {
-    const pass = document.getElementById('creator-pass').value;
-    if (pass === adminPassword) {
-      document.getElementById('admin').style.display = 'block';
-      document.getElementById('creator-auth').style.display = 'none';
-      updateTokenList(); // <-- сразу показать токены
-    } else {
-      alert("Неверный пароль креатора");
-    }
-  }
-</script>
-
+  </script>
 </body>
 </html>
-
