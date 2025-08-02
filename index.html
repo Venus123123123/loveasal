@@ -1,139 +1,145 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Мы любим Асаль</title>
-<style>
-  :root {
-    --pink: #ff4da6;
-    --pink-dark: #ff007f;
-    --bg1: #000000;
-    --bg2: #222222;
-    --font: 'Segoe UI', sans-serif;
-  }
-  * {
-    box-sizing: border-box;
-    transition: all 0.3s ease;
-  }
-  html, body {
-    margin: 0; padding: 0;
-    height: 100vh; width: 100vw;
-    font-family: var(--font);
-    background: linear-gradient(135deg, var(--bg1), var(--bg2));
-    animation: bgshift 6s infinite alternate ease-in-out;
-    color: white;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  #intro {
-    position: fixed;
-    top:0; left:0; width: 100vw; height: 100vh;
-    background: black;
-    color: white;
-    font-size: 3em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    opacity: 1;
-    transition: opacity 1s ease;
-  }
-  @keyframes bgshift {
-    0% {background: linear-gradient(135deg, var(--bg1), var(--bg2));}
-    100% {background: linear-gradient(135deg, #1c1c1c, #000000);}
-  }
-  .hidden {display:none !important;}
-  button {
-    background: var(--pink);
-    border: none;
-    color: white;
-    padding: 10px 25px;
-    margin: 10px;
-    border-radius: 12px;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(255, 77, 166, 0.3);
-    width: 90vw;
-    max-width: 300px;
-    transition: background 0.3s ease, transform 0.3s ease;
-  }
-  button:hover {
-    background: var(--pink-dark);
-    transform: scale(1.05);
-  }
-  input[type=password] {
-    padding: 10px;
-    border-radius: 8px;
-    margin: 10px;
-    font-size: 16px;
-    border: 1px solid var(--pink);
-    background: transparent;
-    color: white;
-    width: 80vw;
-    max-width: 300px;
-  }
-  #version {
-    position: fixed;
-    top: 10px;
-    right: 20px;
-    font-size: 13px;
-    color: #888;
-    z-index: 10000;
-  }
-  #adminBtn {
-    position: fixed;
-    top: 10px;
-    left: 20px;
-    font-size: 13px;
-    z-index: 10000;
-  }
-  .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  .container.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  #asalScreen {
-    font-size: 2.2em;
-    text-align: center;
-    color: var(--pink);
-    animation: neon 2s ease-in-out infinite alternate;
-    letter-spacing: 2px;
-    padding: 20px;
-    text-shadow: 0 0 5px var(--pink), 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
-    margin-bottom: 20px;
-  }
-  @keyframes neon {
-    0% {
-      text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Мы любим Асаль</title>
+  <style>
+    :root {
+      --pink: #ff4da6;
+      --pink-dark: #ff007f;
+      --bg1: #000000;
+      --bg2: #222222;
+      --font: 'Segoe UI', sans-serif;
     }
-    100% {
-      text-shadow: 0 0 20px var(--pink), 0 0 40px var(--pink-dark);
+    * {
+      box-sizing: border-box;
+      transition: all 0.3s ease;
     }
-  }
-  iframe {
-    width: 95vw;
-    height: 80vh;
-    margin-top: 20px;
-    border: none;
-  }
-  audio, video {
-    width: 95vw;
-    max-height: 60vh;
-    margin-top: 20px;
-  }
-</style>
+    html, body {
+      margin: 0; padding: 0;
+      height: 100vh; width: 100vw;
+      font-family: var(--font);
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      animation: bgshift 6s infinite alternate ease-in-out;
+      color: white;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #intro {
+      position: fixed;
+      top:0; left:0; width: 100vw; height: 100vh;
+      background: black;
+      color: white;
+      font-size: 3em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 1;
+      animation: introfade 3s ease forwards;
+    }
+    @keyframes introfade {
+      0% {opacity: 1;}
+      80% {opacity: 1;}
+      100% {opacity: 0; visibility: hidden;}
+    }
+    @keyframes bgshift {
+      0% {background: linear-gradient(135deg, var(--bg1), var(--bg2));}
+      100% {background: linear-gradient(135deg, #1c1c1c, #000000);}
+    }
+    .hidden {display:none !important;}
+    button {
+      background: var(--pink);
+      border: none;
+      color: white;
+      padding: 10px 25px;
+      margin: 10px;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(255, 77, 166, 0.3);
+      width: 90vw;
+      max-width: 300px;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    button:hover {
+      background: var(--pink-dark);
+      transform: scale(1.05);
+    }
+    input[type=password] {
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px;
+      font-size: 16px;
+      border: 1px solid var(--pink);
+      background: transparent;
+      color: white;
+      width: 80vw;
+      max-width: 300px;
+      -webkit-text-security: disc;
+    }
+    #version {
+      position: fixed;
+      top: 10px;
+      right: 20px;
+      font-size: 13px;
+      color: #888;
+      z-index: 10000;
+    }
+    #adminBtn {
+      position: fixed;
+      top: 10px;
+      left: 20px;
+      font-size: 13px;
+      z-index: 10000;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .container.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #asalScreen {
+      font-size: 2.2em;
+      text-align: center;
+      color: var(--pink);
+      animation: neon 2s ease-in-out infinite alternate;
+      letter-spacing: 2px;
+      padding: 20px;
+      text-shadow: 0 0 5px var(--pink), 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
+      margin-bottom: 20px;
+    }
+    @keyframes neon {
+      0% {
+        text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
+      }
+      100% {
+        text-shadow: 0 0 20px var(--pink), 0 0 40px var(--pink-dark);
+      }
+    }
+    iframe {
+      width: 95vw;
+      height: 80vh;
+      margin-top: 20px;
+      border: none;
+    }
+    audio, video {
+      width: 95vw;
+      max-height: 60vh;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
   <div id="intro">Said</div>
@@ -223,6 +229,7 @@
   // Запуск после интро
   window.onload = () => {
     setTimeout(() => {
+      setTimeout(() => {
       const intro = document.getElementById('intro');
       intro.style.opacity = '0';
       setTimeout(() => intro.style.display = 'none', 1000);
@@ -230,24 +237,31 @@
     }, 3000);
   };
 
-  // Управление меню и подменю
+  // Авторизация по токену
   loginBtn.onclick = () => {
     const token = tokenInput.value.trim();
-    if (!token) return alert('Введите токен');
+    if (!token) {
+      alert('Введите токен');
+      return;
+    }
     get(ref(db, 'tokens/' + token)).then(snapshot => {
       if (snapshot.exists()) {
-        // Успешный вход
+        // Успешный вход — удаляем токен из базы
         remove(ref(db, 'tokens/' + token));
         hideElement(auth);
         showElement(menu);
-        showElement(document.getElementById('asalScreen'));
-        if (!audio.muted && !video.muted) {
-          new Audio('ppol.mp3').play();
-        }
-      } else alert('Неверный токен');
+        // Запуск песни ppol.mp3 после входа
+        audio.src = 'ppol.mp3';
+        audio.classList.remove('hidden');
+        video.classList.add('hidden');
+        audio.play();
+      } else {
+        alert('Неверный токен');
+      }
     });
   };
 
+  // Обработка нажатий на меню
   document.querySelectorAll('[data-menu]').forEach(btn => {
     btn.onclick = () => {
       hideElement(menu);
@@ -259,9 +273,14 @@
         gdzFrame.src = '';
       }
       showElement(document.getElementById(target + 'Menu'));
+      audio.pause();
+      video.pause();
+      audio.classList.add('hidden');
+      video.classList.add('hidden');
     };
   });
 
+  // Кнопки "Назад" в подменю
   backButtons.forEach(btn => {
     btn.onclick = () => {
       document.querySelectorAll('.submenu').forEach(sm => hideElement(sm));
@@ -274,6 +293,7 @@
     };
   });
 
+  // Воспроизведение аудио из меню песен
   document.querySelectorAll('[data-audio]').forEach(btn => {
     btn.onclick = () => {
       audio.src = btn.getAttribute('data-audio');
@@ -283,6 +303,7 @@
     };
   });
 
+  // Воспроизведение видео из меню видео
   document.querySelectorAll('[data-video]').forEach(btn => {
     btn.onclick = () => {
       video.src = btn.getAttribute('data-video');
@@ -292,11 +313,12 @@
     };
   });
 
+  // Выход из меню — перезагрузка страницы
   document.getElementById('logoutBtn').onclick = () => {
     location.reload();
   };
 
-  // Панель админа
+  // Панель админа (Креатор)
   const adminPanel = document.createElement('div');
   adminPanel.style.position = 'fixed';
   adminPanel.style.top = '40px';
@@ -321,6 +343,7 @@
 
   document.body.appendChild(adminPanel);
 
+  // Обновление списка токенов из базы
   function refreshTokenList() {
     get(ref(db, 'tokens')).then(snap => {
       tokenList.innerHTML = '';
@@ -338,16 +361,19 @@
     });
   }
 
+  // Создание нового токена длиной 2 символа
   createTokenBtn.onclick = () => {
-    const token = Math.random().toString(36).slice(2,4);
+    const token = Math.random().toString(36).slice(2, 4);
     set(ref(db, 'tokens/' + token), true).then(() => refreshTokenList());
   };
 
   backAdminBtn.onclick = () => {
     adminPanel.style.display = 'none';
     auth.classList.remove('hidden');
+    menu.classList.add('hidden');
   };
 
+  // Кнопка Креатор - запрос пароля, показать админ панель
   adminBtn.onclick = () => {
     if (adminPanel.style.display === 'none') {
       const pass = prompt('Введите пароль для креатора:');
