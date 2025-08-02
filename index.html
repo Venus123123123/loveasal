@@ -180,7 +180,7 @@
     50% { opacity: 1; transform: scale(1.1); text-shadow: 0 0 20px rgba(77, 168, 255, 0.8); }
     100% { opacity: 0; transform: scale(1); visibility: hidden; text-shadow: 0 0 10px rgba(77, 168, 255, 0.5); }
   }
-  input[type=password] {
+  input[type=password], input[type=text] {
     padding: 10px;
     border-radius: 8px;
     margin: 10px;
@@ -191,6 +191,9 @@
     width: 80vw;
     max-width: 300px;
     -webkit-text-security: disc;
+  }
+  input[type=text] {
+    -webkit-text-security: none;
   }
   #version {
     position: fixed;
@@ -206,9 +209,37 @@
     left: 20px;
     font-size: 13px;
     z-index: 10000;
+    display: none;
+  }
+  @media (min-width: 768px) {
+    #consoleBtn {
+      display: block;
+    }
+    #intro {
+      font-size: 4em;
+    }
+    #asalScreen, #studentInfo {
+      font-size: 1.8em;
+    }
+    #disclaimer {
+      font-size: 1em;
+    }
+  }
+  @media (max-width: 767px) {
+    #intro {
+      font-size: 2.5em;
+    }
+    #asalScreen, #studentInfo {
+      font-size: 1.2em;
+      padding: 10px;
+      line-height: 1.4;
+    }
+    #disclaimer {
+      font-size: 0.8em;
+      padding: 5px;
+    }
   }
   #asalScreen, #studentInfo {
-    font-size: 1.8em;
     text-align: center;
     color: var(--blue);
     animation: neon 2s ease-in-out infinite alternate;
@@ -225,7 +256,6 @@
   }
   #disclaimer {
     color: #ff3333;
-    font-size: 1em;
     text-align: center;
     padding: 10px;
     max-width: 90vw;
@@ -258,7 +288,7 @@
   <div class="stars2"></div>
   <div class="stars3"></div>
   <div id="intro">Said</div>
-  <div id="version">v2.4</div>
+  <div id="version">v2.6</div>
   <button id="consoleBtn">Консоль</button>
 
   <div class="container auth hidden">
@@ -271,7 +301,7 @@
     <button data-menu="videoMenu">Кнопка НЕ нажимать</button>
     <button data-menu="asalMenu">💖 Мы любим Асаль</button>
     <button data-menu="gdzMenu">ГДЗ</button>
-    <button data-menu="studentsMenu">База данных учеников</button>
+    <button data-menu="studentsMenu">База данных</button>
     <button id="logoutBtn">Выход</button>
   </div>
 
@@ -309,13 +339,14 @@
   </div>
 
   <div class="container submenu hidden" id="studentsListMenu">
-    <button data-student="timur">Тимур</button>
+    <input id="studentTokenInput" type="text" placeholder="Введите токен доступа" autocomplete="off" />
+    <button data-student="timur" data-encrypted="13245533499">13245533499</button>
     <button class="back">Назад в меню</button>
   </div>
 
   <div class="container submenu hidden" id="studentInfoMenu">
     <div id="studentInfo"></div>
-    <button class="back">Назад в базу учеников</button>
+    <button class="back">Назад в базу данных</button>
   </div>
 
 <script type="module">
@@ -352,6 +383,7 @@
   const studentInfoMenu = document.getElementById('studentInfoMenu');
   const studentPassInput = document.getElementById('studentPassInput');
   const studentPassBtn = document.getElementById('studentPassBtn');
+  const studentTokenInput = document.getElementById('studentTokenInput');
   const studentInfo = document.getElementById('studentInfo');
   const backButtons = document.querySelectorAll('.back');
   const consoleBtn = document.getElementById('consoleBtn');
@@ -417,6 +449,7 @@
     video.pause(); video.classList.add('hidden'); video.src = '';
     asalAudio.pause(); asalAudio.classList.add('hidden'); asalAudio.src = '';
     studentInfo.textContent = '';
+    studentTokenInput.value = '';
     const el = document.getElementById(menuId);
     if (el) {
       showElement(el);
@@ -438,6 +471,18 @@
     } catch (error) {
       console.error('Token check error:', error);
       alert('Ошибка проверки токена: ' + error.message);
+      return false;
+    }
+  }
+
+  async function checkStudentToken(token) {
+    try {
+      const snapshot = await get(ref(db, 'studentTokens/' + token));
+      console.log('Student token check result:', snapshot.exists());
+      return snapshot.exists();
+    } catch (error) {
+      console.error('Student token check error:', error);
+      alert('Ошибка проверки токена доступа: ' + error.message);
       return false;
     }
   }
@@ -550,27 +595,34 @@
   });
 
   studentsListMenu.querySelectorAll('button[data-student]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
       e.stopPropagation();
       console.log('Student button clicked:', btn.getAttribute('data-student'));
       const studentId = btn.getAttribute('data-student');
-      const data = studentsData[studentId];
-      if (data) {
-        studentInfo.innerHTML = `
-          <span style="--i:1">Имя: ${data.name}</span>
-          <span style="--i:2">Фамилия: ${data.surname}</span>
-          <span style="--i:3">Отчество: ${data.patronymic}</span>
-          <span style="--i:4">Дата рождения: ${data.birthDate}</span>
-          <span style="--i:5">Отец: ${data.father}</span>
-          <span style="--i:6">Мать: ${data.mother}</span>
-          <span style="--i:7">Класс: ${data.class}</span>
-          <span style="--i:8">Телефон: ${data.phone}</span>
-          <span style="--i:9">Телефон матери: ${data.motherPhone}</span>
-          <span style="--i:10">Телефон отца: ${data.fatherPhone}</span>
-          <span style="--i:11">Братья/сёстры: ${data.siblings}</span>
-        `;
-        hideElement(studentsListMenu);
-        showElement(studentInfoMenu);
+      const token = studentTokenInput.value.trim();
+      if (!token) return alert('Введите токен доступа');
+      const valid = await checkStudentToken(token);
+      if (valid) {
+        const data = studentsData[studentId];
+        if (data) {
+          studentInfo.innerHTML = `
+            <span style="--i:1">Имя: ${data.name}</span>
+            <span style="--i:2">Фамилия: ${data.surname}</span>
+            <span style="--i:3">Отчество: ${data.patronymic}</span>
+            <span style="--i:4">Дата рождения: ${data.birthDate}</span>
+            <span style="--i:5">Отец: ${data.father}</span>
+            <span style="--i:6">Мать: ${data.mother}</span>
+            <span style="--i:7">Класс: ${data.class}</span>
+            <span style="--i:8">Телефон: ${data.phone}</span>
+            <span style="--i:9">Телефон матери: ${data.motherPhone}</span>
+            <span style="--i:10">Телефон отца: ${data.fatherPhone}</span>
+            <span style="--i:11">Братья/сёстры: ${data.siblings}</span>
+          `;
+          hideElement(studentsListMenu);
+          showElement(studentInfoMenu);
+        }
+      } else {
+        alert('Неверный токен доступа');
       }
     });
   });
@@ -592,15 +644,21 @@
       <h2>Консоль: Управление токенами</h2>
       <input id="newTokenInput" placeholder="Новый токен" style="width: 80%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid var(--blue); background: transparent; color: white;" />
       <button id="addTokenBtn">Добавить токен</button>
+      <input id="newStudentTokenInput" placeholder="Новый токен доступа" style="width: 80%; padding: 8px; margin: 10px 0; border-radius: 6px; border: 1px solid var(--blue); background: transparent; color: white;" />
+      <button id="addStudentTokenBtn">Добавить токен доступа</button>
       <button id="closeConsoleBtn" style="margin-left: 10px; background: var(--blue-dark);">Закрыть</button>
       <div id="tokensList" style="margin-top: 15px;">Загрузка токенов...</div>
+      <div id="studentTokensList" style="margin-top: 15px;">Загрузка токенов доступа...</div>
     `;
     document.body.appendChild(panel);
 
     const newTokenInput = panel.querySelector('#newTokenInput');
     const addTokenBtn = panel.querySelector('#addTokenBtn');
+    const newStudentTokenInput = panel.querySelector('#newStudentTokenInput');
+    const addStudentTokenBtn = panel.querySelector('#addStudentTokenBtn');
     const closeConsoleBtn = panel.querySelector('#closeConsoleBtn');
     const tokensList = panel.querySelector('#tokensList');
+    const studentTokensList = panel.querySelector('#studentTokensList');
 
     async function updateTokensList() {
       try {
@@ -647,6 +705,51 @@
       }
     }
 
+    async function updateStudentTokensList() {
+      try {
+        studentTokensList.innerHTML = 'Загрузка токенов доступа...';
+        const snapshot = await get(ref(db, 'studentTokens'));
+        console.log('Student tokens snapshot:', snapshot.val());
+        if (snapshot.exists()) {
+          const tokens = snapshot.val();
+          studentTokensList.innerHTML = '';
+          if (Object.keys(tokens).length === 0) {
+            studentTokensList.textContent = 'Токены доступа отсутствуют';
+          } else {
+            Object.keys(tokens).forEach(t => {
+              const tokenEl = document.createElement('div');
+              tokenEl.style = 'display:flex; justify-content:space-between; margin-bottom:6px; border-bottom: 1px solid #444; padding-bottom:4px;';
+              tokenEl.textContent = t;
+              const delBtn = document.createElement('button');
+              delBtn.textContent = 'Удалить';
+              delBtn.style.background = '#a00';
+              delBtn.style.color = 'white';
+              delBtn.style.border = 'none';
+              delBtn.style.borderRadius = '6px';
+              delBtn.style.cursor = 'pointer';
+              delBtn.addEventListener('click', async () => {
+                try {
+                  await remove(ref(db, 'studentTokens/' + t));
+                  console.log('Student token removed:', t);
+                  updateStudentTokensList();
+                } catch (error) {
+                  console.error('Error removing student token:', error);
+                  alert('Ошибка удаления токена доступа: ' + error.message);
+                }
+              });
+              tokenEl.appendChild(delBtn);
+              studentTokensList.appendChild(tokenEl);
+            });
+          }
+        } else {
+          studentTokensList.textContent = 'Токены доступа отсутствуют';
+        }
+      } catch (error) {
+        console.error('Error fetching student tokens:', error);
+        studentTokensList.textContent = 'Ошибка загрузки токенов доступа: ' + error.message;
+      }
+    }
+
     addTokenBtn.addEventListener('click', async () => {
       const newToken = newTokenInput.value.trim();
       if (!newToken) return alert('Введите токен для добавления');
@@ -661,11 +764,26 @@
       }
     });
 
+    addStudentTokenBtn.addEventListener('click', async () => {
+      const newStudentToken = newStudentTokenInput.value.trim();
+      if (!newStudentToken) return alert('Введите токен доступа для добавления');
+      try {
+        await set(ref(db, 'studentTokens/' + newStudentToken), true);
+        console.log('Student token added:', newStudentToken);
+        newStudentTokenInput.value = '';
+        updateStudentTokensList();
+      } catch (error) {
+        console.error('Error adding student token:', error);
+        alert('Ошибка добавления токена доступа: ' + error.message);
+      }
+    });
+
     closeConsoleBtn.addEventListener('click', () => {
       panel.remove();
     });
 
     updateTokensList();
+    updateStudentTokensList();
   });
 
   window.addEventListener('load', () => {
