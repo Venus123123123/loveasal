@@ -117,7 +117,8 @@
     animation: slide-in-right 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
   .container.visible button:first-child,
-  .container.visible #asalScreen {
+  .container.visible #asalScreen,
+  .container.visible #studentInfo {
     animation: drop-in 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
   .container.visible button:last-child {
@@ -128,7 +129,8 @@
   }
   .container:not(.visible) button,
   .container:not(.visible) input,
-  .container:not(.visible) #asalScreen {
+  .container:not(.visible) #asalScreen,
+  .container:not(.visible) #studentInfo {
     animation: fade-out 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
   @keyframes slide-in-left {
@@ -150,6 +152,10 @@
   @keyframes fade-out {
     0% { transform: translateX(0); opacity: 1; }
     100% { transform: translateX(0); opacity: 0; }
+  }
+  @keyframes text-appear {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
   body.transitioning {
     pointer-events: none;
@@ -201,14 +207,29 @@
     font-size: 13px;
     z-index: 10000;
   }
-  #asalScreen {
-    font-size: 2.2em;
+  #asalScreen, #studentInfo {
+    font-size: 1.8em;
     text-align: center;
     color: var(--blue);
     animation: neon 2s ease-in-out infinite alternate;
     letter-spacing: 2px;
     padding: 20px;
     margin-bottom: 20px;
+    max-width: 90vw;
+    word-wrap: break-word;
+  }
+  #studentInfo span {
+    display: block;
+    animation: text-appear 0.5s ease forwards;
+    animation-delay: calc(0.1s * var(--i));
+  }
+  #disclaimer {
+    color: #ff3333;
+    font-size: 1em;
+    text-align: center;
+    padding: 10px;
+    max-width: 90vw;
+    word-wrap: break-word;
   }
   @keyframes neon {
     0% { text-shadow: 0 0 5px rgba(77, 168, 255, 0.5); }
@@ -237,7 +258,7 @@
   <div class="stars2"></div>
   <div class="stars3"></div>
   <div id="intro">Said</div>
-  <div id="version">v2.2</div>
+  <div id="version">v2.4</div>
   <button id="consoleBtn">Консоль</button>
 
   <div class="container auth hidden">
@@ -250,6 +271,7 @@
     <button data-menu="videoMenu">Кнопка НЕ нажимать</button>
     <button data-menu="asalMenu">💖 Мы любим Асаль</button>
     <button data-menu="gdzMenu">ГДЗ</button>
+    <button data-menu="studentsMenu">База данных учеников</button>
     <button id="logoutBtn">Выход</button>
   </div>
 
@@ -278,6 +300,22 @@
     <iframe src="" id="gdzFrame" allowfullscreen></iframe>
     <button data-gdzkey="english">ГДЗ Английский</button>
     <button class="back">Назад в меню</button>
+  </div>
+
+  <div class="container submenu hidden" id="studentsMenu">
+    <div id="disclaimer">База данных не используется для мошенничества или других незаконных действий</div>
+    <input id="studentPassInput" type="password" placeholder="Введите пароль" autocomplete="off" />
+    <button id="studentPassBtn">Подтвердить</button>
+  </div>
+
+  <div class="container submenu hidden" id="studentsListMenu">
+    <button data-student="timur">Тимур</button>
+    <button class="back">Назад в меню</button>
+  </div>
+
+  <div class="container submenu hidden" id="studentInfoMenu">
+    <div id="studentInfo"></div>
+    <button class="back">Назад в базу учеников</button>
   </div>
 
 <script type="module">
@@ -309,8 +347,30 @@
   const videoMenu = document.getElementById('videoMenu');
   const asalMenu = document.getElementById('asalMenu');
   const gdzMenu = document.getElementById('gdzMenu');
+  const studentsMenu = document.getElementById('studentsMenu');
+  const studentsListMenu = document.getElementById('studentsListMenu');
+  const studentInfoMenu = document.getElementById('studentInfoMenu');
+  const studentPassInput = document.getElementById('studentPassInput');
+  const studentPassBtn = document.getElementById('studentPassBtn');
+  const studentInfo = document.getElementById('studentInfo');
   const backButtons = document.querySelectorAll('.back');
   const consoleBtn = document.getElementById('consoleBtn');
+
+  const studentsData = {
+    timur: {
+      name: 'Тимур',
+      surname: 'Нуралиев',
+      patronymic: 'Музаффарович',
+      birthDate: '28.09.2011',
+      father: 'Музаффар Нуралиев',
+      mother: 'Мафтуна (возможно, Нуралиева)',
+      class: '8Д Vosiq',
+      phone: '+998946372464',
+      motherPhone: '+998900060030',
+      fatherPhone: '+998988122711',
+      siblings: 'Сестра: Асаль Нуралиева, 12 лет, 6К Vosiq'
+    }
+  };
 
   document.addEventListener('mousemove', (e) => {
     const x = (e.clientX / window.innerWidth) * 100;
@@ -352,10 +412,11 @@
 
   function openMenu(menuId) {
     console.log('Opening menu:', menuId);
-    hideElements([menu, auth, ...document.querySelectorAll('.submenu')]);
+    hideElements([menu, auth, musicMenu, videoMenu, asalMenu, gdzMenu, studentsMenu, studentsListMenu, studentInfoMenu]);
     audio.pause(); audio.classList.add('hidden'); audio.src = '';
     video.pause(); video.classList.add('hidden'); video.src = '';
     asalAudio.pause(); asalAudio.classList.add('hidden'); asalAudio.src = '';
+    studentInfo.textContent = '';
     const el = document.getElementById(menuId);
     if (el) {
       showElement(el);
@@ -418,8 +479,16 @@
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       console.log('Back button clicked');
-      hideElements(document.querySelectorAll('.submenu'));
-      showElement(menu);
+      if (studentInfoMenu.classList.contains('visible')) {
+        hideElement(studentInfoMenu);
+        showElement(studentsListMenu);
+      } else if (studentsListMenu.classList.contains('visible')) {
+        hideElement(studentsListMenu);
+        showElement(studentsMenu);
+      } else {
+        hideElements(document.querySelectorAll('.submenu'));
+        showElement(menu);
+      }
     });
   });
 
@@ -464,6 +533,44 @@
       const key = btn.getAttribute('data-gdzkey');
       if (gdzUrls[key]) {
         gdzFrame.src = gdzUrls[key];
+      }
+    });
+  });
+
+  studentPassBtn.addEventListener('click', () => {
+    const pass = studentPassInput.value.trim();
+    if (pass === 'V228') {
+      console.log('Student menu password correct');
+      hideElement(studentsMenu);
+      showElement(studentsListMenu);
+      studentPassInput.value = '';
+    } else {
+      alert('Неверный пароль');
+    }
+  });
+
+  studentsListMenu.querySelectorAll('button[data-student]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      console.log('Student button clicked:', btn.getAttribute('data-student'));
+      const studentId = btn.getAttribute('data-student');
+      const data = studentsData[studentId];
+      if (data) {
+        studentInfo.innerHTML = `
+          <span style="--i:1">Имя: ${data.name}</span>
+          <span style="--i:2">Фамилия: ${data.surname}</span>
+          <span style="--i:3">Отчество: ${data.patronymic}</span>
+          <span style="--i:4">Дата рождения: ${data.birthDate}</span>
+          <span style="--i:5">Отец: ${data.father}</span>
+          <span style="--i:6">Мать: ${data.mother}</span>
+          <span style="--i:7">Класс: ${data.class}</span>
+          <span style="--i:8">Телефон: ${data.phone}</span>
+          <span style="--i:9">Телефон матери: ${data.motherPhone}</span>
+          <span style="--i:10">Телефон отца: ${data.fatherPhone}</span>
+          <span style="--i:11">Братья/сёстры: ${data.siblings}</span>
+        `;
+        hideElement(studentsListMenu);
+        showElement(studentInfoMenu);
       }
     });
   });
