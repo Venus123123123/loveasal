@@ -1,293 +1,369 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Мы любим Асаль</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import { getDatabase, ref, get, set, push, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBTcH3_tri2L7AHLh1e-YD-0s-QSthuE6Q",
-      authDomain: "disk-c98ee.firebaseapp.com",
-      projectId: "disk-c98ee",
-      storageBucket: "disk-c98ee.appspot.com",
-      messagingSenderId: "59577059636",
-      appId: "1:59577059636:web:e98f456d054cc360747d61",
-      databaseURL: "https://disk-c98ee-default-rtdb.firebaseio.com"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    window.firebaseStuff = { db, ref, get, set, push, remove };
-  </script>
-  <style>
-    :root {
-      --pink: #ff4da6;
-      --pink-dark: #ff007f;
-      --bg: #000000;
-      --font: 'Segoe UI', sans-serif;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Мы любим Асаль</title>
+<style>
+  :root {
+    --pink: #ff4da6;
+    --pink-dark: #ff007f;
+    --bg1: #000000;
+    --bg2: #222222;
+    --font: 'Segoe UI', sans-serif;
+  }
+  * {
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    height: 100vh; width: 100vw;
+    font-family: var(--font);
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    animation: bgshift 6s infinite alternate ease-in-out;
+    color: white;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  #intro {
+    position: fixed;
+    top:0; left:0; width: 100vw; height: 100vh;
+    background: black;
+    color: white;
+    font-size: 3em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 1s ease;
+  }
+  @keyframes bgshift {
+    0% {background: linear-gradient(135deg, var(--bg1), var(--bg2));}
+    100% {background: linear-gradient(135deg, #1c1c1c, #000000);}
+  }
+  .hidden {display:none !important;}
+  button {
+    background: var(--pink);
+    border: none;
+    color: white;
+    padding: 10px 25px;
+    margin: 10px;
+    border-radius: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(255, 77, 166, 0.3);
+    width: 90vw;
+    max-width: 300px;
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+  button:hover {
+    background: var(--pink-dark);
+    transform: scale(1.05);
+  }
+  input[type=password] {
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px;
+    font-size: 16px;
+    border: 1px solid var(--pink);
+    background: transparent;
+    color: white;
+    width: 80vw;
+    max-width: 300px;
+  }
+  #version {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    font-size: 13px;
+    color: #888;
+    z-index: 10000;
+  }
+  #adminBtn {
+    position: fixed;
+    top: 10px;
+    left: 20px;
+    font-size: 13px;
+    z-index: 10000;
+  }
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .container.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  #asalScreen {
+    font-size: 2.2em;
+    text-align: center;
+    color: var(--pink);
+    animation: neon 2s ease-in-out infinite alternate;
+    letter-spacing: 2px;
+    padding: 20px;
+    text-shadow: 0 0 5px var(--pink), 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
+    margin-bottom: 20px;
+  }
+  @keyframes neon {
+    0% {
+      text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
     }
-    * {
-      box-sizing: border-box;
-      transition: all 0.3s ease;
+    100% {
+      text-shadow: 0 0 20px var(--pink), 0 0 40px var(--pink-dark);
     }
-    html, body {
-      margin: 0;
-      font-family: var(--font);
-      background: var(--bg);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100dvh;
-      width: 100%;
-      overflow-x: hidden;
-    }
-    .hidden { display: none !important; }
-    button {
-      background: var(--pink);
-      border: none;
-      color: white;
-      padding: 10px 25px;
-      margin: 10px;
-      border-radius: 12px;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(255, 77, 166, 0.3);
-      width: 90vw;
-      max-width: 300px;
-    }
-    button:hover {
-      background: var(--pink-dark);
-      transform: scale(1.05);
-    }
-    input {
-      padding: 10px;
-      border-radius: 8px;
-      margin: 10px;
-      font-size: 16px;
-      border: 1px solid var(--pink);
-      background: transparent;
-      color: black;
-      width: 80vw;
-      max-width: 300px;
-    }
-    .menu, .submenu, .auth, .admin {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      padding-bottom: 20px;
-    }
-    video, audio {
-      width: 95vw;
-      max-height: 60vh;
-      margin-top: 20px;
-    }
-    iframe {
-      width: 95vw;
-      height: 80vh;
-      margin-top: 20px;
-      border: none;
-    }
-    #asalScreen {
-      font-size: 2.2em;
-      text-align: center;
-      color: var(--pink);
-      animation: neon 2s ease-in-out infinite alternate;
-      letter-spacing: 2px;
-      padding: 20px;
-      text-shadow: 0 0 5px var(--pink), 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
-    }
-    @keyframes neon {
-      0% {
-        text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
-      }
-      100% {
-        text-shadow: 0 0 20px var(--pink), 0 0 40px var(--pink-dark);
-      }
-    }
-    #version {
-      position: fixed;
-      top: 10px;
-      right: 20px;
-      font-size: 13px;
-      color: #888;
-      z-index: 999;
-    }
-    #adminBtn {
-      position: fixed;
-      top: 10px;
-      left: 20px;
-      font-size: 13px;
-      z-index: 999;
-    }
-    #adminPanel {
-      position: fixed;
-      top: 40px;
-      left: 20px;
-      background: rgba(255,255,255,0.1);
-      padding: 10px;
-      border-radius: 8px;
-      z-index: 1000;
-      display: none;
-    }
-  </style>
+  }
+  iframe {
+    width: 95vw;
+    height: 80vh;
+    margin-top: 20px;
+    border: none;
+  }
+  audio, video {
+    width: 95vw;
+    max-height: 60vh;
+    margin-top: 20px;
+  }
+</style>
 </head>
 <body>
-  <div id="version">v1.0.2</div>
+  <div id="intro">Said</div>
+  <div id="version">v2.1</div>
   <button id="adminBtn">Креатор</button>
-  <div id="adminPanel">
-    <button onclick="createToken()">Создать токен</button>
-    <ul id="tokenList"></ul>
-  </div>
-  <div id="asalScreen" class="hidden">МЫ ЛЮБИМ АСАЛЬ 💖</div>
-  <div class="auth">
-    <input id="tokenInput" placeholder="Введите токен" />
+
+  <div class="container auth">
+    <input id="tokenInput" type="password" placeholder="Введите токен" autocomplete="off" />
     <button id="loginBtn">Войти</button>
-    <button id="muteToggle">На уроке</button>
   </div>
-  <div class="menu hidden">
+
+  <div class="container menu hidden">
     <button data-menu="music">Песня</button>
     <button data-menu="video">Кнопка НЕ нажимать</button>
     <button data-menu="asal">💖 Мы любим Асаль</button>
     <button data-menu="gdz">ГДЗ</button>
     <button id="logoutBtn">Выход</button>
   </div>
-  <div class="submenu hidden" id="musicMenu">
+
+  <div class="container submenu hidden" id="musicMenu">
     <button data-audio="round-start.mp3">Амонг Ас</button>
     <button data-audio="tum-tum-tum-sahur.mp3">Тум Тум Сахур</button>
     <button data-audio="audio_2025-08-01_23-01-57.mp3">Это не забудем Тимура</button>
     <button class="back">Назад в меню</button>
   </div>
-  <div class="submenu hidden" id="videoMenu">
+
+  <div class="container submenu hidden" id="videoMenu">
     <button data-video="oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4">Тимур</button>
     <button data-video="oMTvPfb7222222.mp4">МГРР</button>
     <button class="back">Назад в меню</button>
   </div>
-  <div class="submenu hidden" id="asalMenu">
+
+  <div class="container submenu hidden" id="asalMenu">
     <div id="asalText">💖 Мы любим Асаль 💖</div>
     <button class="back">Назад в меню</button>
   </div>
-  <div class="submenu hidden" id="gdzMenu">
-    <iframe src="" id="gdzFrame"></iframe>
+
+  <div class="container submenu hidden" id="gdzMenu">
+    <iframe src="" id="gdzFrame" sandbox="allow-same-origin allow-scripts allow-popups" allowfullscreen></iframe>
     <button class="back">Назад в меню</button>
   </div>
+
   <audio id="audio" controls class="hidden"></audio>
   <video id="video" controls class="hidden"></video>
-  <script>
-    const tokenInput = document.getElementById('tokenInput');
-    const loginBtn = document.getElementById('loginBtn');
-    const auth = document.querySelector('.auth');
-    const menu = document.querySelector('.menu');
-    const asalScreen = document.getElementById('asalScreen');
-    const audio = document.getElementById('audio');
-    const video = document.getElementById('video');
-    const gdzFrame = document.getElementById('gdzFrame');
-    const musicMenu = document.getElementById('musicMenu');
-    const videoMenu = document.getElementById('videoMenu');
-    const asalMenu = document.getElementById('asalMenu');
-    const gdzMenu = document.getElementById('gdzMenu');
-    const backButtons = document.querySelectorAll('.back');
-    const adminBtn = document.getElementById('adminBtn');
 
-    let isMuted = false;
-    document.getElementById('muteToggle').onclick = () => {
-      isMuted = !isMuted;
-      document.getElementById('muteToggle').innerText = isMuted ? '🔇 Звук выкл' : '🔊 Звук вкл';
-      audio.muted = isMuted;
-      video.muted = isMuted;
-    };
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-    loginBtn.onclick = () => {
-      const token = tokenInput.value.trim();
-      if (!token) return alert('Введите токен');
-      firebaseStuff.get(firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token)).then(snapshot => {
-        if (snapshot.exists()) {
-          firebaseStuff.remove(firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token));
-          auth.classList.add('hidden');
-          menu.classList.remove('hidden');
-          asalScreen.classList.remove('hidden');
-          if (!isMuted) new Audio('ppol.mp3').play();
-        } else alert('Неверный токен');
-      });
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyBTcH3_tri2L7AHLh1e-YD-0s-QSthuE6Q",
+    authDomain: "disk-c98ee.firebaseapp.com",
+    projectId: "disk-c98ee",
+    storageBucket: "disk-c98ee.appspot.com",
+    messagingSenderId: "59577059636",
+    appId: "1:59577059636:web:e98f456d054cc360747d61",
+    databaseURL: "https://disk-c98ee-default-rtdb.firebaseio.com"
+  };
 
-    document.querySelectorAll('[data-menu]').forEach(btn => {
-      btn.onclick = () => {
-        menu.classList.add('hidden');
-        document.querySelectorAll('.submenu').forEach(sm => sm.classList.add('hidden'));
-        const target = btn.getAttribute('data-menu');
-        if (target === 'gdz') gdzFrame.src = 'https://rdc-cdn.lms.macmillaneducation.com/wp-content/uploads/sites/8/2014/03/Bey_B1_WBAK.pdf.pdf';
-        document.getElementById(target + 'Menu').classList.remove('hidden');
-      };
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const tokenInput = document.getElementById('tokenInput');
+  const loginBtn = document.getElementById('loginBtn');
+  const auth = document.querySelector('.auth');
+  const menu = document.querySelector('.menu');
+  const audio = document.getElementById('audio');
+  const video = document.getElementById('video');
+  const gdzFrame = document.getElementById('gdzFrame');
+  const musicMenu = document.getElementById('musicMenu');
+  const videoMenu = document.getElementById('videoMenu');
+  const asalMenu = document.getElementById('asalMenu');
+  const gdzMenu = document.getElementById('gdzMenu');
+  const backButtons = document.querySelectorAll('.back');
+  const adminBtn = document.getElementById('adminBtn');
+
+  // Вспомогательные функции для анимаций видимости
+  function showElement(el) {
+    el.classList.remove('hidden');
+    setTimeout(() => el.classList.add('visible'), 10);
+  }
+  function hideElement(el) {
+    el.classList.remove('visible');
+    setTimeout(() => el.classList.add('hidden'), 300);
+  }
+
+  // Запуск после интро
+  window.onload = () => {
+    setTimeout(() => {
+      const intro = document.getElementById('intro');
+      intro.style.opacity = '0';
+      setTimeout(() => intro.style.display = 'none', 1000);
+      showElement(auth);
+    }, 3000);
+  };
+
+  // Управление меню и подменю
+  loginBtn.onclick = () => {
+    const token = tokenInput.value.trim();
+    if (!token) return alert('Введите токен');
+    get(ref(db, 'tokens/' + token)).then(snapshot => {
+      if (snapshot.exists()) {
+        // Успешный вход
+        remove(ref(db, 'tokens/' + token));
+        hideElement(auth);
+        showElement(menu);
+        showElement(document.getElementById('asalScreen'));
+        if (!audio.muted && !video.muted) {
+          new Audio('ppol.mp3').play();
+        }
+      } else alert('Неверный токен');
     });
+  };
 
-    backButtons.forEach(btn => btn.onclick = () => {
-      document.querySelectorAll('.submenu').forEach(sm => sm.classList.add('hidden'));
-      menu.classList.remove('hidden');
+  document.querySelectorAll('[data-menu]').forEach(btn => {
+    btn.onclick = () => {
+      hideElement(menu);
+      document.querySelectorAll('.submenu').forEach(sm => hideElement(sm));
+      const target = btn.getAttribute('data-menu');
+      if (target === 'gdz') {
+        gdzFrame.src = 'https://rdc-cdn.lms.macmillaneducation.com/wp-content/uploads/sites/8/2014/03/Bey_B1_WBAK.pdf.pdf';
+      } else {
+        gdzFrame.src = '';
+      }
+      showElement(document.getElementById(target + 'Menu'));
+    };
+  });
+
+  backButtons.forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.submenu').forEach(sm => hideElement(sm));
+      showElement(menu);
       gdzFrame.src = '';
-    });
+      audio.pause();
+      video.pause();
+      audio.classList.add('hidden');
+      video.classList.add('hidden');
+    };
+  });
 
-    document.querySelectorAll('[data-audio]').forEach(btn => {
-      btn.onclick = () => {
-        audio.src = btn.getAttribute('data-audio');
-        audio.classList.remove('hidden');
-        video.classList.add('hidden');
-        audio.play();
-      };
-    });
+  document.querySelectorAll('[data-audio]').forEach(btn => {
+    btn.onclick = () => {
+      audio.src = btn.getAttribute('data-audio');
+      audio.classList.remove('hidden');
+      video.classList.add('hidden');
+      audio.play();
+    };
+  });
 
-    document.querySelectorAll('[data-video]').forEach(btn => {
-      btn.onclick = () => {
-        video.src = btn.getAttribute('data-video');
-        video.classList.remove('hidden');
-        audio.classList.add('hidden');
-        video.play();
-      };
-    });
+  document.querySelectorAll('[data-video]').forEach(btn => {
+    btn.onclick = () => {
+      video.src = btn.getAttribute('data-video');
+      video.classList.remove('hidden');
+      audio.classList.add('hidden');
+      video.play();
+    };
+  });
 
-    document.getElementById('logoutBtn').onclick = () => location.reload();
+  document.getElementById('logoutBtn').onclick = () => {
+    location.reload();
+  };
 
-    const adminPanel = document.getElementById('adminPanel');
-    const tokenList = document.getElementById('tokenList');
+  // Панель админа
+  const adminPanel = document.createElement('div');
+  adminPanel.style.position = 'fixed';
+  adminPanel.style.top = '40px';
+  adminPanel.style.left = '20px';
+  adminPanel.style.background = 'rgba(255,255,255,0.1)';
+  adminPanel.style.padding = '10px';
+  adminPanel.style.borderRadius = '8px';
+  adminPanel.style.zIndex = '10000';
+  adminPanel.style.display = 'none';
+  adminPanel.id = 'adminPanel';
 
-    function createToken() {
-      const token = Math.random().toString(36).slice(2, 4);
-      const refToken = firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token);
-      firebaseStuff.set(refToken, true).then(() => {
-        const li = document.createElement('li');
-        li.textContent = token;
-        tokenList.appendChild(li);
-      });
-    }
+  const createTokenBtn = document.createElement('button');
+  createTokenBtn.textContent = 'Создать токен';
+  adminPanel.appendChild(createTokenBtn);
 
-    adminBtn.onclick = () => {
-      const p = prompt('Введите пароль для креатора:');
-      if (p === 'V') {
-        adminPanel.style.display = 'block';
-        alert('Добро пожаловать в панель создателя!');
-        firebaseStuff.get(firebaseStuff.ref(firebaseStuff.db, 'tokens')).then(snap => {
-          tokenList.innerHTML = '';
-          if (snap.exists()) {
-            Object.keys(snap.val()).forEach(token => {
-              const li = document.createElement('li');
-              li.textContent = token;
-              tokenList.appendChild(li);
-            });
-          } else {
-            const li = document.createElement('li');
-            li.textContent = 'Нет активных токенов';
-            tokenList.appendChild(li);
-          }
+  const tokenList = document.createElement('ul');
+  adminPanel.appendChild(tokenList);
+
+  const backAdminBtn = document.createElement('button');
+  backAdminBtn.textContent = 'Назад';
+  adminPanel.appendChild(backAdminBtn);
+
+  document.body.appendChild(adminPanel);
+
+  function refreshTokenList() {
+    get(ref(db, 'tokens')).then(snap => {
+      tokenList.innerHTML = '';
+      if (snap.exists()) {
+        Object.keys(snap.val()).forEach(token => {
+          const li = document.createElement('li');
+          li.textContent = token;
+          tokenList.appendChild(li);
         });
+      } else {
+        const li = document.createElement('li');
+        li.textContent = 'Нет активных токенов';
+        tokenList.appendChild(li);
+      }
+    });
+  }
+
+  createTokenBtn.onclick = () => {
+    const token = Math.random().toString(36).slice(2,4);
+    set(ref(db, 'tokens/' + token), true).then(() => refreshTokenList());
+  };
+
+  backAdminBtn.onclick = () => {
+    adminPanel.style.display = 'none';
+    auth.classList.remove('hidden');
+  };
+
+  adminBtn.onclick = () => {
+    if (adminPanel.style.display === 'none') {
+      const pass = prompt('Введите пароль для креатора:');
+      if (pass === 'V') {
+        adminPanel.style.display = 'block';
+        auth.classList.add('hidden');
+        menu.classList.add('hidden');
+        refreshTokenList();
+        alert('Добро пожаловать в панель создателя!');
       } else {
         alert('Неверный пароль');
       }
+    } else {
+      adminPanel.style.display = 'none';
     }
-  </script>
+  };
+</script>
 </body>
 </html>
