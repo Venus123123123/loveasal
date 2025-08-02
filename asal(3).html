@@ -34,7 +34,7 @@ window.firebaseStuff = { db, ref, get, set, push, remove };
     html, body {
       margin: 0;
       font-family: var(--font);
-      background: var(--bg);
+      background: linear-gradient(135deg, #000000, #222222); animation: bgshift 4s infinite alternate;
       color: white;
       display: flex;
       flex-direction: column;
@@ -143,45 +143,55 @@ iframe {
   display: none;
 }
 
-  </style>
+@keyframes bgshift { 0% { background: linear-gradient(135deg, #000000, #222222); } 100% { background: linear-gradient(135deg, #1c1c1c, #000000); } }
+
+@keyframes fadein { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.fadein { animation: fadein 0.6s ease-out; }
+
+#intro { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; color: white; font-size: 3em; display: flex; align-items: center; justify-content: center; z-index: 2000; animation: fadeout 3s ease forwards; }
+
+@keyframes fadeout { 0% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } } </style>
+
 </head>
 <body>
+  <div id="intro">Said</div>
   <div id="version">v1.0.2</div>
   <button id="adminBtn">Креатор</button>
-  <div id=\"adminPanel\" class="hidden">
+  <div id="adminPanel" class="hidden fadein">
     <button onclick="createToken()">Создать токен</button>
     <ul id="tokenList"></ul>
   <button class="back" onclick="adminPanel.classList.add('hidden'); auth.classList.remove('hidden');">Назад</button>
   </div>
   <div id="asalScreen" class="hidden">МЫ ЛЮБИМ АСАЛЬ 💖</div>
   <div class="auth">
-    <input id="tokenInput" placeholder="Введите токен" />
+    <input id="tokenInput" type="password" placeholder="Введите токен" />
     <button id="loginBtn">Войти</button>
     <button id="muteToggle">На уроке</button>
   </div>
-  <div class="menu hidden">
+  <div class="menu hidden fadein">
     <button data-menu="music">Песня</button>
     <button data-menu="video">Кнопка НЕ нажимать</button>
     <button data-menu="asal">💖 Мы любим Асаль</button>
     <button data-menu="gdz">ГДЗ</button>
     <button id="logoutBtn">Выход</button>
   </div>
-  <div class="submenu hidden" id="musicMenu">
+  <div class="submenu hidden fadein" id="musicMenu">
     <button data-audio="round-start.mp3">Амонг Ас</button>
     <button data-audio="tum-tum-tum-sahur.mp3">Тум Тум Сахур</button>
     <button data-audio="audio_2025-08-01_23-01-57.mp3">Это не забудем Тимура</button>
     <button class="back">Назад в меню</button>
   </div>
-  <div class="submenu hidden" id="videoMenu">
+  <div class="submenu hidden fadein" id="videoMenu">
     <button data-video="oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4">Тимур</button>
     <button data-video="oMTvPfb7222222.mp4">МГРР</button>
     <button class="back">Назад в меню</button>
   </div>
-  <div class="submenu hidden" id="asalMenu">
+  <div class="submenu hidden fadein" id="asalMenu">
     <div id="asalText">💖 Мы любим Асаль 💖</div>
     <button class="back">Назад в меню</button>
   </div>
-  <div class="submenu hidden" id="gdzMenu">
+  <div class="submenu hidden fadein" id="gdzMenu">
     <iframe src="" id="gdzFrame" allow="fullscreen" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>
     <button class="back">Назад в меню</button>
   </div>
