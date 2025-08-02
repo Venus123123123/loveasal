@@ -8,8 +8,6 @@
   :root {
     --pink: #ff4da6;
     --pink-dark: #ff007f;
-    --bg1: #000000;
-    --bg2: #222222;
     --font: 'Segoe UI', sans-serif;
   }
   * {
@@ -38,29 +36,29 @@
   }
   .stars {
     background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="white"/></svg>') repeat;
-    background-size: 50px 50px;
-    opacity: 0.8;
-    filter: blur(1px);
-    animation: twinkle 8s infinite;
+    background-size: 40px 40px;
+    opacity: 0.9;
+    filter: blur(1.5px);
+    animation: twinkle 7s infinite;
   }
   .stars2 {
     background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="3" cy="3" r="3" fill="white"/></svg>') repeat;
-    background-size: 75px 75px;
-    opacity: 0.6;
-    filter: blur(0.5px);
-    animation: twinkle 6s infinite;
+    background-size: 60px 60px;
+    opacity: 0.7;
+    filter: blur(1px);
+    animation: twinkle 5s infinite;
   }
   .stars3 {
     background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="4" cy="4" r="4" fill="white"/></svg>') repeat;
-    background-size: 100px 100px;
-    opacity: 0.4;
-    filter: blur(0.3px);
-    animation: twinkle 4s infinite;
+    background-size: 80px 80px;
+    opacity: 0.5;
+    filter: blur(0.5px);
+    animation: twinkle 3s infinite;
   }
   @keyframes twinkle {
-    0% { opacity: 0.4; transform: scale(0.7); }
+    0% { opacity: 0.5; transform: scale(0.6); }
     50% { opacity: 1; transform: scale(1); }
-    100% { opacity: 0.4; transform: scale(0.7); }
+    100% { opacity: 0.5; transform: scale(0.6); }
   }
   /* Animation for diving and rising */
   .container {
@@ -76,25 +74,25 @@
     animation: none;
   }
   .submenu.visible {
-    animation: dive 0.8s ease forwards;
+    animation: dive 1s ease forwards;
   }
   .submenu:not(.visible) {
-    animation: dive-out 0.8s ease forwards;
+    animation: dive-out 1s ease forwards;
   }
-  .menu.visible {
-    animation: rise 0.8s ease forwards;
+  .menu.visible, .auth.visible {
+    animation: rise 1s ease forwards;
   }
   @keyframes dive {
-    0% { transform: translateY(-100vh) scale(0.7); opacity: 0; box-shadow: 0 0 20px rgba(0,0,0,0.5); backdrop-filter: brightness(0.6); }
-    100% { transform: translateY(0) scale(1); opacity: 1; box-shadow: 0 0 10px rgba(0,0,0,0.2); backdrop-filter: brightness(1); }
+    0% { transform: translateY(-100vh) scale(0.6); opacity: 0; box-shadow: 0 0 30px rgba(0,0,0,0.7); }
+    100% { transform: translateY(0) scale(1); opacity: 1; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
   }
   @keyframes dive-out {
-    0% { transform: translateY(0) scale(1); opacity: 1; box-shadow: 0 0 10px rgba(0,0,0,0.2); backdrop-filter: brightness(1); }
-    100% { transform: translateY(100vh) scale(0.7); opacity: 0; box-shadow: 0 0 20px rgba(0,0,0,0.5); backdrop-filter: brightness(0.6); }
+    0% { transform: translateY(0) scale(1); opacity: 1; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+    100% { transform: translateY(100vh) scale(0.6); opacity: 0; box-shadow: 0 0 30px rgba(0,0,0,0.7); }
   }
   @keyframes rise {
-    0% { transform: translateY(100vh) scale(0.7); opacity: 0; box-shadow: 0 0 20px rgba(0,0,0,0.5); backdrop-filter: brightness(0.6); }
-    100% { transform: translateY(0) scale(1); opacity: 1; box-shadow: 0 0 10px rgba(0,0,0,0.2); backdrop-filter: brightness(1); }
+    0% { transform: translateY(100vh) scale(0.6); opacity: 0; box-shadow: 0 0 30px rgba(0,0,0,0.7); }
+    100% { transform: translateY(0) scale(1); opacity: 1; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
   }
   body.transitioning {
     pointer-events: none;
@@ -181,14 +179,14 @@
   }
   iframe {
     width: 95vw;
-    height: 80vh;
+    height: 60vh;
     margin: 10px auto;
     border: none;
     display: block;
   }
   audio, video {
     width: 95vw;
-    max-height: 60vh;
+    max-height: 40vh;
     margin: 10px auto;
     display: block;
   }
@@ -231,12 +229,14 @@
   </div>
 
   <div class="container submenu hidden" id="asalMenu">
+    <audio id="asalAudio" controls class="hidden"></audio>
     <div id="asalScreen">💖 Мы любим Асаль 💖</div>
     <button class="back">Назад в меню</button>
   </div>
 
   <div class="container submenu hidden" id="gdzMenu">
     <iframe src="" id="gdzFrame" sandbox="allow-same-origin allow-scripts allow-popups" allowfullscreen></iframe>
+    <button data-gdzkey="english">ГДЗ Английский</button>
     <button class="back">Назад в меню</button>
   </div>
 
@@ -263,6 +263,7 @@
   const menu = document.querySelector('.menu');
   const audio = document.getElementById('audio');
   const video = document.getElementById('video');
+  const asalAudio = document.getElementById('asalAudio');
   const gdzFrame = document.getElementById('gdzFrame');
   const musicMenu = document.getElementById('musicMenu');
   const videoMenu = document.getElementById('videoMenu');
@@ -277,7 +278,7 @@
     el.classList.remove('hidden');
     el.classList.add('visible');
     document.body.classList.add('transitioning');
-    setTimeout(() => document.body.classList.remove('transitioning'), 800);
+    setTimeout(() => document.body.classList.remove('transitioning'), 1000);
   }
 
   function hideElement(el) {
@@ -296,8 +297,16 @@
     hideElements([menu, auth, ...document.querySelectorAll('.submenu')]);
     audio.pause(); audio.classList.add('hidden'); audio.src = '';
     video.pause(); video.classList.add('hidden'); video.src = '';
+    asalAudio.pause(); asalAudio.classList.add('hidden'); asalAudio.src = '';
     const el = document.getElementById(menuId);
-    if (el) showElement(el);
+    if (el) {
+      showElement(el);
+      if (menuId === 'asalMenu') {
+        asalAudio.src = 'pool.mp3';
+        asalAudio.classList.remove('hidden');
+        asalAudio.play().catch(err => console.error('Asal audio playback error:', err));
+      }
+    }
   }
 
   async function checkToken(token) {
@@ -360,6 +369,8 @@
       const audioFile = btn.getAttribute('data-audio');
       video.pause();
       video.classList.add('hidden');
+      asalAudio.pause();
+      asalAudio.classList.add('hidden');
       audio.src = audioFile;
       audio.classList.remove('hidden');
       audio.play().catch(err => console.error('Audio playback error:', err));
@@ -373,15 +384,17 @@
       const videoFile = btn.getAttribute('data-video');
       audio.pause();
       audio.classList.add('hidden');
+      asalAudio.pause();
+      asalAudio.classList.add('hidden');
       video.src = videoFile;
       video.classList.remove('hidden');
       video.play().catch(err => console.error('Video playback error:', err));
     });
   });
 
-  // ГДЗ меню, ссылки можно добавить сюда по ключам
+  // ГДЗ меню
   const gdzUrls = {
-    // 'example': 'https://example.com'
+    'english': 'https://gdz.ru/class-7/english/spotlight-7/'
   };
 
   gdzMenu.querySelectorAll('button[data-gdzkey]').forEach(btn => {
