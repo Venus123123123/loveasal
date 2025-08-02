@@ -145,7 +145,7 @@
   <div id="version">v2.1</div>
   <button id="adminBtn">Креатор</button>
 
-  <div class="container auth">
+  <div class="container auth hidden">
     <input id="tokenInput" type="password" placeholder="Введите токен" autocomplete="off" />
     <button id="loginBtn">Войти</button>
   </div>
@@ -215,34 +215,30 @@
   const backButtons = document.querySelectorAll('.back');
   const adminBtn = document.getElementById('adminBtn');
 
-  // Показать элемент с анимацией
   function showElement(el) {
+    if (!el) return;
     el.classList.remove('hidden');
     setTimeout(() => el.classList.add('visible'), 10);
   }
 
-  // Скрыть элемент с анимацией
   function hideElement(el) {
+    if (!el) return;
     el.classList.remove('visible');
     setTimeout(() => el.classList.add('hidden'), 300);
   }
 
-  // Переключить меню — показать выбранное, скрыть остальные
-  function openMenu(menuId) {
-    // Скрыть все submenu
-    document.querySelectorAll('.submenu').forEach(el => hideElement(el));
-    // Скрыть аудио/видео плееры
-    audio.pause(); audio.classList.add('hidden');
-    video.pause(); video.classList.add('hidden');
-    audio.src = '';
-    video.src = '';
+  function hideElements(elements) {
+    elements.forEach(el => hideElement(el));
+  }
 
-    // Показать выбранное меню
+  function openMenu(menuId) {
+    hideElements(document.querySelectorAll('.submenu'));
+    audio.pause(); audio.classList.add('hidden'); audio.src = '';
+    video.pause(); video.classList.add('hidden'); video.src = '';
     const el = document.getElementById(menuId);
     if (el) showElement(el);
   }
 
-  // Проверка токена в Firebase
   async function checkToken(token) {
     try {
       const snapshot = await get(ref(db, 'tokens/' + token));
@@ -252,7 +248,6 @@
     }
   }
 
-  // Вход по токену
   loginBtn.addEventListener('click', async () => {
     const token = tokenInput.value.trim();
     if (!token) return alert('Введите токен');
@@ -267,33 +262,28 @@
     }
   });
 
-  // Выход (сброс)
   document.getElementById('logoutBtn').addEventListener('click', () => {
     hideElement(menu);
-    hideElement(document.querySelectorAll('.submenu'));
+    hideElements(document.querySelectorAll('.submenu'));
     tokenInput.value = '';
     showElement(auth);
   });
 
-  // Кнопки главного меню - переход в подменю
   menu.querySelectorAll('button[data-menu]').forEach(btn => {
     btn.addEventListener('click', () => {
+      hideElement(menu);
       const menuId = btn.getAttribute('data-menu');
       openMenu(menuId);
     });
   });
 
-  // Кнопки назад в подменю
   backButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      // Скрыть все подменю
-      document.querySelectorAll('.submenu').forEach(el => hideElement(el));
-      // Показать главное меню
+      hideElements(document.querySelectorAll('.submenu'));
       showElement(menu);
     });
   });
 
-  // Воспроизведение аудио (меню Песня)
   musicMenu.querySelectorAll('button[data-audio]').forEach(btn => {
     btn.addEventListener('click', () => {
       const audioFile = btn.getAttribute('data-audio');
@@ -305,7 +295,6 @@
     });
   });
 
-  // Воспроизведение видео (меню Кнопка НЕ нажимать)
   videoMenu.querySelectorAll('button[data-video]').forEach(btn => {
     btn.addEventListener('click', () => {
       const videoFile = btn.getAttribute('data-video');
@@ -317,14 +306,11 @@
     });
   });
 
-  // Меню ГДЗ — встраивание iframe с ссылкой на сайт по кнопкам меню (если нужны ссылки, добавь)
+  // ГДЗ меню, ссылки можно добавить сюда по ключам
   const gdzUrls = {
-    // пример:
-    // 'someKey': 'https://example.com',
+    // 'example': 'https://example.com'
   };
-  // Если хочешь, можешь добавить кнопки с data-gdzkey для подменю ГДЗ и назначить URL из объекта выше.
 
-  // Обработка кнопок меню ГДЗ, если будут (пока пусто, можно расширить)
   gdzMenu.querySelectorAll('button[data-gdzkey]').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.getAttribute('data-gdzkey');
@@ -334,26 +320,25 @@
     });
   });
 
-  // Админская панель (кнопка Креатор)
   adminBtn.addEventListener('click', async () => {
     const adminToken = prompt('Введите админ токен');
     if (adminToken !== 'admin123') {
       alert('Неверный админ токен');
       return;
     }
-    // Открыть админскую панель
     const panel = document.createElement('div');
     panel.style = `
       position: fixed; top: 50px; left: 50%; transform: translateX(-50%);
       background: #111; color: white; padding: 20px; border-radius: 10px;
       z-index: 100000; max-width: 400px; width: 90vw;
+      max-height: 70vh; overflow-y: auto;
     `;
     panel.innerHTML = `
       <h2>Админка: Управление токенами</h2>
       <input id="newTokenInput" placeholder="Новый токен" style="width: 80%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid var(--pink); background: transparent; color: white;" />
       <button id="addTokenBtn">Добавить токен</button>
       <button id="closeAdminBtn" style="margin-left: 10px; background: #aa0055;">Закрыть</button>
-      <div id="tokensList" style="margin-top: 15px; max-height: 200px; overflow-y: auto;"></div>
+      <div id="tokensList" style="margin-top: 15px;"></div>
     `;
     document.body.appendChild(panel);
 
@@ -362,7 +347,6 @@
     const closeAdminBtn = panel.querySelector('#closeAdminBtn');
     const tokensList = panel.querySelector('#tokensList');
 
-    // Функция обновить список токенов из БД
     async function updateTokensList() {
       tokensList.innerHTML = 'Загрузка...';
       const snapshot = await get(ref(db, 'tokens'));
@@ -407,7 +391,6 @@
     updateTokensList();
   });
 
-  // После анимации intro показать авторизацию
   window.addEventListener('load', () => {
     setTimeout(() => {
       const intro = document.getElementById('intro');
