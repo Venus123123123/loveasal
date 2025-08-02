@@ -1,30 +1,33 @@
-<!DOCTYPE html><html lang="ru">
+<!DOCTYPE html>
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Мы любим Асаль</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import { getDatabase, ref, get, set, push, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";const firebaseConfig = {
-  apiKey: "AIzaSyBTcH3_tri2L7AHLh1e-YD-0s-QSthuE6Q",
-  authDomain: "disk-c98ee.firebaseapp.com",
-  projectId: "disk-c98ee",
-  storageBucket: "disk-c98ee.appspot.com",
-  messagingSenderId: "59577059636",
-  appId: "1:59577059636:web:e98f456d054cc360747d61",
-  databaseURL: "https://disk-c98ee-default-rtdb.firebaseio.com"
-};
+    import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-window.firebaseStuff = { db, ref, get, set, push, remove };
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTcH3_tri2L7AHLh1e-YD-0s-QSthuE6Q",
+      authDomain: "disk-c98ee.firebaseapp.com",
+      projectId: "disk-c98ee",
+      storageBucket: "disk-c98ee.appspot.com",
+      messagingSenderId: "59577059636",
+      appId: "1:59577059636:web:e98f456d054cc360747d61",
+      databaseURL: "https://disk-c98ee-default-rtdb.firebaseio.com"
+    };
 
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    window.firebaseStuff = { db, ref, get, set, remove };
   </script>
   <style>
     :root {
       --pink: #ff4da6;
       --pink-dark: #ff007f;
-      --bg: #000000;
+      --bg-dark1: #000000;
+      --bg-dark2: #1c1c1c;
       --font: 'Segoe UI', sans-serif;
     }
     * {
@@ -34,7 +37,8 @@ window.firebaseStuff = { db, ref, get, set, push, remove };
     html, body {
       margin: 0;
       font-family: var(--font);
-      background: linear-gradient(135deg, #000000, #222222); animation: bgshift 4s infinite alternate;
+      background: linear-gradient(135deg, var(--bg-dark1), var(--bg-dark2));
+      animation: bgshift 8s ease-in-out infinite alternate;
       color: white;
       display: flex;
       flex-direction: column;
@@ -46,157 +50,182 @@ window.firebaseStuff = { db, ref, get, set, push, remove };
     }
     .hidden { display: none !important; }
     button {
+      background: var(--pink);
+      border: none;
+      color: white;
+      padding: 10px 25px;
+      margin: 10px;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(255, 77, 166, 0.3);
+      width: 90vw;
+      max-width: 300px;
       transform: translateY(50px);
       opacity: 0;
       animation: rise 0.5s forwards;
-    }@keyframes rise {
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-
-  background: var(--pink);
-  border: none;
-  color: white;
-  padding: 10px 25px;
-  margin: 10px;
-  border-radius: 12px;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(255, 77, 166, 0.3);
-  width: 90vw;
-  max-width: 300px;
-}
-button:hover {
-  background: var(--pink-dark);
-  transform: scale(1.05);
-}
-input {
-  padding: 10px;
-  border-radius: 8px;
-  margin: 10px;
-  font-size: 16px;
-  border: 1px solid var(--pink);
-  background: transparent;
-  color: black;
-  width: 80vw;
-  max-width: 300px;
-}
-.menu, .submenu, .auth, .admin {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  padding-bottom: 20px;
-}
-video, audio {
-  width: 95vw;
-  max-height: 60vh;
-  margin-top: 20px;
-}
-iframe {
-  width: 95vw;
-  height: 80vh;
-  margin-top: 20px;
-  border: none;
-}
-#asalScreen {
-  font-size: 2.2em;
-  text-align: center;
-  color: var(--pink);
-  animation: neon 2s ease-in-out infinite alternate;
-  letter-spacing: 2px;
-  padding: 20px;
-  text-shadow: 0 0 5px var(--pink), 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
-}
-@keyframes neon {
-  0% {
-    text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
-  }
-  100% {
-    text-shadow: 0 0 20px var(--pink), 0 0 40px var(--pink-dark);
-  }
-}
-#version {
-  position: fixed;
-  top: 10px;
-  right: 20px;
-  font-size: 13px;
-  color: #888;
-  z-index: 999;
-}
-#adminBtn {
-  position: fixed;
-  top: 10px;
-  left: 20px;
-  font-size: 13px;
-  z-index: 999;
-}
-#adminPanel {
-  position: fixed;
-  top: 40px;
-  left: 20px;
-  background: rgba(255,255,255,0.1);
-  padding: 10px;
-  border-radius: 8px;
-  z-index: 1000;
-  display: none;
-}
-
-@keyframes bgshift { 0% { background: linear-gradient(135deg, #000000, #222222); } 100% { background: linear-gradient(135deg, #1c1c1c, #000000); } }
-
-@keyframes fadein { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-.fadein { animation: fadein 0.6s ease-out; }
-
-#intro { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; color: white; font-size: 3em; display: flex; align-items: center; justify-content: center; z-index: 2000; animation: fadeout 3s ease forwards; }
-
-@keyframes fadeout { 0% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } } </style>
-
+      animation-timing-function: cubic-bezier(0.2, 1, 0.22, 1);
+    }
+    button:hover {
+      background: var(--pink-dark);
+      transform: scale(1.05);
+    }
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px;
+      font-size: 16px;
+      border: 1px solid var(--pink);
+      background: transparent;
+      color: white;
+      width: 80vw;
+      max-width: 300px;
+    }
+    .fade-panel {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadein 0.6s ease-out forwards;
+    }
+    .menu, .submenu, .auth, .admin {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding-bottom: 20px;
+    }
+    video, audio {
+      width: 95vw;
+      max-height: 60vh;
+      margin-top: 20px;
+    }
+    iframe {
+      width: 95vw;
+      height: 80vh;
+      margin-top: 20px;
+      border: none;
+    }
+    #asalScreen {
+      font-size: 2.2em;
+      text-align: center;
+      color: var(--pink);
+      animation: neon 2s ease-in-out infinite alternate;
+      letter-spacing: 2px;
+      padding: 20px;
+      text-shadow: 0 0 5px var(--pink), 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
+    }
+    @keyframes neon {
+      0% {
+        text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
+      }
+      100% {
+        text-shadow: 0 0 20px var(--pink), 0 0 40px var(--pink-dark);
+      }
+    }
+    #version {
+      position: fixed;
+      top: 10px;
+      right: 20px;
+      font-size: 13px;
+      color: #888;
+      z-index: 999;
+    }
+    #adminBtn {
+      position: fixed;
+      top: 10px;
+      left: 20px;
+      font-size: 13px;
+      z-index: 999;
+    }
+    #adminPanel {
+      position: fixed;
+      top: 40px;
+      left: 20px;
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 1000;
+      display: none;
+    }
+    @keyframes bgshift {
+      0% { background: linear-gradient(135deg, var(--bg-dark1), var(--bg-dark2)); }
+      100% { background: linear-gradient(135deg, var(--bg-dark2), var(--bg-dark1)); }
+    }
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes rise {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    #intro {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      color: white;
+      font-size: 3em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      animation: fadeout 3s ease forwards;
+    }
+    @keyframes fadeout {
+      0% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { opacity: 0; visibility: hidden; }
+    }
+  </style>
 </head>
 <body>
   <div id="intro">Said</div>
-  <div id="version">v1.0.2</div>
+  <div id="version">v1.0.3</div>
   <button id="adminBtn">Креатор</button>
-  <div id="adminPanel" class="hidden fadein">
+  <div id="adminPanel" class="hidden fade-panel">
     <button onclick="createToken()">Создать токен</button>
     <ul id="tokenList"></ul>
-  <button class="back" onclick="adminPanel.classList.add('hidden'); auth.classList.remove('hidden');">Назад</button>
+    <button class="back" onclick="adminPanel.classList.add('hidden'); auth.classList.remove('hidden');">Назад</button>
   </div>
   <div id="asalScreen" class="hidden">МЫ ЛЮБИМ АСАЛЬ 💖</div>
-  <div class="auth">
+  <div class="auth fade-panel">
     <input id="tokenInput" type="password" placeholder="Введите токен" />
     <button id="loginBtn">Войти</button>
     <button id="muteToggle">На уроке</button>
   </div>
-  <div class="menu hidden fadein">
+  <div class="menu hidden fade-panel">
     <button data-menu="music">Песня</button>
     <button data-menu="video">Кнопка НЕ нажимать</button>
     <button data-menu="asal">💖 Мы любим Асаль</button>
     <button data-menu="gdz">ГДЗ</button>
     <button id="logoutBtn">Выход</button>
   </div>
-  <div class="submenu hidden fadein" id="musicMenu">
+  <div class="submenu hidden fade-panel" id="musicMenu">
     <button data-audio="round-start.mp3">Амонг Ас</button>
     <button data-audio="tum-tum-tum-sahur.mp3">Тум Тум Сахур</button>
     <button data-audio="audio_2025-08-01_23-01-57.mp3">Это не забудем Тимура</button>
     <button class="back">Назад в меню</button>
   </div>
-  <div class="submenu hidden fadein" id="videoMenu">
+  <div class="submenu hidden fade-panel" id="videoMenu">
     <button data-video="oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4">Тимур</button>
     <button data-video="oMTvPfb7222222.mp4">МГРР</button>
     <button class="back">Назад в меню</button>
   </div>
-  <div class="submenu hidden fadein" id="asalMenu">
+  <div class="submenu hidden fade-panel" id="asalMenu">
     <div id="asalText">💖 Мы любим Асаль 💖</div>
     <button class="back">Назад в меню</button>
   </div>
-  <div class="submenu hidden fadein" id="gdzMenu">
+  <div class="submenu hidden fade-panel" id="gdzMenu">
     <iframe src="" id="gdzFrame" allow="fullscreen" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>
     <button class="back">Назад в меню</button>
   </div>
   <audio id="audio" controls class="hidden"></audio>
   <video id="video" controls class="hidden"></video>
+
   <script>
     const tokenInput = document.getElementById('tokenInput');
     const loginBtn = document.getElementById('loginBtn');
@@ -211,101 +240,138 @@ iframe {
     const asalMenu = document.getElementById('asalMenu');
     const gdzMenu = document.getElementById('gdzMenu');
     const backButtons = document.querySelectorAll('.back');
-    const adminBtn = document.getElementById('adminBtn');let isMuted = false;
-document.getElementById('muteToggle').onclick = () => {
-  isMuted = !isMuted;
-  document.getElementById('muteToggle').innerText = isMuted ? '🔇 Звук выкл' : '🔊 Звук вкл';
-  audio.muted = isMuted;
-  video.muted = isMuted;
-};
+    const adminBtn = document.getElementById('adminBtn');
+    const adminPanel = document.getElementById('adminPanel');
+    const tokenList = document.getElementById('tokenList');
 
-loginBtn.onclick = () => {
-  const token = tokenInput.value.trim();
-  if (!token) return alert('Введите токен');
-  firebaseStuff.get(firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token)).then(snapshot => {
-    if (snapshot.exists()) {
-      firebaseStuff.remove(firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token));
-      auth.classList.add('hidden');
-      menu.classList.remove('hidden');
-      asalScreen.classList.remove('hidden');
-      if (!isMuted) new Audio('ppol.mp3').play();
-    } else alert('Неверный токен');
-  });
-};
+    let isMuted = false;
+    document.getElementById('muteToggle').onclick = () => {
+      isMuted = !isMuted;
+      document.getElementById('muteToggle').innerText = isMuted ? '🔇 Звук выкл' : '🔊 Звук вкл';
+      audio.muted = isMuted;
+      video.muted = isMuted;
+    };
 
-document.querySelectorAll('[data-menu]').forEach(btn => {
-  btn.onclick = () => {
-    menu.classList.add('hidden');
-    document.querySelectorAll('.submenu').forEach(sm => sm.classList.add('hidden'));
-    const target = btn.getAttribute('data-menu');
-    if (target === 'gdz') gdzFrame.src = 'https://rdc-cdn.lms.macmillaneducation.com/wp-content/uploads/sites/8/2014/03/Bey_B1_WBAK.pdf.pdf';
-    document.getElementById(target + 'Menu').classList.remove('hidden');
-  };
-});
+    loginBtn.onclick = () => {
+      const token = tokenInput.value.trim();
+      if (!token) return alert('Введите токен');
+      firebaseStuff.get(firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token)).then(snapshot => {
+        if (snapshot.exists()) {
+          firebaseStuff.remove(firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token));
+          auth.classList.add('hidden');
+          menu.classList.remove('hidden');
+          asalScreen.classList.remove('hidden');
+          if (!isMuted) new Audio('ppol.mp3').play();
+        } else alert('Неверный токен');
+      });
+    };
 
-backButtons.forEach(btn => btn.onclick = () => {
-  document.querySelectorAll('.submenu').forEach(sm => sm.classList.add('hidden'));
-  menu.classList.remove('hidden');
-  gdzFrame.src = '';
-});
-
-document.querySelectorAll('[data-audio]').forEach(btn => {
-  btn.onclick = () => {
-    audio.src = btn.getAttribute('data-audio');
-    audio.classList.remove('hidden');
-    video.classList.add('hidden');
-    audio.play();
-  };
-});
-
-document.querySelectorAll('[data-video]').forEach(btn => {
-  btn.onclick = () => {
-    video.src = btn.getAttribute('data-video');
-    video.classList.remove('hidden');
-    audio.classList.add('hidden');
-    video.play();
-  };
-});
-
-document.getElementById('logoutBtn').onclick = () => location.reload();
-
-const adminPanel = document.getElementById('adminPanel');
-const tokenList = document.getElementById('tokenList');
-
-function createToken() {
-  const token = Math.random().toString(36).slice(2, 4);
-  const refToken = firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token);
-  firebaseStuff.set(refToken, true).then(() => {
-    const li = document.createElement('li');
-    li.textContent = token;
-    tokenList.appendChild(li);
-  });
-}
-
-adminBtn.onclick = () => {
-  const p = prompt('Введите пароль для креатора:');
-  if (p === 'V') {
-    adminPanel.classList.remove('hidden'); auth.classList.add('hidden'); menu.classList.add('hidden');
-    alert('Добро пожаловать в панель создателя!');
-    firebaseStuff.get(firebaseStuff.ref(firebaseStuff.db, 'tokens')).then(snap => {
-      tokenList.innerHTML = '';
-      if (snap.exists()) {
-        Object.keys(snap.val()).forEach(token => {
-          const li = document.createElement('li');
-          li.textContent = token;
-          tokenList.appendChild(li);
-        });
-      } else {
-        const li = document.createElement('li');
-        li.textContent = 'Нет активных токенов';
-        tokenList.appendChild(li);
-      }
+    document.querySelectorAll('[data-menu]').forEach(btn => {
+      btn.onclick = () => {
+        menu.classList.add('hidden');
+        document.querySelectorAll('.submenu').forEach(sm => sm.classList.add('hidden'));
+        const target = btn.getAttribute('data-menu');
+        if (target === 'gdz') gdzFrame.src = 'https://rdc-cdn.lms.macmillaneducation.com/wp-content/uploads/sites/8/2014/03/Bey_B1_WBAK.pdf.pdf';
+        document.getElementById(target + 'Menu').classList.remove('hidden');
+      };
     });
-  } else {
-    alert('Неверный пароль');
-  }
-}
 
+    backButtons.forEach(btn => btn.onclick = () => {
+      document.querySelectorAll('.submenu').forEach(sm => sm.classList.add('hidden'));
+      menu.classList.remove('hidden');
+      gdzFrame.src = '';
+      audio.pause();
+      video.pause();
+      audio.classList.add('hidden');
+      video.classList.add('hidden');
+    });
+
+    document.querySelectorAll('[data-audio]').forEach(btn => {
+      btn.onclick = () => {
+        audio.src = btn.getAttribute('data-audio');
+        audio.classList.remove('hidden');
+        video.classList.add('hidden');
+        video.pause();
+        audio.play();
+      };
+    });
+
+    document.querySelectorAll('[data-video]').forEach(btn => {
+      btn.onclick = () => {
+        video.src = btn.getAttribute('data-video');
+        video.classList.remove('hidden');
+        audio.classList.add('hidden');
+        audio.pause();
+        video.play();
+      };
+    });
+
+    document.getElementById('logoutBtn').onclick = () => location.reload();
+
+    function createToken() {
+      const token = Math.random().toString(36).slice(2, 4)
+      function createToken() {
+      const token = Math.random().toString(36).slice(2, 4);
+      const refToken = firebaseStuff.ref(firebaseStuff.db, 'tokens/' + token);
+      firebaseStuff.set(refToken, true).then(() => {
+        const li = document.createElement('li');
+        li.textContent = token;
+        tokenList.appendChild(li);
+      });
+    }
+
+    adminBtn.onclick = () => {
+      if (adminPanel.classList.contains('hidden')) {
+        const p = prompt('Введите пароль для креатора:');
+        if (p === 'V') {
+          adminPanel.classList.remove('hidden');
+          auth.classList.add('hidden');
+          menu.classList.add('hidden');
+          alert('Добро пожаловать в панель создателя!');
+          firebaseStuff.get(firebaseStuff.ref(firebaseStuff.db, 'tokens')).then(snap => {
+            tokenList.innerHTML = '';
+            if (snap.exists()) {
+              Object.keys(snap.val()).forEach(token => {
+                const li = document.createElement('li');
+                li.textContent = token;
+                tokenList.appendChild(li);
+              });
+            } else {
+              const li = document.createElement('li');
+              li.textContent = 'Нет активных токенов';
+              tokenList.appendChild(li);
+            }
+          });
+        } else {
+          alert('Неверный пароль');
+        }
+      } else {
+        adminPanel.classList.add('hidden');
+        auth.classList.remove('hidden');
+      }
+    };
+
+    // Интро анимация и показ auth после неё
+    window.onload = () => {
+      const intro = document.getElementById('intro');
+      const authPanel = document.querySelector('.auth');
+      const menuPanel = document.querySelector('.menu');
+      const adminP = document.getElementById('adminPanel');
+
+      setTimeout(() => {
+        intro.style.animation = 'fadeout 2s ease forwards';
+        setTimeout(() => {
+          intro.style.display = 'none';
+          authPanel.classList.add('fade-panel');
+          authPanel.style.opacity = 1;
+          authPanel.style.transform = 'translateY(0)';
+          authPanel.classList.remove('hidden');
+          // Скрываем меню и админку на старте
+          menuPanel.classList.add('hidden');
+          adminP.classList.add('hidden');
+        }, 2000);
+      }, 3000);
+    };
   </script>
 </body>
 </html>
