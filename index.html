@@ -281,6 +281,20 @@
   audio.hidden {
     display: none;
   }
+  button[data-student]::before {
+    content: '🔒 ';
+  }
+  button[data-student].unlocked::before {
+    content: '';
+  }
+  #studentPhoto {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 2px solid var(--blue);
+  }
 </style>
 </head>
 <body>
@@ -288,7 +302,7 @@
   <div class="stars2"></div>
   <div class="stars3"></div>
   <div id="intro">Said</div>
-  <div id="version">v2.6</div>
+  <div id="version">v2.8</div>
   <button id="consoleBtn">Консоль</button>
 
   <div class="container auth hidden">
@@ -340,11 +354,14 @@
 
   <div class="container submenu hidden" id="studentsListMenu">
     <input id="studentTokenInput" type="text" placeholder="Введите токен доступа" autocomplete="off" />
-    <button data-student="timur" data-encrypted="13245533499">13245533499</button>
+    <button id="studentTokenBtn">Подтвердить токен</button>
+    <button data-student="timur" data-encrypted="13245533499" data-name="Тимур">🔒 13245533499</button>
+    <button data-student="ibrohim" data-encrypted="39284232" data-name="Иброхим">🔒 39284232</button>
     <button class="back">Назад в меню</button>
   </div>
 
   <div class="container submenu hidden" id="studentInfoMenu">
+    <img id="studentPhoto" src="" alt="Фото ученика" />
     <div id="studentInfo"></div>
     <button class="back">Назад в базу данных</button>
   </div>
@@ -384,7 +401,9 @@
   const studentPassInput = document.getElementById('studentPassInput');
   const studentPassBtn = document.getElementById('studentPassBtn');
   const studentTokenInput = document.getElementById('studentTokenInput');
+  const studentTokenBtn = document.getElementById('studentTokenBtn');
   const studentInfo = document.getElementById('studentInfo');
+  const studentPhoto = document.getElementById('studentPhoto');
   const backButtons = document.querySelectorAll('.back');
   const consoleBtn = document.getElementById('consoleBtn');
 
@@ -400,9 +419,26 @@
       phone: '+998946372464',
       motherPhone: '+998900060030',
       fatherPhone: '+998988122711',
-      siblings: 'Сестра: Асаль Нуралиева, 12 лет, 6К Vosiq'
+      siblings: 'Сестра: Асаль Нуралиева, 12 лет, 6К Vosiq',
+      photo: 'photo_2025-08-02_19-28-21.jpg'
+    },
+    ibrohim: {
+      name: 'Иброхим',
+      surname: 'Шарипов',
+      patronymic: 'Бабуров',
+      birthDate: '30.09.2011',
+      father: 'Бабур',
+      mother: 'Не знаю',
+      class: '8Д',
+      phone: '+998917841115',
+      motherPhone: 'Нет',
+      fatherPhone: 'Нет',
+      siblings: 'Сестра, не родная',
+      photo: 'photo_2025-08-02_19-59-32.jpg'
     }
   };
+
+  let isTokenVerified = false;
 
   document.addEventListener('mousemove', (e) => {
     const x = (e.clientX / window.innerWidth) * 100;
@@ -449,7 +485,13 @@
     video.pause(); video.classList.add('hidden'); video.src = '';
     asalAudio.pause(); asalAudio.classList.add('hidden'); asalAudio.src = '';
     studentInfo.textContent = '';
+    studentPhoto.src = '';
     studentTokenInput.value = '';
+    isTokenVerified = false;
+    studentsListMenu.querySelectorAll('button[data-student]').forEach(btn => {
+      btn.textContent = `🔒 ${btn.getAttribute('data-encrypted')}`;
+      btn.classList.remove('unlocked');
+    });
     const el = document.getElementById(menuId);
     if (el) {
       showElement(el);
@@ -594,35 +636,50 @@
     }
   });
 
+  studentTokenBtn.addEventListener('click', async () => {
+    const token = studentTokenInput.value.trim();
+    if (!token) return alert('Введите токен доступа');
+    const valid = await checkStudentToken(token);
+    if (valid) {
+      console.log('Student token verified');
+      isTokenVerified = true;
+      studentsListMenu.querySelectorAll('button[data-student]').forEach(btn => {
+        btn.textContent = btn.getAttribute('data-name');
+        btn.classList.add('unlocked');
+      });
+      studentTokenInput.value = '';
+    } else {
+      alert('Неверный токен доступа');
+    }
+  });
+
   studentsListMenu.querySelectorAll('button[data-student]').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
+    btn.addEventListener('click', (e) => {
       e.stopPropagation();
       console.log('Student button clicked:', btn.getAttribute('data-student'));
+      if (!isTokenVerified) {
+        alert('Сначала подтвердите токен доступа');
+        return;
+      }
       const studentId = btn.getAttribute('data-student');
-      const token = studentTokenInput.value.trim();
-      if (!token) return alert('Введите токен доступа');
-      const valid = await checkStudentToken(token);
-      if (valid) {
-        const data = studentsData[studentId];
-        if (data) {
-          studentInfo.innerHTML = `
-            <span style="--i:1">Имя: ${data.name}</span>
-            <span style="--i:2">Фамилия: ${data.surname}</span>
-            <span style="--i:3">Отчество: ${data.patronymic}</span>
-            <span style="--i:4">Дата рождения: ${data.birthDate}</span>
-            <span style="--i:5">Отец: ${data.father}</span>
-            <span style="--i:6">Мать: ${data.mother}</span>
-            <span style="--i:7">Класс: ${data.class}</span>
-            <span style="--i:8">Телефон: ${data.phone}</span>
-            <span style="--i:9">Телефон матери: ${data.motherPhone}</span>
-            <span style="--i:10">Телефон отца: ${data.fatherPhone}</span>
-            <span style="--i:11">Братья/сёстры: ${data.siblings}</span>
-          `;
-          hideElement(studentsListMenu);
-          showElement(studentInfoMenu);
-        }
-      } else {
-        alert('Неверный токен доступа');
+      const data = studentsData[studentId];
+      if (data) {
+        studentInfo.innerHTML = `
+          <span style="--i:1">Имя: ${data.name}</span>
+          <span style="--i:2">Фамилия: ${data.surname}</span>
+          <span style="--i:3">Отчество: ${data.patronymic}</span>
+          <span style="--i:4">Дата рождения: ${data.birthDate}</span>
+          <span style="--i:5">Отец: ${data.father}</span>
+          <span style="--i:6">Мать: ${data.mother}</span>
+          <span style="--i:7">Класс: ${data.class}</span>
+          <span style="--i:8">Телефон: ${data.phone}</span>
+          <span style="--i:9">Телефон матери: ${data.motherPhone}</span>
+          <span style="--i:10">Телефон отца: ${data.fatherPhone}</span>
+          <span style="--i:11">Братья/сёстры: ${data.siblings}</span>
+        `;
+        studentPhoto.src = data.photo;
+        hideElement(studentsListMenu);
+        showElement(studentInfoMenu);
       }
     });
   });
