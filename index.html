@@ -29,6 +29,10 @@
     align-items: center;
     justify-content: center;
   }
+  @keyframes bgshift {
+    0% {background: linear-gradient(135deg, var(--bg1), var(--bg2));}
+    100% {background: linear-gradient(135deg, #1c1c1c, #000000);}
+  }
   #intro {
     position: fixed;
     top:0; left:0; width: 100vw; height: 100vh;
@@ -40,13 +44,12 @@
     justify-content: center;
     z-index: 9999;
     opacity: 1;
-    transition: opacity 1s ease;
+    animation: introfade 3s ease forwards;
   }
-  @keyframes bgshift {
-    0% {background: linear-gradient(135deg, var(--bg1), var(--bg2));}
-    100% {background: linear-gradient(135deg, #1c1c1c, #000000);}
+  @keyframes introfade {
+    0%, 90% {opacity: 1;}
+    100% {opacity: 0; visibility: hidden;}
   }
-  .hidden {display:none !important;}
   button {
     background: var(--pink);
     border: none;
@@ -75,7 +78,21 @@
     color: white;
     width: 80vw;
     max-width: 300px;
-    -webkit-text-security: disc; /* точки вместо текста */
+    -webkit-text-security: disc;
+  }
+  .hidden {display:none !important;}
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .container.visible {
+    opacity: 1;
+    transform: translateY(0);
   }
   #version {
     position: fixed;
@@ -91,29 +108,16 @@
     left: 20px;
     font-size: 13px;
     z-index: 10000;
-    cursor: pointer;
   }
-  .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  .container.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  #asalText {
-    font-size: 2em;
+  #asalScreen {
+    font-size: 2.2em;
+    text-align: center;
     color: var(--pink);
     animation: neon 2s ease-in-out infinite alternate;
     letter-spacing: 2px;
     padding: 20px;
     text-shadow: 0 0 5px var(--pink), 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
-    text-align: center;
+    margin-bottom: 20px;
   }
   @keyframes neon {
     0% {
@@ -134,71 +138,51 @@
     max-height: 60vh;
     margin-top: 20px;
   }
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 10px 0;
-    width: 90vw;
-    max-width: 300px;
-    overflow-wrap: break-word;
-  }
-  ul li {
-    background: rgba(255, 77, 166, 0.3);
-    padding: 6px 12px;
-    margin-bottom: 4px;
-    border-radius: 8px;
-    word-break: break-all;
-  }
 </style>
 </head>
 <body>
+  <div id="intro">Said</div>
+  <div id="version">v2.1</div>
+  <button id="adminBtn">Креатор</button>
 
-<div id="intro">Said</div>
-<div id="version">v2.1</div>
-<button id="adminBtn">Креатор</button>
+  <div class="container auth">
+    <input id="tokenInput" type="password" placeholder="Введите токен" autocomplete="off" />
+    <button id="loginBtn">Войти</button>
+  </div>
 
-<div class="container auth hidden">
-  <input id="tokenInput" type="password" placeholder="Введите токен" autocomplete="off" />
-  <button id="loginBtn">Войти</button>
-</div>
+  <div class="container menu hidden">
+    <button data-menu="musicMenu">Песня</button>
+    <button data-menu="videoMenu">Кнопка НЕ нажимать</button>
+    <button data-menu="asalMenu">💖 Мы любим Асаль</button>
+    <button data-menu="gdzMenu">ГДЗ</button>
+    <button id="logoutBtn">Выход</button>
+  </div>
 
-<div class="container menu hidden">
-  <button data-menu="musicMenu">Песня</button>
-  <button data-menu="videoMenu">Кнопка НЕ нажимать</button>
-  <button data-menu="asalMenu">💖 Мы любим Асаль</button>
-  <button data-menu="gdzMenu">ГДЗ</button>
-  <button id="logoutBtn">Выход</button>
-</div>
+  <div class="container submenu hidden" id="musicMenu">
+    <button data-audio="round-start.mp3">Амонг Ас</button>
+    <button data-audio="tum-tum-tum-sahur.mp3">Тум Тум Сахур</button>
+    <button data-audio="audio_2025-08-01_23-01-57.mp3">Это не забудем Тимура</button>
+    <button class="back">Назад в меню</button>
+  </div>
 
-<!-- Подменю Песни -->
-<div class="container submenu hidden" id="musicMenu">
-  <button data-audio="round-start.mp3">Амонг Ас</button>
-  <button data-audio="tum-tum-tum-sahur.mp3">Тум Тум Сахур</button>
-  <button data-audio="audio_2025-08-01_23-01-57.mp3">Это не забудем Тимура</button>
-  <button class="backBtn">Назад в меню</button>
-</div>
+  <div class="container submenu hidden" id="videoMenu">
+    <button data-video="oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4">Тимур</button>
+    <button data-video="oMTvPfb7222222.mp4">МГРР</button>
+    <button class="back">Назад в меню</button>
+  </div>
 
-<!-- Подменю Видео -->
-<div class="container submenu hidden" id="videoMenu">
-  <button data-video="oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4">Тимур</button>
-  <button data-video="oMTvPfb7222222.mp4">МГРР</button>
-  <button class="backBtn">Назад в меню</button>
-</div>
+  <div class="container submenu hidden" id="asalMenu">
+    <div id="asalScreen">💖 Мы любим Асаль 💖</div>
+    <button class="back">Назад в меню</button>
+  </div>
 
-<!-- Подменю Мы любим Асаль -->
-<div class="container submenu hidden" id="asalMenu">
-  <div id="asalText">💖 Мы любим Асаль 💖</div>
-  <button class="backBtn">Назад в меню</button>
-</div>
+  <div class="container submenu hidden" id="gdzMenu">
+    <iframe src="" id="gdzFrame" sandbox="allow-same-origin allow-scripts allow-popups" allowfullscreen></iframe>
+    <button class="back">Назад в меню</button>
+  </div>
 
-<!-- Подменю ГДЗ -->
-<div class="container submenu hidden" id="gdzMenu">
-  <iframe id="gdzFrame" src="" sandbox="allow-same-origin allow-scripts allow-popups" allowfullscreen></iframe>
-  <button class="backBtn">Назад в меню</button>
-</div>
-
-<audio id="audio" controls class="hidden"></audio>
-<video id="video" controls class="hidden"></video>
+  <audio id="audio" controls class="hidden"></audio>
+  <video id="video" controls class="hidden"></video>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
@@ -217,201 +201,220 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // Элементы DOM
-  const intro = document.getElementById('intro');
+  const tokenInput = document.getElementById('tokenInput');
+  const loginBtn = document.getElementById('loginBtn');
   const auth = document.querySelector('.auth');
   const menu = document.querySelector('.menu');
+  const audio = document.getElementById('audio');
+  const video = document.getElementById('video');
+  const gdzFrame = document.getElementById('gdzFrame');
   const musicMenu = document.getElementById('musicMenu');
   const videoMenu = document.getElementById('videoMenu');
   const asalMenu = document.getElementById('asalMenu');
   const gdzMenu = document.getElementById('gdzMenu');
-  const audio = document.getElementById('audio');
-  const video = document.getElementById('video');
-  const gdzFrame = document.getElementById('gdzFrame');
-  const tokenInput = document.getElementById('tokenInput');
-  const loginBtn = document.getElementById('loginBtn');
-  const logoutBtn = document.getElementById('logoutBtn');
+  const backButtons = document.querySelectorAll('.back');
   const adminBtn = document.getElementById('adminBtn');
-  const backButtons = document.querySelectorAll('.backBtn');
 
-  // Показывать элемент с анимацией
+  // Показать элемент с анимацией
   function showElement(el) {
     el.classList.remove('hidden');
-    setTimeout(() => el.classList.add('visible'), 20);
+    setTimeout(() => el.classList.add('visible'), 10);
   }
-  // Скрывать элемент с анимацией
+
+  // Скрыть элемент с анимацией
   function hideElement(el) {
     el.classList.remove('visible');
     setTimeout(() => el.classList.add('hidden'), 300);
   }
 
-  // Интро, после 3 секунд показать форму входа
-  window.onload = () => {
-    setTimeout(() => {
-      intro.style.opacity = '0';
-      setTimeout(() => {
-        intro.style.display = 'none';
-        showElement(auth);
-      }, 1000);
-    }, 3000);
-  };
+  // Переключить меню — показать выбранное, скрыть остальные
+  function openMenu(menuId) {
+    // Скрыть все submenu
+    document.querySelectorAll('.submenu').forEach(el => hideElement(el));
+    // Скрыть аудио/видео плееры
+    audio.pause(); audio.classList.add('hidden');
+    video.pause(); video.classList.add('hidden');
+    audio.src = '';
+    video.src = '';
 
-  // Логин по токену
-  loginBtn.onclick = () => {
-    const token = tokenInput.value.trim();
-    if (!token) return alert('Введите токен');
-    get(ref(db, 'tokens/' + token)).then(snapshot => {
-      if (snapshot.exists()) {
-        remove(ref(db, 'tokens/' + token));
-        hideElement(auth);
-        showElement(menu);
-        tokenInput.value = '';
-        // Авто проигрывание песни ppol.mp3
-        audio.src = 'ppol.mp3';
-        audio.classList.remove('hidden');
-        video.classList.add('hidden');
-        audio.play();
-      } else {
-        alert('Неверный токен');
-      }
-    });
-  };
-
-  // Навигация меню
-  document.querySelectorAll('[data-menu]').forEach(btn => {
-    btn.onclick = () => {
-      hideElement(menu);
-      hideElement(audio);
-      hideElement(video);
-      document.querySelectorAll('.submenu').forEach(sm => hideElement(sm));
-      const target = btn.getAttribute('data-menu');
-      if (target === 'gdzMenu') {
-        gdzFrame.src = 'https://rdc-cdn.lms.macmillaneducation.com/wp-content/uploads/sites/8/2014/03/Bey_B1_WBAK.pdf.pdf';
-      } else {
-        gdzFrame.src = '';
-      }
-      showElement(document.getElementById(target));
-    };
-  });
-
-  // Кнопки назад
-  backButtons.forEach(btn => {
-    btn.onclick = () => {
-      document.querySelectorAll('.submenu').forEach(sm => hideElement(sm));
-      hideElement(audio);
-      hideElement(video);
-      gdzFrame.src = '';
-      showElement(menu);
-    };
-  });
-
-  // Воспроизведение аудио
-  document.querySelectorAll('[data-audio]').forEach(btn => {
-    btn.onclick = () => {
-      audio.src = btn.getAttribute('data-audio');
-      audio.classList.remove('hidden');
-      video.classList.add('hidden');
-      audio.play();
-    };
-  });
-
-  // Воспроизведение видео
-  document.querySelectorAll('[data-video]').forEach(btn => {
-    btn.onclick = () => {
-      video.src = btn.getAttribute('data-video');
-      video.classList.remove('hidden');
-      audio.classList.add('hidden');
-      video.play();
-    };
-  });
-
-  // Выход (перезагрузка страницы)
-  logoutBtn.onclick = () => {
-    location.reload();
-  };
-
-  // --- Панель админа ---
-  // Создаём админ панель
-  const adminPanel = document.createElement('div');
-  adminPanel.style.position = 'fixed';
-  adminPanel.style.top = '40px';
-  adminPanel.style.left = '20px';
-  adminPanel.style.background = 'rgba(255,255,255,0.1)';
-  adminPanel.style.padding = '10px';
-  adminPanel.style.borderRadius = '8px';
-  adminPanel.style.zIndex = '10000';
-  adminPanel.style.width = '90vw';
-  adminPanel.style.maxWidth = '320px';
-  adminPanel.style.display = 'none';
-  adminPanel.id = 'adminPanel';
-
-  // Кнопка создания токена
-  const createTokenBtn = document.createElement('button');
-  createTokenBtn.textContent = 'Создать токен (2 символа)';
-  adminPanel.appendChild(createTokenBtn);
-
-  // Список токенов
-  const tokenList = document.createElement('ul');
-  adminPanel.appendChild(tokenList);
-
-  // Кнопка назад
-  const backAdminBtn = document.createElement('button');
-  backAdminBtn.textContent = 'Назад';
-  adminPanel.appendChild(backAdminBtn);
-
-  document.body.appendChild(adminPanel);
-
-  // Обновление списка токенов
-  function refreshTokenList() {
-    get(ref(db, 'tokens')).then(snap => {
-      tokenList.innerHTML = '';
-      if (snap.exists()) {
-        const tokens = snap.val();
-        Object.keys(tokens).forEach(tk => {
-          const li = document.createElement('li');
-          li.textContent = tk;
-          tokenList.appendChild(li);
-        });
-      } else {
-        const li = document.createElement('li');
-        li.textContent = 'Нет активных токенов';
-        tokenList.appendChild(li);
-      }
-    });
+    // Показать выбранное меню
+    const el = document.getElementById(menuId);
+    if (el) showElement(el);
   }
 
-  // Создание токена
-  createTokenBtn.onclick = () => {
-    // Генерация 2 символов a-z0-9
-    const token = Math.random().toString(36).slice(2,4);
-    set(ref(db, 'tokens/' + token), true).then(() => {
-      refreshTokenList();
-      alert('Создан токен: ' + token);
-    });
-  };
-
-  backAdminBtn.onclick = () => {
-    adminPanel.style.display = 'none';
-    showElement(auth);
-  };
-
-  adminBtn.onclick = () => {
-    if (adminPanel.style.display === 'none') {
-      const pass = prompt('Введите пароль для креатора:');
-      if (pass === 'V') {
-        adminPanel.style.display = 'block';
-        hideElement(auth);
-        hideElement(menu);
-        refreshTokenList();
-        alert('Добро пожаловать в панель создателя!');
-      } else {
-        alert('Неверный пароль');
-      }
-    } else {
-      adminPanel.style.display = 'none';
-      showElement(auth);
+  // Проверка токена в Firebase
+  async function checkToken(token) {
+    try {
+      const snapshot = await get(ref(db, 'tokens/' + token));
+      return snapshot.exists();
+    } catch {
+      return false;
     }
+  }
+
+  // Вход по токену
+  loginBtn.addEventListener('click', async () => {
+    const token = tokenInput.value.trim();
+    if (!token) return alert('Введите токен');
+    loginBtn.disabled = true;
+    const valid = await checkToken(token);
+    loginBtn.disabled = false;
+    if (valid) {
+      hideElement(auth);
+      showElement(menu);
+    } else {
+      alert('Неверный токен');
+    }
+  });
+
+  // Выход (сброс)
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    hideElement(menu);
+    hideElement(document.querySelectorAll('.submenu'));
+    tokenInput.value = '';
+    showElement(auth);
+  });
+
+  // Кнопки главного меню - переход в подменю
+  menu.querySelectorAll('button[data-menu]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const menuId = btn.getAttribute('data-menu');
+      openMenu(menuId);
+    });
+  });
+
+  // Кнопки назад в подменю
+  backButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Скрыть все подменю
+      document.querySelectorAll('.submenu').forEach(el => hideElement(el));
+      // Показать главное меню
+      showElement(menu);
+    });
+  });
+
+  // Воспроизведение аудио (меню Песня)
+  musicMenu.querySelectorAll('button[data-audio]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const audioFile = btn.getAttribute('data-audio');
+      video.pause();
+      video.classList.add('hidden');
+      audio.src = audioFile;
+      audio.classList.remove('hidden');
+      audio.play();
+    });
+  });
+
+  // Воспроизведение видео (меню Кнопка НЕ нажимать)
+  videoMenu.querySelectorAll('button[data-video]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const videoFile = btn.getAttribute('data-video');
+      audio.pause();
+      audio.classList.add('hidden');
+      video.src = videoFile;
+      video.classList.remove('hidden');
+      video.play();
+    });
+  });
+
+  // Меню ГДЗ — встраивание iframe с ссылкой на сайт по кнопкам меню (если нужны ссылки, добавь)
+  const gdzUrls = {
+    // пример:
+    // 'someKey': 'https://example.com',
   };
+  // Если хочешь, можешь добавить кнопки с data-gdzkey для подменю ГДЗ и назначить URL из объекта выше.
+
+  // Обработка кнопок меню ГДЗ, если будут (пока пусто, можно расширить)
+  gdzMenu.querySelectorAll('button[data-gdzkey]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.getAttribute('data-gdzkey');
+      if (gdzUrls[key]) {
+        gdzFrame.src = gdzUrls[key];
+      }
+    });
+  });
+
+  // Админская панель (кнопка Креатор)
+  adminBtn.addEventListener('click', async () => {
+    const adminToken = prompt('Введите админ токен');
+    if (adminToken !== 'admin123') {
+      alert('Неверный админ токен');
+      return;
+    }
+    // Открыть админскую панель
+    const panel = document.createElement('div');
+    panel.style = `
+      position: fixed; top: 50px; left: 50%; transform: translateX(-50%);
+      background: #111; color: white; padding: 20px; border-radius: 10px;
+      z-index: 100000; max-width: 400px; width: 90vw;
+    `;
+    panel.innerHTML = `
+      <h2>Админка: Управление токенами</h2>
+      <input id="newTokenInput" placeholder="Новый токен" style="width: 80%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid var(--pink); background: transparent; color: white;" />
+      <button id="addTokenBtn">Добавить токен</button>
+      <button id="closeAdminBtn" style="margin-left: 10px; background: #aa0055;">Закрыть</button>
+      <div id="tokensList" style="margin-top: 15px; max-height: 200px; overflow-y: auto;"></div>
+    `;
+    document.body.appendChild(panel);
+
+    const newTokenInput = panel.querySelector('#newTokenInput');
+    const addTokenBtn = panel.querySelector('#addTokenBtn');
+    const closeAdminBtn = panel.querySelector('#closeAdminBtn');
+    const tokensList = panel.querySelector('#tokensList');
+
+    // Функция обновить список токенов из БД
+    async function updateTokensList() {
+      tokensList.innerHTML = 'Загрузка...';
+      const snapshot = await get(ref(db, 'tokens'));
+      if (snapshot.exists()) {
+        const tokens = snapshot.val();
+        tokensList.innerHTML = '';
+        Object.keys(tokens).forEach(t => {
+          const tokenEl = document.createElement('div');
+          tokenEl.style = 'display:flex; justify-content:space-between; margin-bottom:6px; border-bottom: 1px solid #444; padding-bottom:4px;';
+          tokenEl.textContent = t;
+          const delBtn = document.createElement('button');
+          delBtn.textContent = 'Удалить';
+          delBtn.style.background = '#a00';
+          delBtn.style.color = 'white';
+          delBtn.style.border = 'none';
+          delBtn.style.borderRadius = '6px';
+          delBtn.style.cursor = 'pointer';
+          delBtn.addEventListener('click', async () => {
+            await remove(ref(db, 'tokens/' + t));
+            updateTokensList();
+          });
+          tokenEl.appendChild(delBtn);
+          tokensList.appendChild(tokenEl);
+        });
+      } else {
+        tokensList.textContent = 'Токены отсутствуют';
+      }
+    }
+
+    addTokenBtn.addEventListener('click', async () => {
+      const newToken = newTokenInput.value.trim();
+      if (!newToken) return alert('Введите токен для добавления');
+      await set(ref(db, 'tokens/' + newToken), true);
+      newTokenInput.value = '';
+      updateTokensList();
+    });
+
+    closeAdminBtn.addEventListener('click', () => {
+      panel.remove();
+    });
+
+    updateTokensList();
+  });
+
+  // После анимации intro показать авторизацию
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const intro = document.getElementById('intro');
+      intro.style.display = 'none';
+      showElement(auth);
+    }, 3000);
+  });
 </script>
 
 </body>
