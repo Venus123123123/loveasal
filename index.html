@@ -9,14 +9,16 @@
   :root {
     --blue: #4da8ff;
     --blue-dark: #003087;
-    --font: 'Segoe UI', sans-serif;
+    --font: 'Segoe UI', 'Roboto', sans-serif;
   }
   * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
   html, body {
-    margin: 0; padding: 0;
-    height: 100vh; width: 100vw;
+    height: 100vh;
+    width: 100vw;
     font-family: var(--font);
     background: radial-gradient(circle at 50% 50%, #001d3d, #003087);
     color: white;
@@ -69,7 +71,7 @@
     padding: 10px 25px;
     margin: 10px;
     border-radius: 12px;
-    font-size: 1rem;
+    font-size: clamp(14px, 4vw, 16px);
     cursor: pointer;
     width: 90vw;
     max-width: 300px;
@@ -106,6 +108,7 @@
     width: 100%;
     position: relative;
     z-index: 1;
+    padding: 10px;
   }
   .container.visible {
     display: flex;
@@ -165,7 +168,7 @@
     top: 0; left: 0; width: 100vw; height: 100vh;
     color: var(--blue);
     font-family: 'Orbitron', sans-serif;
-    font-size: 4em;
+    font-size: clamp(2em, 8vw, 4em);
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -184,7 +187,7 @@
     padding: 10px;
     border-radius: 8px;
     margin: 10px;
-    font-size: 16px;
+    font-size: clamp(14px, 4vw, 16px);
     border: 1px solid var(--blue);
     background: transparent;
     color: white;
@@ -199,7 +202,7 @@
     position: fixed;
     top: 10px;
     right: 20px;
-    font-size: 13px;
+    font-size: clamp(12px, 3vw, 13px);
     color: #aaa;
     z-index: 10000;
   }
@@ -207,7 +210,7 @@
     position: fixed;
     top: 10px;
     left: 20px;
-    font-size: 13px;
+    font-size: clamp(12px, 3vw, 13px);
     z-index: 10000;
     display: none;
   }
@@ -219,10 +222,11 @@
       font-size: 4em;
     }
     #asalScreen, #studentInfo {
-      font-size: 1.8em;
+      font-size: clamp(1.2em, 3vw, 1.8em);
+      line-height: 1.5;
     }
     #disclaimer {
-      font-size: 1em;
+      font-size: clamp(0.9em, 2vw, 1em);
     }
   }
   @media (max-width: 767px) {
@@ -230,12 +234,12 @@
       font-size: 2.5em;
     }
     #asalScreen, #studentInfo {
-      font-size: 1.2em;
-      padding: 10px;
+      font-size: clamp(0.9em, 3.5vw, 1.2em);
       line-height: 1.4;
+      padding: 10px;
     }
     #disclaimer {
-      font-size: 0.8em;
+      font-size: clamp(0.7em, 2.5vw, 0.8em);
       padding: 5px;
     }
   }
@@ -243,16 +247,19 @@
     text-align: center;
     color: var(--blue);
     animation: neon 2s ease-in-out infinite alternate;
-    letter-spacing: 2px;
-    padding: 20px;
-    margin-bottom: 20px;
+    letter-spacing: 1px;
+    padding: 15px;
+    margin-bottom: 15px;
     max-width: 90vw;
     word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: clamp(0.9em, 3vw, 1.8em);
   }
   #studentInfo span {
     display: block;
     animation: text-appear 0.5s ease forwards;
     animation-delay: calc(0.1s * var(--i));
+    margin: 5px 0;
   }
   #disclaimer {
     color: #ff3333;
@@ -260,6 +267,8 @@
     padding: 10px;
     max-width: 90vw;
     word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: clamp(0.7em, 2.5vw, 1em);
   }
   @keyframes neon {
     0% { text-shadow: 0 0 5px rgba(77, 168, 255, 0.5); }
@@ -278,7 +287,7 @@
     margin: 10px auto;
     display: block;
   }
-  audio.hidden {
+  audio.hidden, video.hidden {
     display: none;
   }
   button[data-student]::before {
@@ -302,7 +311,7 @@
   <div class="stars2"></div>
   <div class="stars3"></div>
   <div id="intro">Said</div>
-  <div id="version">v2.9</div>
+  <div id="version">v2.11</div>
   <button id="consoleBtn">Консоль</button>
 
   <div class="container auth hidden">
@@ -328,7 +337,7 @@
   </div>
 
   <div class="container submenu hidden" id="videoMenu">
-    <video id="video" controls class="hidden"></video>
+    <video id="video" controls class="hidden" preload="metadata"></video>
     <button data-video="oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4">Тимур</button>
     <button data-video="oMTvPfb7222222.mp4">МГРР</button>
     <button data-video="ivanzolo.mp4">Иванзоло</button>
@@ -336,7 +345,7 @@
   </div>
 
   <div class="container submenu hidden" id="asalMenu">
-    <audio id="asalAudio" autoplay></audio>
+    <audio id="asalAudio" autoplay class="hidden"></audio>
     <div id="asalScreen">💖 Мы любим Асаль 💖</div>
     <button class="back">Назад в меню</button>
   </div>
@@ -358,6 +367,7 @@
     <button id="studentTokenBtn">Подтвердить токен</button>
     <button data-student="timur" data-encrypted="13245533499" data-name="Тимур">🔒 13245533499</button>
     <button data-student="ibrohim" data-encrypted="39284232" data-name="Иброхим">🔒 39284232</button>
+    <button data-student="amar" data-encrypted="5432109876" data-name="Амар">🔒 5432109876</button>
     <button class="back">Назад в меню</button>
   </div>
 
@@ -436,6 +446,20 @@
       fatherPhone: 'Нет',
       siblings: 'Сестра, не родная',
       photo: 'photo_2025-08-02_19-59-32.jpg'
+    },
+    amar: {
+      name: 'Амар',
+      surname: 'Рустамов',
+      patronymic: 'Абдуллаевич',
+      birthDate: '22.02.2011',
+      father: 'Абдуллох (возможно, Рустамов)',
+      mother: 'Барно (фамилия и отчество неизвестны)',
+      class: '8Д Vosiq',
+      phone: '+998901779599',
+      motherPhone: 'Неизвестен',
+      fatherPhone: '+998919199999',
+      siblings: 'Брат: Сулейман Рустамов, Абдуллаевич, 22.09.2013, Vosiq, +998970063007; Брат: Мухаммад Рустамов, Абдуллаевич, 8-10 лет, Vosiq, номер отсутствует; Брат: Абубакр Рустамов, 3-5 лет, садик Vosiq, номер отсутствует',
+      photo: 'photo_2025-08-02_21-29-13.jpg'
     }
   };
 
@@ -498,6 +522,7 @@
       showElement(el);
       if (menuId === 'asalMenu') {
         asalAudio.src = 'ppol.mp3';
+        asalAudio.classList.remove('hidden');
         asalAudio.play().catch(err => {
           console.error('Asal audio playback error:', err);
           alert('Ошибка воспроизведения ppol.mp3. Проверьте наличие файла.');
@@ -591,7 +616,10 @@
       asalAudio.classList.add('hidden');
       audio.src = audioFile;
       audio.classList.remove('hidden');
-      audio.play().catch(err => console.error('Audio playback error:', err));
+      audio.play().catch(err => {
+        console.error('Audio playback error:', err);
+        alert(`Ошибка воспроизведения ${audioFile}. Проверьте наличие файла.`);
+      });
     });
   });
 
@@ -606,7 +634,11 @@
       asalAudio.classList.add('hidden');
       video.src = videoFile;
       video.classList.remove('hidden');
-      video.play().catch(err => console.error('Video playback error:', err));
+      video.load();
+      video.play().catch(err => {
+        console.error('Video playback error:', err);
+        alert(`Ошибка воспроизведения ${videoFile}. Проверьте наличие файла или его формат.`);
+      });
     });
   });
 
@@ -679,6 +711,11 @@
           <span style="--i:11">Братья/сёстры: ${data.siblings}</span>
         `;
         studentPhoto.src = data.photo;
+        studentPhoto.onerror = () => {
+          console.error(`Image load error: ${data.photo}`);
+          alert(`Ошибка загрузки фото ${data.photo}. Проверьте наличие файла.`);
+          studentPhoto.src = '';
+        };
         hideElement(studentsListMenu);
         showElement(studentInfoMenu);
       }
@@ -697,6 +734,7 @@
       background: #001d3d; color: white; padding: 20px; border-radius: 10px;
       z-index: 100000; max-width: 400px; width: 90vw;
       max-height: 70vh; overflow-y: auto;
+      font-size: clamp(0.9em, 2.5vw, 1em);
     `;
     panel.innerHTML = `
       <h2>Консоль: Управление токенами</h2>
@@ -854,4 +892,4 @@
 </script>
 </body>
 </html>
-
+      
