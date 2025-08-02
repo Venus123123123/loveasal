@@ -363,15 +363,16 @@
   </div>
 
   <div class="container submenu hidden" id="studentsListMenu">
-    <input id="studentTokenInput" type="text" placeholder="Введите токен доступа" autocomplete="off" />
-    <button id="studentTokenBtn">Подтвердить токен</button>
-    <button data-student="timur" data-encrypted="13245533499" data-name="Тимур">🔒 13245533499</button>
-    <button data-student="ibrohim" data-encrypted="39284232" data-name="Иброхим">🔒 39284232</button>
-    <button data-student="amar" data-encrypted="5432109876" data-name="Амар">🔒 5432109876</button>
-    <button data-student="sabrina" data-encrypted="22214344" data-name="Сабрина">🔒 22214344</button>
-    <button data-student="said" data-encrypted="12312333" data-name="Саид">🔒 12312333</button>
-    <button class="back">Назад в меню</button>
-  </div>
+  <input id="studentTokenInput" type="text" placeholder="Введите токен доступа" autocomplete="off" />
+  <button id="studentTokenBtn">Подтвердить токен</button>
+  <button data-student="timur" data-encrypted="13245533499" data-name="Тимур">🔒 13245533499</button>
+  <button data-student="ibrohim" data-encrypted="39284232" data-name="Иброхим">🔒 39284232</button>
+  <button data-student="amar" data-encrypted="5432109876" data-name="Амар">🔒 5432109876</button>
+  <button data-student="sabrina" data-encrypted="22214344" data-name="Сабрина">🔒 22214344</button>
+  <button data-student="said" data-encrypted="12312333" data-name="Саид">🔒 12312333</button>
+  <button data-student="said_samandarov" data-encrypted="31254355" data-name="Саид">🔒 31254355</button>
+  <button class="back">Назад в меню</button>
+</div>
 
   <div class="container submenu hidden" id="studentInfoMenu">
     <img id="studentPhoto" src="" alt="Фото ученика" />
@@ -490,8 +491,22 @@
       fatherPhone: 'Неизвестен',
       siblings: 'Отсутствуют',
       photo: 'photo_2025-03-04_13-47-17.jpg'
-    }
-  };
+    },
+    said_samandarov: {
+    name: 'Саид',
+    surname: 'Самандаров',
+    patronymic: 'Алишерович',
+    birthDate: '30.10.2011',
+    father: 'Алишер Самандаров Восикович',
+    mother: 'Неизвестно Самандарова Восиковна',
+    class: '8Д',
+    phone: '+998770748507',
+    motherPhone: 'Неизвестен',
+    fatherPhone: 'Неизвестен',
+    siblings: 'Сестра: Кимья Самандарова Алишеровна, примерно 12 лет',
+    photo: 'photo_2025-04-08_16-33-21.jpg'
+  }
+};
 
   let isTokenVerified = false;
 
@@ -922,4 +937,5 @@
 </script>
 </body>
 </html>
+
 
