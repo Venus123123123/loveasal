@@ -6,8 +6,8 @@
 <title>Мы любим Асаль</title>
 <style>
   :root {
-    --pink: #ff4da6;
-    --pink-dark: #ff007f;
+    --blue: #4da8ff;
+    --blue-dark: #003087;
     --font: 'Segoe UI', sans-serif;
   }
   * {
@@ -17,7 +17,8 @@
     margin: 0; padding: 0;
     height: 100vh; width: 100vw;
     font-family: var(--font);
-    background: #000;
+    background: linear-gradient(135deg, #001d3d, #003087);
+    animation: bgshift 15s infinite alternate ease-in-out;
     color: white;
     overflow-x: hidden;
     display: flex;
@@ -39,26 +40,30 @@
     background-size: 40px 40px;
     opacity: 0.9;
     filter: blur(1.5px);
-    animation: twinkle 7s infinite;
+    animation: twinkle 10s infinite ease-in-out;
   }
   .stars2 {
     background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="3" cy="3" r="3" fill="white"/></svg>') repeat;
     background-size: 60px 60px;
     opacity: 0.7;
     filter: blur(1px);
-    animation: twinkle 5s infinite;
+    animation: twinkle 8s infinite ease-in-out;
   }
   .stars3 {
     background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="4" cy="4" r="4" fill="white"/></svg>') repeat;
     background-size: 80px 80px;
     opacity: 0.5;
     filter: blur(0.5px);
-    animation: twinkle 3s infinite;
+    animation: twinkle 6s infinite ease-in-out;
   }
   @keyframes twinkle {
     0% { opacity: 0.5; transform: scale(0.6); }
     50% { opacity: 1; transform: scale(1); }
     100% { opacity: 0.5; transform: scale(0.6); }
+  }
+  @keyframes bgshift {
+    0% { background: linear-gradient(135deg, #001d3d, #003087); }
+    100% { background: linear-gradient(135deg, #003087, #001d3d); }
   }
   /* Animation for diving and rising */
   .container {
@@ -74,25 +79,25 @@
     animation: none;
   }
   .submenu.visible {
-    animation: dive 1s ease forwards;
+    animation: dive 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
   .submenu:not(.visible) {
-    animation: dive-out 1s ease forwards;
+    animation: dive-out 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
   .menu.visible, .auth.visible {
-    animation: rise 1s ease forwards;
+    animation: rise 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
   @keyframes dive {
-    0% { transform: translateY(-100vh) scale(0.6); opacity: 0; box-shadow: 0 0 30px rgba(0,0,0,0.7); }
-    100% { transform: translateY(0) scale(1); opacity: 1; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+    0% { transform: translateY(-100vh) scale(0.6); opacity: 0; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
   }
   @keyframes dive-out {
-    0% { transform: translateY(0) scale(1); opacity: 1; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
-    100% { transform: translateY(100vh) scale(0.6); opacity: 0; box-shadow: 0 0 30px rgba(0,0,0,0.7); }
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(100vh) scale(0.6); opacity: 0; }
   }
   @keyframes rise {
-    0% { transform: translateY(100vh) scale(0.6); opacity: 0; box-shadow: 0 0 30px rgba(0,0,0,0.7); }
-    100% { transform: translateY(0) scale(1); opacity: 1; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+    0% { transform: translateY(100vh) scale(0.6); opacity: 0; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
   }
   body.transitioning {
     pointer-events: none;
@@ -100,7 +105,7 @@
   #intro {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
-    background: black;
+    background: #001d3d;
     color: white;
     font-size: 3em;
     display: flex;
@@ -111,11 +116,11 @@
     animation: introfade 3s ease forwards;
   }
   @keyframes introfade {
-    0%, 90% {opacity: 1;}
-    100% {opacity: 0; visibility: hidden;}
+    0%, 90% { opacity: 1; }
+    100% { opacity: 0; visibility: hidden; }
   }
   button {
-    background: var(--pink);
+    background: var(--blue);
     border: none;
     color: white;
     padding: 10px 25px;
@@ -123,13 +128,12 @@
     border-radius: 12px;
     font-size: 1rem;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(255, 77, 166, 0.3);
     width: 90vw;
     max-width: 300px;
     transition: background 0.3s ease, transform 0.3s ease;
   }
   button:hover {
-    background: var(--pink-dark);
+    background: var(--blue-dark);
     transform: scale(1.05);
   }
   button:disabled {
@@ -141,7 +145,7 @@
     border-radius: 8px;
     margin: 10px;
     font-size: 16px;
-    border: 1px solid var(--pink);
+    border: 1px solid var(--blue);
     background: transparent;
     color: white;
     width: 80vw;
@@ -153,7 +157,7 @@
     top: 10px;
     right: 20px;
     font-size: 13px;
-    color: #888;
+    color: #aaa;
     z-index: 10000;
   }
   #adminBtn {
@@ -166,16 +170,15 @@
   #asalScreen {
     font-size: 2.2em;
     text-align: center;
-    color: var(--pink);
+    color: var(--blue);
     animation: neon 2s ease-in-out infinite alternate;
     letter-spacing: 2px;
     padding: 20px;
-    text-shadow: 0 0 5px var(--pink), 0 0 10px var(--pink), 0 0 20px var(--pink-dark);
     margin-bottom: 20px;
   }
   @keyframes neon {
-    0% { text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink-dark); }
-    100% { text-shadow: 0 0 20px var(--pink), 0 0 40px var(--pink-dark); }
+    0% { text-shadow: 0 0 5px rgba(77, 168, 255, 0.5); }
+    100% { text-shadow: 0 0 10px rgba(77, 168, 255, 0.8); }
   }
   iframe {
     width: 95vw;
@@ -189,6 +192,9 @@
     max-height: 40vh;
     margin: 10px auto;
     display: block;
+  }
+  audio.hidden {
+    display: none;
   }
 </style>
 </head>
@@ -229,7 +235,7 @@
   </div>
 
   <div class="container submenu hidden" id="asalMenu">
-    <audio id="asalAudio" controls class="hidden"></audio>
+    <audio id="asalAudio"></audio>
     <div id="asalScreen">💖 Мы любим Асаль 💖</div>
     <button class="back">Назад в меню</button>
   </div>
@@ -278,7 +284,7 @@
     el.classList.remove('hidden');
     el.classList.add('visible');
     document.body.classList.add('transitioning');
-    setTimeout(() => document.body.classList.remove('transitioning'), 1000);
+    setTimeout(() => document.body.classList.remove('transitioning'), 1500);
   }
 
   function hideElement(el) {
@@ -303,7 +309,6 @@
       showElement(el);
       if (menuId === 'asalMenu') {
         asalAudio.src = 'pool.mp3';
-        asalAudio.classList.remove('hidden');
         asalAudio.play().catch(err => console.error('Asal audio playback error:', err));
       }
     }
@@ -417,15 +422,15 @@
     const panel = document.createElement('div');
     panel.style = `
       position: fixed; top: 50px; left: 50%; transform: translateX(-50%);
-      background: #111; color: white; padding: 20px; border-radius: 10px;
+      background: #001d3d; color: white; padding: 20px; border-radius: 10px;
       z-index: 100000; max-width: 400px; width: 90vw;
       max-height: 70vh; overflow-y: auto;
     `;
     panel.innerHTML = `
       <h2>Админка: Управление токенами</h2>
-      <input id="newTokenInput" placeholder="Новый токен" style="width: 80%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid var(--pink); background: transparent; color: white;" />
+      <input id="newTokenInput" placeholder="Новый токен" style="width: 80%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid var(--blue); background: transparent; color: white;" />
       <button id="addTokenBtn">Добавить токен</button>
-      <button id="closeAdminBtn" style="margin-left: 10px; background: #aa0055;">Закрыть</button>
+      <button id="closeAdminBtn" style="margin-left: 10px; background: var(--blue-dark);">Закрыть</button>
       <div id="tokensList" style="margin-top: 15px;"></div>
     `;
     document.body.appendChild(panel);
