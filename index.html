@@ -68,18 +68,14 @@
     background: var(--blue);
     border: none;
     color: white;
-    padding: 12px 30px;
-    margin: 12px 0;
+    padding: 10px 25px;
+    margin: 10px;
     border-radius: 12px;
-    font-size: clamp(16px, 4.5vw, 18px);
+    font-size: clamp(14px, 4vw, 16px);
     cursor: pointer;
-    width: 95vw;
-    max-width: 400px;
+    width: 90vw;
+    max-width: 300px;
     transition: background 0.3s ease, transform 0.3s ease;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
   button:hover {
     background: var(--blue-dark);
@@ -112,7 +108,7 @@
     width: 100%;
     position: relative;
     z-index: 1;
-    padding: 15px;
+    padding: 10px;
   }
   .container.visible {
     display: flex;
@@ -161,8 +157,8 @@
     100% { transform: translateX(0); opacity: 0; }
   }
   @keyframes text-appear {
-    0% { opacity: 0; transform: translateY(20px); filter: blur(5px); }
-    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
   body.transitioning {
     pointer-events: none;
@@ -188,15 +184,15 @@
     100% { opacity: 0; transform: scale(1); visibility: hidden; text-shadow: 0 0 10px rgba(77, 168, 255, 0.5); }
   }
   input[type=password], input[type=text] {
-    padding: 12px;
+    padding: 10px;
     border-radius: 8px;
-    margin: 12px;
-    font-size: clamp(16px, 4.5vw, 18px);
+    margin: 10px;
+    font-size: clamp(14px, 4vw, 16px);
     border: 1px solid var(--blue);
     background: transparent;
     color: white;
-    width: 95vw;
-    max-width: 400px;
+    width: 80vw;
+    max-width: 300px;
     -webkit-text-security: disc;
   }
   input[type=text] {
@@ -206,7 +202,7 @@
     position: fixed;
     top: 10px;
     right: 20px;
-    font-size: clamp(12px, 3vw, 14px);
+    font-size: clamp(12px, 3vw, 13px);
     color: #aaa;
     z-index: 10000;
   }
@@ -214,7 +210,7 @@
     position: fixed;
     top: 10px;
     left: 20px;
-    font-size: clamp(12px, 3vw, 14px);
+    font-size: clamp(12px, 3vw, 13px);
     z-index: 10000;
     display: none;
   }
@@ -261,7 +257,8 @@
   }
   #studentInfo span {
     display: block;
-    opacity: 0;
+    animation: text-appear 0.5s ease forwards;
+    animation-delay: calc(0.1s * var(--i));
     margin: 5px 0;
   }
   #disclaimer {
@@ -300,24 +297,12 @@
     content: '';
   }
   #studentPhoto {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
     border-radius: 8px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     border: 2px solid var(--blue);
-  }
-  #studentsListMenu {
-    max-height: 60vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-    overscroll-behavior-y: contain;
-    scroll-behavior: smooth;
-    padding: 10px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
 </style>
 </head>
@@ -325,7 +310,7 @@
   <div class="stars"></div>
   <div class="stars2"></div>
   <div class="stars3"></div>
-  <div id="intro">Bebra 71</div>
+  <div id="intro">Said</div>
   <div id="version">v2.12</div>
   <button id="consoleBtn">Консоль</button>
 
@@ -339,7 +324,7 @@
     <button data-menu="videoMenu">Кнопка НЕ нажимать</button>
     <button data-menu="asalMenu">💖 Мы любим Асаль</button>
     <button data-menu="gdzMenu">ГДЗ</button>
-    <button data-menu="studentsMenu" class="studentsMenuBtn">База данных</button>
+    <button data-menu="studentsMenu">База данных</button>
     <button id="logoutBtn">Выход</button>
   </div>
 
@@ -378,22 +363,20 @@
   </div>
 
   <div class="container submenu hidden" id="studentsListMenu">
-    <input id="studentTokenInput" type="text" placeholder="Введите токен доступа" autocomplete="off" />
-    <button id="studentTokenBtn">Подтвердить токен</button>
-    <button data-student="timur" data-encrypted="13245533499" data-name="Тимур">🔒 13245533499</button>
-    <button data-student="ibrohim" data-encrypted="39284232" data-name="Иброхим">🔒 39284232</button>
-    <button data-student="amar" data-encrypted="5432109876" data-name="Амар">🔒 5432109876</button>
-    <button data-student="sabrina" data-encrypted="22214344" data-name="Сабрина">🔒 22214344</button>
-    <button data-student="said" data-encrypted="12312333" data-name="Саид">🔒 12312333</button>
-    <button data-student="said_samandarov" data-encrypted="31254355" data-name="Саид">🔒 31254355</button>
-    <button data-student="abdumumin" data-encrypted="98765432" data-name="Абдумумин">🔒 98765432</button>
-    <button data-student="abubaker" data-encrypted="45678912" data-name="Абубакер">🔒 45678912</button>
-    <button data-student="Mohir" data-encrypted="7777112" data-name="Мохир">🔒 7777112</button>
-    <button data-student="Salta" data-encrypted="773222" data-name="Салтанат">🔒 773222</button>
-    <button data-student="Zarina" data-encrypted="7732122" data-name="Зарина">🔒 7732122</button>
-    <button data-student="Nasta" data-encrypted="77333222" data-name="Настя">🔒 77333222</button>
-    <button class="back">Назад в меню</button>
-  </div>
+  <input id="studentTokenInput" type="text" placeholder="Введите токен доступа" autocomplete="off" />
+  <button id="studentTokenBtn">Подтвердить токен</button>
+  <button data-student="timur" data-encrypted="13245533499" data-name="Тимур">🔒 13245533499</button>
+  <button data-student="ibrohim" data-encrypted="39284232" data-name="Иброхим">🔒 39284232</button>
+  <button data-student="amar" data-encrypted="5432109876" data-name="Амар">🔒 5432109876</button>
+  <button data-student="sabrina" data-encrypted="22214344" data-name="Сабрина">🔒 22214344</button>
+  <button data-student="said" data-encrypted="12312333" data-name="Саид">🔒 12312333</button>
+  <button data-student="said_samandarov" data-encrypted="31254355" data-name="Саид">🔒 31254355</button>
+  <button data-student="abdumumin" data-encrypted="98765432" data-name="Абдумумин">🔒 7777789</button>
+  <button data-student="abubaker" data-encrypted="45678912" data-name="Абубакер">🔒 45678912</button>
+  <button data-student="Mohir" data-encrypted="45678912" data-name="Мохир">🔒 7777112</button>
+  <button data-student="Salta" data-encrypted="45678912" data-name="Салтанат">🔒 773222</button>
+  <button class="back">Назад в меню</button>
+</div>
 
   <div class="container submenu hidden" id="studentInfoMenu">
     <img id="studentPhoto" src="" alt="Фото ученика" />
@@ -447,30 +430,28 @@
       name: 'Тимур',
       surname: 'Нуралиев',
       patronymic: 'Музаффарович',
-      birthDate: '28.08.2011',
-      father: 'Муззафар Нуралиев',
+      birthDate: '28.09.2011',
+      father: 'Музаффар Нуралиев',
       mother: 'Мафтуна (возможно, Нуралиева)',
       class: '8Д Vosiq',
       phone: '+998946372464',
       motherPhone: '+998900060030',
       fatherPhone: '+998988122711',
       siblings: 'Сестра: Асаль Нуралиева, 12 лет, 6К Vosiq',
-      seria: 'FA9854006',
       photo: 'photo_2025-08-02_19-28-21.jpg'
     },
     ibrohim: {
-      name: 'Иброхимжон',
+      name: 'Иброхим',
       surname: 'Шарипов',
-      patronymic: 'Бабур огли',
-      birthDate: '31.08.2011',
-      father: 'Ахмедов Бабир Шарипович',
-      mother: 'Ахмедова Рухсора Туймуродова',
+      patronymic: 'Бабуров',
+      birthDate: '30.09.2011',
+      father: 'Бабур',
+      mother: 'Нету',
       class: '8Д',
       phone: '+998917841115',
       motherPhone: 'Нет',
       fatherPhone: 'Нет',
       siblings: 'Сестра, не родная',
-      seria: 'не найдено',
       photo: 'photo_2025-08-02_19-59-32.jpg'
     },
     amar: {
@@ -484,29 +465,27 @@
       phone: '+998901779599',
       motherPhone: 'Неизвестен',
       fatherPhone: '+998919199999',
-      seria: 'не найдено',
       siblings: 'Брат: Сулейман Рустамов, Абдуллаевич, 22.09.2013, Vosiq, +998970063007; Брат: Мухаммад Рустамов, Абдуллаевич, 8-10 лет, Vosiq, номер отсутствует; Брат: Абубакр Рустамов, 3-5 лет, садик Vosiq, номер отсутствует',
       photo: 'photo_2025-08-02_21-29-13.jpg'
     },
     sabrina: {
       name: 'Сабрина',
       surname: 'Коппола',
-      patronymic: 'Карловна',
+      patronymic: 'Неизвестно',
       birthDate: '30.01.2012',
       father: 'Неизвестно',
-      mother: 'Альбина А,',
+      mother: 'Альбина Коппола, отчество неизвестно',
       class: '8Д Vosiq',
       phone: '+998908112259',
       motherPhone: 'Неизвестен',
       fatherPhone: 'Неизвестен',
       siblings: 'Брат: Альберто Коппола, 2013, +998900027748; Сестра: Алина Коппола, 6-9 лет',
-      seria: 'FA1439551',
       photo: 'photo_2025-08-02_22-04-26.jpg'
     },
     said: {
       name: 'Саид',
       surname: 'Умаров',
-      patronymic: 'Улугбек огли',
+      patronymic: 'Улугбекович',
       birthDate: '07.05.2011',
       father: 'Улугбек Умаров',
       mother: 'Юлдуз Умарова',
@@ -514,127 +493,83 @@
       phone: '+998947518833',
       motherPhone: 'Неизвестен',
       fatherPhone: 'Неизвестен',
-      siblings: '1 сестра 1 брат',
-      seria: 'FA9557657',
+      siblings: 'Отсутствуют',
       photo: 'photo_2025-03-04_13-47-17.jpg'
     },
     said_samandarov: {
-      name: 'Саид',
-      surname: 'Самандаров',
-      patronymic: 'Хуршидович',
-      birthDate: '30.08.2011',
-      father: 'Алишер Восикович',
-      mother: 'Шоира',
-      class: '8Д',
-      phone: '+998770748507',
-      motherPhone: 'Неизвестен',
-      fatherPhone: 'Неизвестен',
-      siblings: 'Сестра: Кимья Самандарова Алишеровна, примерно 12 лет',
-      seria: 'не найдено',
-      photo: 'photo_2025-04-08_16-33-21.jpg'
-    },
+    name: 'Саид',
+    surname: 'Самандаров',
+    patronymic: 'Алишерович',
+    birthDate: '30.10.2011',
+    father: 'Алишер Самандаров Восикович',
+    mother: 'Неизвестно Самандарова Восиковна',
+    class: '8Д',
+    phone: '+998770748507',
+    motherPhone: 'Неизвестен',
+    fatherPhone: 'Неизвестен',
+    siblings: 'Сестра: Кимья Самандарова Алишеровна, примерно 12 лет',
+    photo: 'photo_2025-04-08_16-33-21.jpg'
+  },
     abdumumin: {
-      name: 'Абдумумин',
-      surname: 'Абдувахидов',
-      patronymic: 'Неизвестно',
-      birthDate: '22.02.2011',
-      father: 'Неизвестно',
-      mother: 'Неизвестно',
-      class: '8Д',
-      phone: 'Неизвестен',
-      motherPhone: 'Неизвестен',
-      fatherPhone: 'Неизвестен',
-      siblings: 'Неизвестно',
-      seria: 'не найдено',
-      photo: '2323.png'
-    },
+    name: 'Абдумумин',
+    surname: 'Абдувахидов',
+    patronymic: 'Неизвестно',
+    birthDate: '22.02.2011',
+    father: 'Неизвестно',
+    mother: 'Неизвестно',
+    class: 'Д',
+    phone: 'Неизвестен',
+    motherPhone: 'Неизвестен',
+    fatherPhone: 'Неизвестен',
+    siblings: 'Неизвестно',
+    photo: '2323.png'
+  },
     abubaker: {
-      name: 'Абубакер',
-      surname: 'Хакимов',
-      patronymic: 'Неизвестно',
-      birthDate: '02.09.2011',
-      father: 'Неизвестно',
-      mother: 'Неизвестно',
-      class: '8Д',
-      phone: 'Неизвестен',
-      motherPhone: 'Неизвестен',
-      fatherPhone: 'Неизвестен',
-      siblings: 'Неизвестно',
-      seria: 'не найдено',
-      photo: '23333.jpg'
-    },
+    name: 'Абубакер',
+    surname: 'Хакимов',
+    patronymic: 'Неизвестно',
+    birthDate: '02.10.2011',
+    father: 'Неизвестно',
+    mother: 'Неизвестно',
+    class: '8Д',
+    phone: 'Неизвестен',
+    motherPhone: 'Неизвестен',
+    fatherPhone: 'Неизвестен',
+    siblings: 'Неизвестно',
+    photo: '23333.jpg'
+  },
     Mohir: {
-      name: 'Мохир',
-      surname: 'Мирсамадов',
-      patronymic: 'неизвестно',
-      birthDate: '08.08.2011',
-      father: 'Неизвестно',
-      mother: 'Неизвестно',
-      class: '8Д',
-      phone: '+998909495522',
-      motherPhone: 'Неизвестен',
-      fatherPhone: 'Неизвестен',
-      siblings: '2 сестры',
-      seria: 'не найдено',
-      photo: '1111.jpg'
-    },
+    name: 'Мохир',
+    surname: 'Мирсамадов',
+    patronymic: 'неизвестно',
+    birthDate: '08.09.2011',
+    father: 'Неизвестно',
+    mother: 'Неизвестно',
+    class: '8Д',
+    phone: '+998 90 949 55 22',
+    motherPhone: 'Неизвестен',
+    fatherPhone: 'Неизвестен',
+    siblings: '2 сестры',
+    photo: '1111.jpg'
+  },
     Salta: {
-      name: 'Салтанат',
-      surname: 'Муталова',
-      patronymic: 'Улугбек кизи',
-      birthDate: '06.08.2011',
-      father: 'Улугбек Муталов',
-      mother: 'Шоира Муталова',
-      class: '8Д',
-      phone: '+998974903134',
-      motherPhone: 'Неизвестен',
-      fatherPhone: 'Неизвестен',
-      siblings: '2 сестры',
-      seria: 'не найдено',
-      photo: '11112.jpg'
-    },
-    Zarina: {
-      name: 'Зарина',
-      surname: 'Абдурахманова',
-      patronymic: 'Зарифджонова',
-      birthDate: '19.04.2011',
-      father: 'Зариф',
-      mother: 'не найдено',
-      class: '8Д',
-      phone: 'не найдено',
-      motherPhone: 'Неизвестен',
-      fatherPhone: 'Неизвестен',
-      siblings: '1 сестра',
-      seria: 'FA5374603',
-      photo: 'zzz.jpg'
-    },
-    Nasta: {
-      name: 'Настя',
-      surname: 'Хахлина',
-      patronymic: 'Дмитриевна',
-      birthDate: '09.01.2011',
-      father: 'Дмитрий Хахлин Федерович',
-      mother: 'Хахлина Екатерина Александровна',
-      class: '8Д',
-      phone: '+998935704077',
-      motherPhone: '+998909574081',
-      fatherPhone: 'не найдено',
-      siblings: '1 сестра',
-      seria: 'данные повреждены',
-      photo: 'nasta.jpg'
-    }
-  };
+    name: 'Салтанат',
+    surname: 'Муталова',
+    patronymic: 'Улугбек кизи',
+    birthDate: '06.09.2011',
+    father: 'Улугбек Муталов',
+    mother: 'Шоира Муталова',
+    class: '8Д',
+    phone: '+998 97 490 31 34',
+    motherPhone: 'Неизвестен',
+    fatherPhone: 'Неизвестен',
+    siblings: '2 сестра',
+    photo: '11112.jpg'
+  }
+};
+      
 
   let isTokenVerified = false;
-  let hasDatabaseAccess = false;
-
-  studentsListMenu.addEventListener('scroll', () => {
-    const scrollTop = studentsListMenu.scrollTop;
-    const maxScroll = studentsListMenu.scrollHeight - studentsListMenu.clientHeight;
-    if (scrollTop < 0 || scrollTop > maxScroll) {
-      studentsListMenu.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  });
 
   document.addEventListener('mousemove', (e) => {
     const x = (e.clientX / window.innerWidth) * 100;
@@ -706,11 +641,7 @@
     try {
       const snapshot = await get(ref(db, 'tokens/' + token));
       console.log('Token check result:', snapshot.exists());
-      if (snapshot.exists()) {
-        hasDatabaseAccess = token === '5';
-        return true;
-      }
-      return false;
+      return snapshot.exists();
     } catch (error) {
       console.error('Token check error:', error);
       alert('Ошибка проверки токена: ' + error.message);
@@ -739,8 +670,6 @@
     if (valid) {
       console.log('Login successful');
       hideElement(auth);
-      const studentsMenuBtn = document.querySelector('.studentsMenuBtn');
-      studentsMenuBtn.style.display = hasDatabaseAccess ? 'block' : 'none';
       showElement(menu);
     } else {
       alert('Неверный токен');
@@ -752,7 +681,6 @@
     hideElement(menu);
     hideElements(document.querySelectorAll('.submenu'));
     tokenInput.value = '';
-    hasDatabaseAccess = false;
     showElement(auth);
   });
 
@@ -876,18 +804,17 @@
       const data = studentsData[studentId];
       if (data) {
         studentInfo.innerHTML = `
-          <span>Имя: ${data.name}</span>
-          <span>Фамилия: ${data.surname}</span>
-          <span>Отчество: ${data.patronymic}</span>
-          <span>Дата рождения: ${data.birthDate}</span>
-          <span>Отец: ${data.father}</span>
-          <span>Мать: ${data.mother}</span>
-          <span>Класс: ${data.class}</span>
-          <span>Телефон: ${data.phone}</span>
-          <span>Телефон матери: ${data.motherPhone}</span>
-          <span>Телефон отца: ${data.fatherPhone}</span>
-          <span>Братья/сёстры: ${data.siblings}</span>
-          <span>Серия и номер: ${data.seria}</span>
+          <span style="--i:1">Имя: ${data.name}</span>
+          <span style="--i:2">Фамилия: ${data.surname}</span>
+          <span style="--i:3">Отчество: ${data.patronymic}</span>
+          <span style="--i:4">Дата рождения: ${data.birthDate}</span>
+          <span style="--i:5">Отец: ${data.father}</span>
+          <span style="--i:6">Мать: ${data.mother}</span>
+          <span style="--i:7">Класс: ${data.class}</span>
+          <span style="--i:8">Телефон: ${data.phone}</span>
+          <span style="--i:9">Телефон матери: ${data.motherPhone}</span>
+          <span style="--i:10">Телефон отца: ${data.fatherPhone}</span>
+          <span style="--i:11">Братья/сёстры: ${data.siblings}</span>
         `;
         studentPhoto.src = data.photo;
         studentPhoto.onerror = () => {
@@ -897,12 +824,6 @@
         };
         hideElement(studentsListMenu);
         showElement(studentInfoMenu);
-        const spans = studentInfo.querySelectorAll('span');
-        spans.forEach((span, index) => {
-          setTimeout(() => {
-            span.style.animation = 'text-appear 0.5s ease forwards';
-          }, index * 250);
-        });
       }
     });
   });
@@ -1077,6 +998,7 @@
 </script>
 </body>
 </html>
+
 
 
 
