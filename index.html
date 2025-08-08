@@ -1,1047 +1,938 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
-    <title>Bebra 71</title>
-    <style>
-        :root {
-            --blue: #4da8ff;
-            --blue-dark: #003087;
-            --font: 'Segoe UI', 'Roboto', sans-serif;
-        }
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        html, body {
-            height: 100vh;
-            width: 100vw;
-            font-family: var(--font);
-            background: radial-gradient(circle at 50% 50%, #001d3d, #003087);
-            color: white;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        .stars, .stars2, .stars3 {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            z-index: -1;
-        }
-        .stars {
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="white"/></svg>') repeat;
-            background-size: 40px 40px;
-            opacity: 0.9;
-            filter: blur(1.5px);
-            animation: twinkle 10s infinite ease-in-out;
-        }
-        .stars2 {
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="3" cy="3" r="3" fill="white"/></svg>') repeat;
-            background-size: 60px 60px;
-            opacity: 0.7;
-            filter: blur(1px);
-            animation: twinkle 8s infinite ease-in-out;
-        }
-        .stars3 {
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="4" cy="4" r="4" fill="white"/></svg>') repeat;
-            background-size: 80px 80px;
-            opacity: 0.5;
-            filter: blur(0.5px);
-            animation: twinkle 6s infinite ease-in-out;
-        }
-        @keyframes twinkle {
-            0% { opacity: 0.5; transform: scale(0.6); }
-            50% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0.5; transform: scale(0.6); }
-        }
-        button {
-            position: relative;
-            overflow: hidden;
-            background: var(--blue);
-            border: none;
-            color: white;
-            padding: 10px 25px;
-            margin: 10px;
-            border-radius: 12px;
-            font-size: clamp(14px, 4vw, 16px);
-            cursor: pointer;
-            width: 90vw;
-            max-width: 300px;
-            transition: background 0.3s ease, transform 0.3s ease;
-        }
-        button:hover {
-            background: var(--blue-dark);
-            transform: scale(1.05);
-        }
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        button::after {
-            content: '';
-            position: absolute;
-            background: radial-gradient(circle, rgba(77, 168, 255, 0.5), transparent);
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0;
-            transition: width 0.6s ease, height 0.6s ease, opacity 0.6s ease;
-        }
-        button.ripple::after {
-            width: 200px;
-            height: 200px;
-            opacity: 1;
-        }
-        .container {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            position: relative;
-            z-index: 1;
-            padding: 10px;
-        }
-        .container.visible {
-            display: flex;
-        }
-        .container.visible button:nth-child(odd) {
-            animation: slide-in-left 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        .container.visible button:nth-child(even) {
-            animation: slide-in-right 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        .container.visible button:first-child,
-        .container.visible #asalScreen,
-        .container.visible #studentInfo {
-            animation: drop-in 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        .container.visible button:last-child {
-            animation: pull-up 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        .container.visible input {
-            animation: drop-in 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        .container:not(.visible) button,
-        .container:not(.visible) input,
-        .container:not(.visible) #asalScreen,
-        .container:not(.visible) #studentInfo {
-            animation: fade-out 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        @keyframes slide-in-left {
-            0% { transform: translateX(-100%); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slide-in-right {
-            0% { transform: translateX(100%); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes drop-in {
-            0% { transform: translateY(-100vh); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes pull-up {
-            0% { transform: translateY(100vh); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes fade-out {
-            0% { transform: translateX(0); opacity: 1; }
-            100% { transform: translateX(0); opacity: 0; }
-        }
-        @keyframes text-appear {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        body.transitioning {
-            pointer-events: none;
-        }
-        #intro {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            color: var(--blue);
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2em, 8vw, 4em);
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            opacity: 1;
-            animation: introfade 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            text-shadow: 0 0 10px rgba(77, 168, 255, 0.5);
-        }
-        @keyframes introfade {
-            0% { opacity: 0; transform: scale(0.5); text-shadow: 0 0 10px rgba(77, 168, 255, 0.5); }
-            50% { opacity: 1; transform: scale(1.1); text-shadow: 0 0 20px rgba(77, 168, 255, 0.8); }
-            100% { opacity: 0; transform: scale(1); visibility: hidden; text-shadow: 0 0 10px rgba(77, 168, 255, 0.5); }
-        }
-        input[type=password], input[type=text] {
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px;
-            font-size: clamp(14px, 4vw, 16px);
-            border: 1px solid var(--blue);
-            background: transparent;
-            color: white;
-            width: 80vw;
-            max-width: 300px;
-            -webkit-text-security: disc;
-        }
-        input[type=text] {
-            -webkit-text-security: none;
-        }
-        #version {
-            position: fixed;
-            top: 10px;
-            right: 20px;
-            font-size: clamp(12px, 3vw, 13px);
-            color: #aaa;
-            z-index: 10000;
-        }
-        #consoleBtn {
-            position: fixed;
-            top: 10px;
-            left: 20px;
-            font-size: clamp(12px, 3vw, 13px);
-            z-index: 10000;
-            display: none;
-        }
-        @media (min-width: 768px) {
-            #consoleBtn {
-                display: block;
-            }
-            #intro {
-                font-size: 4em;
-            }
-            #asalScreen, #studentInfo {
-                font-size: clamp(1.2em, 3vw, 1.8em);
-                line-height: 1.5;
-            }
-            #disclaimer {
-                font-size: clamp(0.9em, 2vw, 1em);
-            }
-        }
-        @media (max-width: 767px) {
-            #intro {
-                font-size: 2.5em;
-            }
-            #asalScreen, #studentInfo {
-                font-size: clamp(0.9em, 3.5vw, 1.2em);
-                line-height: 1. negocio: 10px;
-            }
-            #disclaimer {
-                font-size: clamp(0.7em, 2.5vw, 0.8em);
-                padding: 5px;
-            }
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Said - Панель</title>
+<style>
+    :root {
+        --blue: #4da8ff;
+        --blue-dark: #003087;
+    }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #001d3d;
+        color: white;
+        overflow-x: hidden;
+        transition: background 0.5s ease;
+    }
+    .hidden { display: none !important; }
+    .visible { display: block !important; }
+    button {
+        padding: 10px;
+        border-radius: 8px;
+        margin: 10px 5px;
+        font-size: clamp(14px, 4vw, 16px);
+        border: 1px solid var(--blue);
+        background: transparent;
+        color: white;
+        width: auto;
+        max-width: 300px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        user-select: none;
+    }
+    button.ripple::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        background: rgba(77, 168, 255, 0.3);
+        top: var(--ripple-y);
+        left: var(--ripple-x);
+        pointer-events: none;
+        animation: rippleEffect 0.6s linear;
+        transform: translate(-50%, -50%);
+        z-index: 0;
+    }
+    @keyframes rippleEffect {
+        from { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+        to { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+    }
+    input[type=password], input[type=text] {
+        padding: 10px;
+        border-radius: 8px;
+        margin: 10px;
+        font-size: clamp(14px, 4vw, 16px);
+        border: 1px solid var(--blue);
+        background: transparent;
+        color: white;
+        width: 80vw;
+        max-width: 300px;
+        -webkit-text-security: disc;
+    }
+    input[type=text] {
+        -webkit-text-security: none;
+    }
+    #version {
+        position: fixed;
+        top: 10px;
+        right: 20px;
+        font-size: clamp(12px, 3vw, 13px);
+        color: #aaa;
+        z-index: 10000;
+    }
+    #consoleBtn {
+        position: fixed;
+        top: 10px;
+        left: 20px;
+        font-size: clamp(12px, 3vw, 13px);
+        z-index: 10000;
+        display: none;
+    }
+    @media (min-width: 768px) {
+        #consoleBtn { display: block; }
+        #intro { font-size: 4em; }
         #asalScreen, #studentInfo {
-            text-align: center;
-            color: var(--blue);
-            animation: neon 2s ease-in-out infinite alternate;
-            letter-spacing: 1px;
-            padding: 15px;
-            margin-bottom: 15px;
-            max-width: 90vw;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            font-size: clamp(0.9em, 3vw, 1.8em);
-        }
-        #studentInfo span {
-            display: block;
-            animation: text-appear 0.5s ease forwards;
-            animation-delay: calc(0.1s * var(--i));
-            margin: 5px 0;
+            font-size: clamp(1.2em, 3vw, 1.8em);
+            line-height: 1.5;
         }
         #disclaimer {
-            color: #ff3333;
-            text-align: center;
-            padding: 10px;
-            max-width: 90vw;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            font-size: clamp(0.7em, 2.5vw, 1em);
+            font-size: clamp(0.9em, 2vw, 1em);
         }
-        @keyframes neon {
-            0% { text-shadow: 0 0 5px rgba(77, 168, 255, 0.5); }
-            100% { text-shadow: 0 0 10px rgba(77, 168, 255, 0.8); }
+    }
+    @media (max-width: 767px) {
+        #intro { font-size: 2.5em; }
+        #asalScreen, #studentInfo {
+            font-size: clamp(0.9em, 3.5vw, 1.2em);
+            line-height: 1;
         }
-        iframe {
-            width: 95vw;
-            height: 60vh;
-            margin: 10px auto;
-            border: none;
-            display: block;
+        #disclaimer {
+            font-size: clamp(0.7em, 2.5vw, 0.8em);
+            padding: 5px;
         }
-        audio, video {
-            width: 95vw;
-            max-height: 40vh;
-            margin: 10px auto;
-            display: block;
-        }
-        audio.hidden, video.hidden {
-            display: none;
-        }
-        button[data-student]::before {
-            content: '🔒 ';
-        }
-        button[data-student].unlocked::before {
-            content: '';
-        }
-        #studentPhoto {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border: 2px solid var(--blue);
-        }
-    </style>
+    }
+    #asalScreen, #studentInfo {
+        text-align: center;
+        color: var(--blue);
+        animation: neon 2s ease-in-out infinite alternate;
+        letter-spacing: 1px;
+        padding: 15px;
+        margin-bottom: 15px;
+        max-width: 90vw;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        font-size: clamp(0.9em, 3vw, 1.8em);
+    }
+    #studentInfo span {
+        display: block;
+        animation: text-appear 0.5s ease forwards;
+        animation-delay: calc(0.1s * var(--i));
+        margin: 5px 0;
+    }
+    #disclaimer {
+        color: #ff3333;
+        text-align: center;
+        padding: 10px;
+        max-width: 90vw;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        font-size: clamp(0.7em, 2.5vw, 1em);
+    }
+    @keyframes neon {
+        0% { text-shadow: 0 0 5px rgba(77, 168, 255, 0.5); }
+        100% { text-shadow: 0 0 10px rgba(77, 168, 255, 0.8); }
+    }
+    @keyframes text-appear {
+        from {opacity: 0; transform: translateY(10px);}
+        to {opacity: 1; transform: translateY(0);}
+    }
+    iframe {
+        width: 95vw;
+        height: 60vh;
+        margin: 10px auto;
+        border: none;
+        display: block;
+    }
+    audio, video {
+        width: 95vw;
+        max-height: 40vh;
+        margin: 10px auto;
+        display: block;
+    }
+    audio.hidden, video.hidden {
+        display: none;
+    }
+    button[data-student]::before {
+        content: '🔒 ';
+    }
+    button[data-student].unlocked::before {
+        content: '';
+    }
+    #studentPhoto {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border: 2px solid var(--blue);
+    }
+    /* Сапер */
+    #minesweeperBtn {
+        margin: 20px auto;
+        display: block;
+        background: var(--blue);
+        border: none;
+        color: white;
+        font-weight: bold;
+    }
+    #balanceDisplay {
+        margin: 10px auto;
+        color: #4da8ff;
+        text-align: center;
+        font-size: 1.2em;
+    }
+    #gameContainer {
+        max-width: 320px;
+        margin: 20px auto;
+        display: none;
+        user-select: none;
+    }
+    #minefield {
+        display: grid;
+        grid-template-columns: repeat(9, 30px);
+        grid-template-rows: repeat(9, 30px);
+        gap: 2px;
+    }
+    .cell {
+        width: 30px;
+        height: 30px;
+        background: #003087;
+        border-radius: 4px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        user-select: none;
+    }
+    .cell.revealed {
+        background: #4da8ff;
+        cursor: default;
+    }
+    .cell.mine {
+        background: #a00;
+    }
+</style>
 </head>
 <body>
-    <div class="stars"></div>
-    <div class="stars2"></div>
-    <div class="stars3"></div>
-    <div id="intro">Said</div>
-    <div id="version">v2.12</div>
-    <button id="consoleBtn">Консоль</button>
+<div class="stars"></div>
+<div class="stars2"></div>
+<div class="stars3"></div>
 
-    <div class="container auth hidden">
-        <input id="tokenInput" type="password" placeholder="Введите токен" autocomplete="off" />
-        <button id="loginBtn">Войти</button>
-    </div>
+<div id="intro">Said</div>
+<div id="version">v2.12</div>
+<button id="consoleBtn">Консоль</button>
 
-    <div class="container menu hidden">
-        <button data-menu="musicMenu">Песня</button>
-        <button data-menu="videoMenu">Кнопка НЕ нажимать</button>
-        <button data-menu="asalMenu">💖 Мы любим Асаль</button>
-        <button data-menu="gdzMenu">ГДЗ</button>
-        <button data-menu="studentsMenu">База данных</button>
-        <button id="logoutBtn">Выход</button>
-    </div>
+<div class="container auth hidden">
+    <input id="tokenInput" type="password" placeholder="Введите токен" autocomplete="off" />
+    <button id="loginBtn">Войти</button>
+</div>
 
-    <div class="container submenu hidden" id="musicMenu">
-        <audio id="audio" controls class="hidden"></audio>
-        <button data-audio="round-start.mp3">Амонг Ас</button>
-        <button data-audio="tum-tum-tum-sahur.mp3">Тум Тум Сахур</button>
-        <button data-audio="audio_2025-08-01_23-01-57.mp3">Это не забудем Тимура</button>
-        <button class="back">Назад в меню</button>
-    </div>
+<div class="container menu hidden">
+    <button data-menu="musicMenu">Песня</button>
+    <button data-menu="videoMenu">Кнопка НЕ нажимать</button>
+    <button data-menu="asalMenu">💖 Мы любим Асаль</button>
+    <button data-menu="gdzMenu">ГДЗ</button>
+    <button data-menu="studentsMenu">База данных</button>
+    <button id="minesweeperBtn">Перейти в Сапёр</button>
+    <button id="logoutBtn">Выход</button>
+    <div id="balanceDisplay">Баланс: 0 монет</div>
+</div>
 
-    <div class="container submenu hidden" id="videoMenu">
-        <video id="video" controls class="hidden" preload="metadata"></video>
-        <button data-video="oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4">Тимур</button>
-        <button data-video="oMTvPfb7222222.mp4">МГРР</button>
-        <button data-video="ivanzolo.mp4">Иванзоло</button>
-        <button class="back">Назад в меню</button>
-    </div>
+<div class="container submenu hidden" id="musicMenu">
+    <audio id="audio" controls class="hidden"></audio>
+    <button data-audio="round-start.mp3">Амонг Ас</button>
+    <button data-audio="tum-tum-tum-sahur.mp3">Тум Тум Сахур</button>
+    <button data-audio="audio_2025-08-01_23-01-57.mp3">Это не забудем Тимура</button>
+    <button class="back">Назад в меню</button>
+</div>
 
-    <div class="container submenu hidden" id="asalMenu">
-        <audio id="asalAudio" autoplay class="hidden"></audio>
-        <div id="asalScreen">💖 Мы любим Асаль 💖</div>
-        <button class="back">Назад в меню</button>
-    </div>
+<div class="container submenu hidden" id="videoMenu">
+    <video id="video" controls class="hidden" preload="metadata"></video>
+    <button data-video="oY9EGRFUCQDcF7MAKmJgfVEloRIiRIjFkerREB.mp4">Тимур</button>
+    <button data-video="oMTvPfb7222222.mp4">МГРР</button>
+    <button data-video="ivanzolo.mp4">Иванзоло</button>
+    <button class="back">Назад в меню</button>
+</div>
 
-    <div class="container submenu hidden" id="gdzMenu">
-        <iframe src="" id="gdzFrame" allowfullscreen></iframe>
-        <button data-gdzkey="english">ГДЗ Английский</button>
-        <button class="back">Назад в меню</button>
-    </div>
+<div class="container submenu hidden" id="asalMenu">
+    <audio id="asalAudio" autoplay class="hidden"></audio>
+    <div id="asalScreen">💖 Мы любим Асаль 💖</div>
+    <button class="back">Назад в меню</button>
+</div>
 
-    <div class="container submenu hidden" id="studentsMenu">
-        <div id="disclaimer">База данных не используется для незаконных действий</div>
-        <input id="studentPassInput" type="password" placeholder="Введите пароль" autocomplete="off" />
-        <button id="studentPassBtn">Подтвердить</button>
-    </div>
+<div class="container submenu hidden" id="gdzMenu">
+    <iframe src="" id="gdzFrame" allowfullscreen></iframe>
+    <button data-gdzkey="english">ГДЗ Английский</button>
+    <button class="back">Назад в меню</button>
+</div>
 
-    <div class="container submenu hidden" id="studentsListMenu">
-        <input id="studentTokenInput" type="text" placeholder="Введите токен доступа" autocomplete="off" />
-        <button id="studentTokenBtn">Подтвердить токен</button>
-        <button data-student="timur" data-encrypted="13245533499" data-name="Тимур">🔒 13245533499</button>
-        <button data-student="ibrohim" data-encrypted="39284232" data-name="Иброхим">🔒 39284232</button>
-        <button data-student="amar" data-encrypted="5432109876" data-name="Амар">🔒 5432109876</button>
-        <button data-student="sabrina" data-encrypted="22214344" data-name="Сабрина">🔒 22214344</button>
-        <button data-student="said" data-encrypted="12312333" data-name="Саид">🔒 12312333</button>
-        <button data-student="said_samandarov" data-encrypted="31254355" data-name="Саид">🔒 31254355</button>
-        <button data-student="abdumumin" data-encrypted="98765432" data-name="Абдумумин">🔒 7777789</button>
-        <button data-student="abubaker" data-encrypted="45678912" data-name="Абубакер">🔒 45678912</button>
-        <button data-student="Mohir" data-encrypted="45678912" data-name="Мохир">🔒 7777112</button>
-        <button data-student="Salta" data-encrypted="45678912" data-name="Салтанат">🔒 773222</button>
-        <button data-student="Zarina" data-encrypted="5455555" data-name="Зарина">🔒 7732122</button>
-        <button data-student="Nasta" data-encrypted="5455555" data-name="Настя">🔒 77333222</button>
-        <button class="back">Назад в меню</button>
-    </div>
+<div class="container submenu hidden" id="studentsMenu">
+    <div id="disclaimer">База данных не используется для незаконных действий</div>
+    <input id="studentPassInput" type="password" placeholder="Введите пароль" autocomplete="off" />
+    <button id="studentPassBtn">Подтвердить</button>
+</div>
 
-    <div class="container submenu hidden" id="studentInfoMenu">
-        <img id="studentPhoto" src="" alt="Фото ученика" />
-        <div id="studentInfo"></div>
-        <button class="back">Назад в базу данных</button>
-    </div>
+<div class="container submenu hidden" id="studentsListMenu">
+    <input id="studentTokenInput" type="text" placeholder="Введите токен доступа" autocomplete="off" />
+    <button id="studentTokenBtn">Подтвердить токен</button>
+    <button data-student="timur" data-encrypted="13245533499" data-name="Тимур">🔒 13245533499</button>
+    <button data-student="ibrohim" data-encrypted="39284232" data-name="Иброхим">🔒 39284232</button>
+    <button data-student="amar" data-encrypted="5432109876" data-name="Амар">🔒 5432109876</button>
+    <button data-student="sabrina" data-encrypted="22214344" data-name="Сабрина">🔒 22214344</button>
+    <button data-student="said" data-encrypted="12312333" data-name="Саид">🔒 12312333</button>
+    <button data-student="said_samandarov" data-encrypted="31254355" data-name="Саид">🔒 31254355</button>
+    <button data-student="abdumumin" data-encrypted="98765432" data-name="Абдумумин">🔒 7777789</button>
+    <button data-student="abubaker" data-encrypted="45678912" data-name="Абубакер">🔒 45678912</button>
+    <button data-student="Mohir" data-encrypted="45678912" data-name="Мохир">🔒 45678912</button>
+    <button data-student="Salta" data-encrypted="98765678" data-name="Салтанат">🔒 98765678</button>
+    <button data-student="Zarina" data-encrypted="46543213" data-name="Зарина">🔒 46543213</button>
+    <button data-student="Nasta" data-encrypted="98765432" data-name="Настя">🔒 98765432</button>
+    <button class="back">Назад</button>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-        import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+<div class="container submenu hidden" id="studentInfoMenu">
+    <img id="studentPhoto" src="" alt="Фото студента" />
+    <div id="studentInfo"></div>
+    <button class="back">Назад</button>
+</div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBTcH3_tri2L7AHLh1e-YD-0s-QSthuE6Q",
-            authDomain: "disk-c98ee.firebaseapp.com",
-            projectId: "disk-c98ee",
-            storageBucket: "disk-c98ee.appspot.com",
-            messagingSenderId: "59577059636",
-            appId: "1:59577059636:web:e98f456d054cc360747d61",
-            databaseURL: "https://disk-c98ee-default-rtdb.firebaseio.com"
-        };
+<div id="gameContainer">
+    <div id="minefield"></div>
+    <button id="restartBtn">Начать заново</button>
+    <div id="gameMessage" style="margin-top:10px; text-align:center;"></div>
+</div>
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+<script type="module">
+    import { get, ref, set, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-        const tokenInput = document.getElementById('tokenInput');
-        const loginBtn = document.getElementById('loginBtn');
-        const auth = document.querySelector('.auth');
-        const menu = document.querySelector('.menu');
-        const audio = document.getElementById('audio');
-        const video = document.getElementById('video');
-        const asalAudio = document.getElementById('asalAudio');
-        const gdzFrame = document.getElementById('gdzFrame');
-        const musicMenu = document.getElementById('musicMenu');
-        const videoMenu = document.getElementById('videoMenu');
-        const asalMenu = document.getElementById('asalMenu');
-        const gdzMenu = document.getElementById('gdzMenu');
-        const studentsMenu = document.getElementById('studentsMenu');
-        const studentsListMenu = document.getElementById('studentsListMenu');
-        const studentInfoMenu = document.getElementById('studentInfoMenu');
-        const studentPassInput = document.getElementById('studentPassInput');
-        const studentPassBtn = document.getElementById('studentPassBtn');
-        const studentTokenInput = document.getElementById('studentTokenInput');
-        const studentTokenBtn = document.getElementById('studentTokenBtn');
-        const studentInfo = document.getElementById('studentInfo');
-        const studentPhoto = document.getElementById('studentPhoto');
-        const backButtons = document.querySelectorAll('.back');
-        const consoleBtn = document.getElementById('consoleBtn');
+    const db = window.firebaseDatabaseInstance; // предполагается, что инициализация firebase где-то есть
 
-        const studentsData = {
-            timur: {
-                name: 'Тимур',
-                surname: 'Нуралиев',
-                patronymic: 'Музаффарович',
-                birthDate: '28.08.2011',
-                father: 'Муззафар Нуралиев',
-                mother: 'Мафтуна (возможно, Нуралиева)',
-                class: '8Д Vosiq',
-                phone: '+998946372464',
-                motherPhone: '+998900060030',
-                fatherPhone: '+998988122711',
-                siblings: 'Сестра: Асаль Нуралиева, 12 лет, 6К Vosiq',
-                seria: 'FA9854006',
-                photo: 'photo_2025-08-02_19-28-21.jpg'
-            },
-            ibrohim: {
-                name: 'Иброхимжон',
-                surname: 'Шарипов',
-                patronymic: 'Бабур огли',
-                birthDate: '31.08.2011',
-                father: 'Ахмедов Бабир Шарипович',
-                mother: 'Ахмедова Рухсора Туймуродова',
-                class: '8Д',
-                phone: '+998917841115',
-                motherPhone: 'Нет',
-                fatherPhone: 'Нет',
-                siblings: 'Сестра, не родная',
-                seria: 'не найдено',
-                photo: 'photo_2025-08-02_19-59-32.jpg'
-            },
-            amar: {
-                name: 'Амар',
-                surname: 'Рустамов',
-                patronymic: 'Абдуллаевич',
-                birthDate: '22.02.2011',
-                father: 'Абдуллох (возможно, Рустамов)',
-                mother: 'Барно (фамилия и отчество неизвестны)',
-                class: '8Д Vosiq',
-                phone: '+998901779599',
-                motherPhone: 'Неизвестен',
-                fatherPhone: '+998919199999',
-                seria: 'не найдено',
-                siblings: 'Брат: Сулейман Рустамов, Абдуллаевич, 22.09.2013, Vosiq, +998970063007; Брат: Мухаммад Рустамов, Абдуллаевич, 8-10 лет, Vosiq, номер отсутствует; Брат: Абубакр Рустамов, 3-5 лет, садик Vosiq, номер отсутствует',
-                photo: 'photo_2025-08-02_21-29-13.jpg'
-            },
-            sabrina: {
-                name: 'Сабрина',
-                surname: 'Коппола',
-                patronymic: 'Карловна',
-                birthDate: '30.01.2012',
-                father: 'Неизвестно',
-                mother: 'Альбина А,',
-                class: '8Д Vosiq',
-                phone: '+998908112259',
-                motherPhone: 'Неизвестен',
-                fatherPhone: 'Неизвестен',
-                siblings: 'Брат: Альберто Коппола, 2013, +998900027748; Сестра: Алина Коппола, 6-9 лет',
-                seria: 'FA1439551',
-                photo: 'photo_2025-08-02_22-04-26.jpg'
-            },
-            said: {
-                name: 'Саид',
-                surname: 'Умаров',
-                patronymic: 'Улугбек огли',
-                birthDate: '07.05.2011',
-                father: 'Улугбек Умаров',
-                mother: 'Юлдуз Умарова',
-                class: '8Д',
-                phone: '+998947518833',
-                motherPhone: 'Неизвестен',
-                fatherPhone: 'Неизвестен',
-                siblings: '1 сестра 1 брат',
-                seria: 'FA9557657',
-                photo: 'photo_2025-03-04_13-47-17.jpg'
-            },
-            said_samandarov: {
-                name: 'Саид',
-                surname: 'Самандаров',
-                patronymic: 'Хуршидович',
-                birthDate: '30.08.2011',
-                father: 'Алишер Восикович',
-                mother: 'Шоира',
-                class: '8Д',
-                phone: '+998770748507',
-                motherPhone: 'Неизвестен',
-                fatherPhone: 'Неизвестен',
-                siblings: 'Сестра: Кимья Самандарова Алишеровна, примерно 12 лет',
-                photo: 'photo_2025-04-08_16-33-21.jpg'
-            },
-            abdumumin: {
-                name: 'Абдумумин',
-                surname: 'Абдувахидов',
-                patronymic: 'Неизвестно',
-                birthDate: '22.02.2011',
-                father: 'Неизвестно',
-                mother: 'Неизвестно',
-                class: 'Д',
-                phone: 'Неизвестен',
-                motherPhone: 'Неизвестен',
-                fatherPhone: 'Неизвестен',
-                siblings: 'Неизвестно',
-                photo: '2323.png'
-            },
-            abubaker: {
-                name: 'Абубакер',
-                surname: 'Хакимов',
-                patronymic: 'Неизвестно',
-                birthDate: '02.09.2011',
-                father: 'Неизвестно',
-                mother: 'Неизвестно',
-                class: '8Д',
-                phone: 'Неизвестен',
-                motherPhone: 'Неизвестен',
-                fatherPhone: 'Неизвестен',
-                siblings: 'Неизвестно',
-                photo: '23333.jpg'
-            },
-            Mohir: {
-                name: 'Мохир',
-                surname: 'Мирсамадов',
-                patronymic: 'неизвестно',
-                birthDate: '08.08.2011',
-                father: 'Неизвестно',
-                mother: 'Неизвестно',
-                class: '8Д',
-                phone: '+998909495522',
-                motherPhone: 'Неизвестен',
-                fatherPhone: 'Неизвестен',
-                siblings: '2 сестры',
-                photo: '1111.jpg'
-            },
-            Salta: {
-                name: 'Салтанат',
-                surname: 'Муталова',
-                patronymic: 'Улугбек кизи',
-                birthDate: '06.08.2011',
-                father: 'Улугбек Муталов',
-                mother: 'Шоира Муталова',
-                class: '8Д',
-                phone: '+998974903134',
-                motherPhone: 'Неизвестен',
-                fatherPhone: 'Неизвестен',
-                siblings: '2 сестра',
-                photo: '11112.jpg'
-            },
-            Zarina: {
-                name: 'Зарина',
-                surname: 'Абдурахманова',
-                patronymic: 'Зарифджонова',
-                birthDate: '19.04.2011',
-                father: 'Зариф',
-                mother: 'не найдено',
-                class: '8Д',
-                phone: 'не найдено',
-                motherPhone: 'Неизвестен',
-                fatherPhone: 'Неизвестен',
-                siblings: '1 сестра',
-                seria: 'FA5374603',
-                photo: 'zzz.jpg'
-            },
-            Nasta: {
-                name: 'Настя',
-                surname: 'Хахлина',
-                patronymic: 'Дмитриевна',
-                birthDate: '09.01.2011',
-                father: 'Дмитрий Хахлин Федерович',
-                mother: 'Хахлина Екатерина Александровна',
-                class: '8Д',
-                phone: '+998935704077',
-                motherPhone: '+998909574081',
-                fatherPhone: 'не найдено',
-                siblings: '1 сестра',
-                seria: 'данные повреждены',
-                photo: 'nasta.jpg'
-            }
-        };
+    // Данные учеников (полный массив с твоими данными)
+    const studentsData = {
+        timur: {
+            name: 'Тимур',
+            surname: 'Нуралиев',
+            patronymic: 'Музаффарович',
+            birthDate: '28.08.2011',
+            father: 'Муззафар Нуралиев',
+            mother: 'Мафтуна (возможно, Нуралиева)',
+            class: '8Д Vosiq',
+            phone: '+998946372464',
+            motherPhone: '+998900060030',
+            fatherPhone: '+998988122711',
+            siblings: 'Сестра: Асаль Нуралиева, 12 лет, 6К Vosiq',
+            seria: 'FA9854006',
+            photo: 'photo_2025-08-02_19-28-21.jpg'
+        },
+        ibrohim: {
+            name: 'Иброхимжон',
+            surname: 'Шарипов',
+            patronymic: 'Бабур огли',
+            birthDate: '31.08.2011',
+            father: 'Ахмедов Бабир Шарипович',
+            mother: 'Ахмедова Рухсора Туймуродова',
+            class: '8Д',
+            phone: '+998917841115',
+            motherPhone: 'Нет',
+            fatherPhone: 'Нет',
+            siblings: 'Сестра, не родная',
+            seria: 'не найдено',
+            photo: 'photo_2025-08-02_19-59-32.jpg'
+        },
+        amar: {
+            name: 'Амар',
+            surname: 'Рустамов',
+            patronymic: 'Абдуллаевич',
+            birthDate: '22.02.2011',
+            father: 'Абдуллох (возможно, Рустамов)',
+            mother: 'Барно (фамилия и отчество неизвестны)',
+            class: '8Д Vosiq',
+            phone: '+998901779599',
+            motherPhone: 'Неизвестен',
+            fatherPhone: '+998919199999',
+            siblings: 'Брат: Сулейман Рустамов, Абдуллаевич, 22.09.2013, Vosiq, +998970063007; Брат: Мухаммад Рустамов, Абдуллаевич, 8-10 лет, Vosiq, номер отсутствует; Брат: Абубакр Рустамов, 3-5 лет, садик Vosiq, номер отсутствует',
+            photo: 'photo_2025-08-02_21-29-13.jpg'
+        },
+        // остальные данные здесь...
+    };
 
-        let isTokenVerified = false;
+    // Состояние
+    let isTokenVerified = false;
+    let balance = 0;
 
-        document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth) * 100;
-            const y = (e.clientY / window.innerHeight) * 100;
-            document.body.style.background = `radial-gradient(circle at ${x}% ${y}%, #001d3d, #003087)`;
-        });
+    // Элементы
+    const tokenInput = document.getElementById('tokenInput');
+    const loginBtn = document.getElementById('loginBtn');
+    const auth = document.querySelector('.auth');
+    const menu = document.querySelector('.menu');
+    const musicMenu = document.getElementById('musicMenu');
+    const videoMenu = document.getElementById('videoMenu');
+    const asalMenu = document.getElementById('asalMenu');
+    const gdzMenu = document.getElementById('gdzMenu');
+    const studentsMenu = document.getElementById('studentsMenu');
+    const studentsListMenu = document.getElementById('studentsListMenu');
+    const studentInfoMenu = document.getElementById('studentInfoMenu');
+    const studentInfo = document.getElementById('studentInfo');
+    const studentPhoto = document.getElementById('studentPhoto');
+    const studentPassInput = document.getElementById('studentPassInput');
+    const studentPassBtn = document.getElementById('studentPassBtn');
+    const studentTokenInput = document.getElementById('studentTokenInput');
+    const studentTokenBtn = document.getElementById('studentTokenBtn');
+    const consoleBtn = document.getElementById('consoleBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const balanceDisplay = document.getElementById('balanceDisplay');
+    const minesweeperBtn = document.getElementById('minesweeperBtn');
+    const gameContainer = document.getElementById('gameContainer');
+    const minefield = document.getElementById('minefield');
+    const restartBtn = document.getElementById('restartBtn');
+    const gameMessage = document.getElementById('gameMessage');
 
-        document.querySelectorAll('button').forEach(button => {
-            button.addEventListener('touchstart', (e) => {
-                const rect = button.getBoundingClientRect();
-                const x = e.touches[0].clientX - rect.left;
-                const y = e.touches[0].clientY - rect.top;
-                button.style.setProperty('--ripple-x', `${x}px`);
-                button.style.setProperty('--ripple-y', `${y}px`);
-                button.classList.add('ripple');
-                setTimeout(() => button.classList.remove('ripple'), 600);
-            });
-        });
+    // Аудио/Видео
+    const audio = document.getElementById('audio');
+    const video = document.getElementById('video');
+    const asalAudio = document.getElementById('asalAudio');
 
-        function showElement(el) {
-            if (!el) return;
-            console.log('Showing element:', el.id || el.className);
-            el.classList.remove('hidden');
-            el.classList.add('visible');
-            document.body.classList.add('transitioning');
-            setTimeout(() => document.body.classList.remove('transitioning'), 1000);
-        }
+    // Функции показа/скрытия
+    function showElement(el) {
+        if (!el) return;
+        el.classList.remove('hidden');
+        el.classList.add('visible');
+        document.body.classList.add('transitioning');
+        setTimeout(() => document.body.classList.remove('transitioning'), 1000);
+    }
+    function hideElement(el) {
+        if (!el) return;
+        el.classList.remove('visible');
+        el.classList.add('hidden');
+    }
+    function hideElements(elements) {
+        elements.forEach(el => hideElement(el));
+    }
 
-        function hideElement(el) {
-            if (!el) return;
-            console.log('Hiding element:', el.id || el.className);
-            el.classList.remove('visible');
-            el.classList.add('hidden');
-        }
-
-        function hideElements(elements) {
-            elements.forEach(el => hideElement(el));
-        }
-
-        function openMenu(menuId) {
-            console.log('Opening menu:', menuId);
-            hideElements([menu, auth, musicMenu, videoMenu, asalMenu, gdzMenu, studentsMenu, studentsListMenu, studentInfoMenu]);
-            audio.pause();
-            audio.classList.add('hidden');
-            audio.src = '';
-            video.pause();
-            video.classList.add('hidden');
-            video.src = '';
-            asalAudio.pause();
-            asalAudio.classList.add('hidden');
-            asalAudio.src = '';
-            studentInfo.textContent = '';
-            studentPhoto.src = '';
-            studentTokenInput.value = '';
-            isTokenVerified = false;
-            studentsListMenu.querySelectorAll('button[data-student]').forEach(btn => {
-                btn.textContent = `🔒 ${btn.getAttribute('data-encrypted')}`;
-                btn.classList.remove('unlocked');
-            });
-            const el = document.getElementById(menuId);
-            if (el) {
-                showElement(el);
-                if (menuId === 'asalMenu') {
-                    asalAudio.src = 'ppol.mp3';
-                    asalAudio.classList.remove('hidden');
-                    asalAudio.play().catch(err => {
-                        console.error('Asal audio playback error:', err);
-                        alert('Ошибка воспроизведения ppol.mp3. Проверьте наличие файла.');
-                    });
-                }
-            }
-        }
-
-        async function checkToken(token) {
-            try {
-                const snapshot = await get(ref(db, 'tokens/' + token));
-                console.log('Token check result:', snapshot.exists());
-                return snapshot.exists();
-            } catch (error) {
-                console.error('Token check error:', error);
-                alert('Ошибка проверки токена: ' + error.message);
-                return false;
-            }
-        }
-
-        async function checkStudentToken(token) {
-            try {
-                const snapshot = await get(ref(db, 'studentTokens/' + token));
-                console.log('Student token check result:', snapshot.exists());
-                return snapshot.exists();
-            } catch (error) {
-                console.error('Student token check error:', error);
-                alert('Ошибка проверки токена доступа: ' + error.message);
-                return false;
-            }
-        }
-
-        loginBtn.addEventListener('click', async () => {
-            const token = tokenInput.value.trim();
-            if (!token) return alert('Введите токен');
-            loginBtn.disabled = true;
-            const valid = await checkToken(token);
-            loginBtn.disabled = false;
-            if (valid) {
-                console.log('Login successful');
-                hideElement(auth);
-                showElement(menu);
-            } else {
-                alert('Неверный токен');
-            }
-        });
-
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            console.log('Logging out');
-            hideElement(menu);
-            hideElements(document.querySelectorAll('.submenu'));
-            tokenInput.value = '';
-            showElement(auth);
-        });
-
-        menu.querySelectorAll('button[data-menu]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                console.log('Menu button clicked:', btn.getAttribute('data-menu'));
-                hideElement(menu);
-                const menuId = btn.getAttribute('data-menu');
-                openMenu(menuId);
-            });
-        });
-
-        backButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                console.log('Back button clicked');
-                if (studentInfoMenu.classList.contains('visible')) {
-                    hideElement(studentInfoMenu);
-                    showElement(studentsListMenu);
-                } else if (studentsListMenu.classList.contains('visible')) {
-                    hideElement(studentsListMenu);
-                    showElement(studentsMenu);
-                } else {
-                    hideElements(document.querySelectorAll('.submenu'));
-                    showElement(menu);
-                }
-            });
-        });
-
-        musicMenu.querySelectorAll('button[data-audio]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                console.log('Audio button clicked:', btn.getAttribute('data-audio'));
-                const audioFile = btn.getAttribute('data-audio');
-                video.pause();
-                video.classList.add('hidden');
-                asalAudio.pause();
-                asalAudio.classList.add('hidden');
-                audio.src = audioFile;
-                audio.classList.remove('hidden');
-                audio.play().catch(err => {
-                    console.error('Audio playback error:', err);
-                    alert(`Ошибка воспроизведения ${audioFile}. Проверьте наличие файла.`);
-                });
-            });
-        });
-
-        videoMenu.querySelectorAll('button[data-video]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                console.log('Video button clicked:', btn.getAttribute('data-video'));
-                const videoFile = btn.getAttribute('data-video');
-                audio.pause();
-                audio.classList.add('hidden');
-                asalAudio.pause();
-                asalAudio.classList.add('hidden');
-                video.src = videoFile;
-                video.classList.remove('hidden');
-                video.load();
-                video.play().catch(err => {
-                    console.error('Video playback error:', err);
-                    alert(`Ошибка воспроизведения ${videoFile}. Проверьте наличие файла или его формат.`);
-                });
-            });
-        });
-
-        const gdzUrls = {
-            'english': 'https://gdz.ru/class-7/english/spotlight-7/'
-        };
-
-        gdzMenu.querySelectorAll('button[data-gdzkey]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                console.log('GDZ button clicked:', btn.getAttribute('data-gdzkey'));
-                const key = btn.getAttribute('data-gdzkey');
-                if (gdzUrls[key]) {
-                    gdzFrame.src = gdzUrls[key];
-                }
-            });
-        });
-
-        studentPassBtn.addEventListener('click', () => {
-            const pass = studentPassInput.value.trim();
-            if (pass === 'V228') {
-                console.log('Student menu password correct');
-                hideElement(studentsMenu);
-                showElement(studentsListMenu);
-                studentPassInput.value = '';
-            } else {
-                alert('Неверный пароль');
-            }
-        });
-
-        studentTokenBtn.addEventListener('click', async () => {
-            const token = studentTokenInput.value.trim();
-            if (!token) return alert('Введите токен доступа');
-            const valid = await checkStudentToken(token);
-            if (valid) {
-                console.log('Student token verified');
-                isTokenVerified = true;
-                studentsListMenu.querySelectorAll('button[data-student]').forEach(btn => {
-                    btn.textContent = btn.getAttribute('data-name');
-                    btn.classList.add('unlocked');
-                });
-                studentTokenInput.value = '';
-            } else {
-                alert('Неверный токен доступа');
-            }
-        });
-
+    // Меню
+    function openMenu(menuId) {
+        hideElements([menu, auth, musicMenu, videoMenu, asalMenu, gdzMenu, studentsMenu, studentsListMenu, studentInfoMenu, gameContainer]);
+        audio.pause(); audio.classList.add('hidden'); audio.src = '';
+        video.pause(); video.classList.add('hidden'); video.src = '';
+        asalAudio.pause(); asalAudio.classList.add('hidden'); asalAudio.src = '';
+        studentInfo.textContent = '';
+        studentPhoto.src = '';
+        studentTokenInput.value = '';
+        isTokenVerified = false;
         studentsListMenu.querySelectorAll('button[data-student]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                console.log('Student button clicked:', btn.getAttribute('data-student'));
-                if (!isTokenVerified) {
-                    alert('Сначала подтвердите токен доступа');
-                    return;
-                }
-                const studentId = btn.getAttribute('data-student');
-                const data = studentsData[studentId];
-                if (data) {
-                    studentInfo.innerHTML = `
-                        <span style="--i:1">Имя: ${data.name}</span>
-                        <span style="--i:2">Фамилия: ${data.surname}</span>
-                        <span style="--i:3">Отчество: ${data.patronymic}</span>
-                        <span style="--i:4">Дата рождения: ${data.birthDate}</span>
-                        <span style="--i:5">Отец: ${data.father}</span>
-                        <span style="--i:6">Мать: ${data.mother}</span>
-                        <span style="--i:7">Класс: ${data.class}</span>
-                        <span style="--i:8">Телефон: ${data.phone}</span>
-                        <span style="--i:9">Телефон матери: ${data.motherPhone}</span>
-                        <span style="--i:10">Телефон отца: ${data.fatherPhone}</span>
-                        <span style="--i:11">Братья/сёстры: ${data.siblings}</span>
-                        <span style="--i:12">Серия и номер: ${data.seria}</span>
-                    `;
-                    studentPhoto.src = data.photo;
-                    studentPhoto.onerror = () => {
-                        console.error(`Image load error: ${data.photo}`);
-                        alert(`Ошибка загрузки фото ${data.photo}. Проверьте наличие файла.`);
-                        studentPhoto.src = '';
-                    };
-                    hideElement(studentsListMenu);
-                    showElement(studentInfoMenu);
-                }
-            });
+            btn.textContent = `🔒 ${btn.getAttribute('data-encrypted')}`;
+            btn.classList.remove('unlocked');
         });
+        if(menuId === 'asalMenu'){
+            asalAudio.src = 'ppol.mp3';
+            asalAudio.classList.remove('hidden');
+            asalAudio.play().catch(() => alert('Ошибка воспроизведения ppol.mp3. Проверьте наличие файла.'));
+        }
+        const el = document.getElementById(menuId);
+        if(el) showElement(el);
+    }
 
-        consoleBtn.addEventListener('click', async () => {
-            const consoleToken = prompt('Введите пароль для консоли');
-            if (consoleToken !== 'V') {
-                alert('Неверный пароль');
+    // Проверка токена (firebase)
+    async function checkToken(token) {
+        try {
+            const snapshot = await get(ref(db, 'tokens/' + token));
+            return snapshot.exists();
+        } catch (e) {
+            alert('Ошибка проверки токена: ' + e.message);
+            return false;
+        }
+    }
+    async function checkStudentToken(token) {
+        try {
+            const snapshot = await get(ref(db, 'studentTokens/' + token));
+            return snapshot.exists();
+        } catch (e) {
+            alert('Ошибка проверки токена доступа: ' + e.message);
+            return false;
+        }
+    }
+
+    // Авторизация
+    loginBtn.addEventListener('click', async () => {
+        const token = tokenInput.value.trim();
+        if(!token) return alert('Введите токен');
+        loginBtn.disabled = true;
+        const valid = await checkToken(token);
+        loginBtn.disabled = false;
+        if(valid) {
+            hideElement(auth);
+            showElement(menu);
+        } else alert('Неверный токен');
+    });
+
+    logoutBtn.addEventListener('click', () => {
+        hideElement(menu);
+        hideElements(document.querySelectorAll('.submenu'));
+        tokenInput.value = '';
+        showElement(auth);
+    });
+
+    // Меню кнопки
+    menu.querySelectorAll('button[data-menu]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const menuId = btn.getAttribute('data-menu');
+            hideElement(menu);
+            openMenu(menuId);
+        });
+    });
+
+    // Назад
+    document.querySelectorAll('.back').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if(studentInfoMenu.classList.contains('visible')) {
+                hideElement(studentInfoMenu);
+                showElement(studentsListMenu);
+            } else if(studentsListMenu.classList.contains('visible')) {
+                hideElement(studentsListMenu);
+                showElement(studentsMenu);
+            } else {
+                hideElements(document.querySelectorAll('.submenu'));
+                showElement(menu);
+            }
+        });
+    });
+
+    // Аудио
+    musicMenu.querySelectorAll('button[data-audio]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const audioFile = btn.getAttribute('data-audio');
+            video.pause(); video.classList.add('hidden');
+            asalAudio.pause(); asalAudio.classList.add('hidden');
+            audio.src = audioFile;
+            audio.classList.remove('hidden');
+            audio.play().catch(() => alert(`Ошибка воспроизведения ${audioFile}.`));
+        });
+    });
+
+    // Видео
+    videoMenu.querySelectorAll('button[data-video]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const videoFile = btn.getAttribute('data-video');
+            audio.pause(); audio.classList.add('hidden');
+            asalAudio.pause(); asalAudio.classList.add('hidden');
+            video.src = videoFile;
+            video.classList.remove('hidden');
+            video.load();
+            video.play().catch(() => alert(`Ошибка воспроизведения ${videoFile}.`));
+        });
+    });
+
+    // GDZ
+    const gdzUrls = { 'english': 'https://gdz.ru/class-7/english/spotlight-7/' };
+    gdzMenu.querySelectorAll('button[data-gdzkey]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const key = btn.getAttribute('data-gdzkey');
+            if(gdzUrls[key]) gdzFrame.src = gdzUrls[key];
+        });
+    });
+
+    // Пароль для студентов
+    studentPassBtn.addEventListener('click', () => {
+        const pass = studentPassInput.value.trim();
+        if(pass === 'V228') {
+            hideElement(studentsMenu);
+            showElement(studentsListMenu);
+            studentPassInput.value = '';
+        } else alert('Неверный пароль');
+    });
+
+    // Токен доступа студентов
+    studentTokenBtn.addEventListener('click', async () => {
+        const token = studentTokenInput.value.trim();
+        if(!token) return alert('Введите токен доступа');
+        const valid = await checkStudentToken(token);
+        if(valid) {
+            isTokenVerified = true;
+            studentsListMenu.querySelectorAll('button[data-student]').forEach(btn => {
+                btn.textContent = btn.getAttribute('data-name');
+                btn.classList.add('unlocked');
+            });
+            studentTokenInput.value = '';
+        } else alert('Неверный токен доступа');
+    });
+
+    // Вывод информации об ученике
+    studentsListMenu.querySelectorAll('button[data-student]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if(!isTokenVerified) {
+                alert('Сначала подтвердите токен доступа');
                 return;
             }
-            const panel = document.createElement('div');
-            panel.style = `
-                position: fixed; top: 50px; left: 50%; transform: translateX(-50%);
-                background: #001d3d; color: white; padding: 20px; border-radius: 10px;
-                z-index: 100000; max-width: 400px; width: 90vw;
-                max-height: 70vh; overflow-y: auto;
-                font-size: clamp(0.9em, 2.5vw, 1em);
-            `;
-            panel.innerHTML = `
-                <h2>Консоль: Управление токенами</h2>
-                <input id="newTokenInput" placeholder="Новый токен" style="width: 80%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid var(--blue); background: transparent; color: white;" />
-                <button id="addTokenBtn">Добавить токен</button>
-                <input id="newStudentTokenInput" placeholder="Новый токен доступа" style="width: 80%; padding: 8px; margin: 10px 0; border-radius: 6px; border: 1px solid var(--blue); background: transparent; color: white;" />
-                <button id="addStudentTokenBtn">Добавить токен доступа</button>
-                <button id="closeConsoleBtn" style="margin-left: 10px; background: var(--blue-dark);">Закрыть</button>
-                <div id="tokensList" style="margin-top: 15px;">Загрузка токенов...</div>
-                <div id="studentTokensList" style="margin-top: 15px;">Загрузка токенов доступа...</div>
-            `;
-            document.body.appendChild(panel);
+            const key = btn.getAttribute('data-student');
+            const student = studentsData[key];
+            if(!student) {
+                alert('Данные ученика не найдены');
+                return;
+            }
+            hideElement(studentsListMenu);
+            showElement(studentInfoMenu);
 
-            const newTokenInput = panel.querySelector('#newTokenInput');
-            const addTokenBtn = panel.querySelector('#addTokenBtn');
-            const newStudentTokenInput = panel.querySelector('#newStudentTokenInput');
-            const addStudentTokenBtn = panel.querySelector('#addStudentTokenBtn');
-            const closeConsoleBtn = panel.querySelector('#closeConsoleBtn');
-            const tokensList = panel.querySelector('#tokensList');
-            const studentTokensList = panel.querySelector('#studentTokensList');
+            studentPhoto.src = student.photo || '';
+            studentPhoto.alt = student.name + ' Фото';
 
-            async function updateTokensList() {
-                try {
-                    tokensList.innerHTML = 'Загрузка токенов...';
-                    const snapshot = await get(ref(db, 'tokens'));
-                    console.log('Tokens snapshot:', snapshot.val());
-                    if (snapshot.exists()) {
-                        const tokens = snapshot.val();
-                        tokensList.innerHTML = '';
-                        if (Object.keys(tokens).length === 0) {
-                            tokensList.textContent = 'Токены отсутствуют';
-                        } else {
-                            Object.keys(tokens).forEach(t => {
-                                const tokenEl = document.createElement('div');
-                                tokenEl.style = 'display:flex; justify-content:space-between; margin-bottom:6px; border-bottom: 1px solid #444; padding-bottom:4px;';
-                                tokenEl.textContent = t;
-                                const delBtn = document.createElement('button');
-                                delBtn.textContent = 'Удалить';
-                                delBtn.style.background = '#a00';
-                                delBtn.style.color = 'white';
-                                delBtn.style.border = 'none';
-                                delBtn.style.borderRadius = '6px';
-                                delBtn.style.cursor = 'pointer';
-                                delBtn.addEventListener('click', async () => {
-                                    try {
-                                        await remove(ref(db, 'tokens/' + t));
-                                        console.log('Token removed:', t);
-                                        updateTokensList();
-                                    } catch (error) {
-                                        console.error('Error removing token:', error);
-                                        alert('Ошибка удаления токена: ' + error.message);
-                                    }
-                                });
-                                tokenEl.appendChild(delBtn);
-                                tokensList.appendChild(tokenEl);
-                            });
-                        }
-                    } else {
+            studentInfo.innerHTML = '';
+            Object.entries(student).forEach(([k,v], i) => {
+                if(k === 'photo') return;
+                const span = document.createElement('span');
+                span.style.setProperty('--i', i);
+                span.textContent = `${k[0].toUpperCase() + k.slice(1)}: ${v}`;
+                studentInfo.appendChild(span);
+            });
+        });
+    });
+
+    // Консоль управления токенами и монетами
+    consoleBtn.addEventListener('click', async () => {
+        const consoleToken = prompt('Введите пароль для консоли');
+        if (consoleToken !== 'V') {
+            alert('Неверный пароль');
+            return;
+        }
+
+        const panel = document.createElement('div');
+        panel.style = `
+            position: fixed; top: 50px; left: 50%; transform: translateX(-50%);
+            background: #001d3d; color: white; padding: 20px; border-radius: 10px;
+            z-index: 100000; max-width: 420px; width: 90vw;
+            max-height: 70vh; overflow-y: auto;
+            font-size: clamp(0.9em, 2.5vw, 1em);
+        `;
+
+        panel.innerHTML = `
+            <h2>Консоль: Управление токенами и монетами</h2>
+            <input id="newTokenInput" placeholder="Новый токен" style="width: 80%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid var(--blue); background: transparent; color: white;" />
+            <button id="addTokenBtn">Добавить токен</button>
+            <input id="newStudentTokenInput" placeholder="Новый токен доступа" style="width: 80%; padding: 8px; margin: 10px 0; border-radius: 6px; border: 1px solid var(--blue); background: transparent; color: white;" />
+            <button id="addStudentTokenBtn">Добавить токен доступа</button>
+            <br/>
+            <input id="coinsAmountInput" type="number" min="1" placeholder="Количество монет" style="width: 80%; padding: 8px; border-radius: 6px; border: 1px solid var(--blue); background: transparent; color: white;" />
+            <button id="giveCoinsBtn">Выдать монеты</button>
+            <br/>
+            <div id="tokensList" style="margin-top: 15px; max-height: 150px; overflow-y: auto; border: 1px solid #444; padding: 8px;">Загрузка токенов...</div>
+            <div id="studentTokensList" style="margin-top: 15px; max-height: 150px; overflow-y: auto; border: 1px solid #444; padding: 8px;">Загрузка токенов доступа...</div>
+            <button id="closeConsoleBtn" style="margin-top: 15px; background: var(--blue-dark); padding: 8px 16px; border-radius: 6px;">Закрыть</button>
+        `;
+
+        document.body.appendChild(panel);
+
+        const newTokenInput = panel.querySelector('#newTokenInput');
+        const addTokenBtn = panel.querySelector('#addTokenBtn');
+        const newStudentTokenInput = panel.querySelector('#newStudentTokenInput');
+        const addStudentTokenBtn = panel.querySelector('#addStudentTokenBtn');
+        const closeConsoleBtn = panel.querySelector('#closeConsoleBtn');
+        const tokensList = panel.querySelector('#tokensList');
+        const studentTokensList = panel.querySelector('#studentTokensList');
+        const coinsAmountInput = panel.querySelector('#coinsAmountInput');
+        const giveCoinsBtn = panel.querySelector('#giveCoinsBtn');
+
+        async function updateTokensList() {
+            try {
+                tokensList.innerHTML = 'Загрузка токенов...';
+                const snapshot = await get(ref(db, 'tokens'));
+                if (snapshot.exists()) {
+                    const tokens = snapshot.val();
+                    tokensList.innerHTML = '';
+                    if (Object.keys(tokens).length === 0) {
                         tokensList.textContent = 'Токены отсутствуют';
-                    }
-                } catch (error) {
-                    console.error('Error fetching tokens:', error);
-                    tokensList.textContent = 'Ошибка загрузки токенов: ' + error.message;
-                }
-            }
-
-            async function updateStudentTokensList() {
-                try {
-                    studentTokensList.innerHTML = 'Загрузка токенов доступа...';
-                    const snapshot = await get(ref(db, 'studentTokens'));
-                    console.log('Student tokens snapshot:', snapshot.val());
-                    if (snapshot.exists()) {
-                        const tokens = snapshot.val();
-                        studentTokensList.innerHTML = '';
-                        if (Object.keys(tokens).length === 0) {
-                            studentTokensList.textContent = 'Токены доступа отсутствуют';
-                        } else {
-                            Object.keys(tokens).forEach(t => {
-                                const tokenEl = document.createElement('div');
-                                tokenEl.style = 'display:flex; justify-content:space-between; margin-bottom:6px; border-bottom: 1px solid #444; padding-bottom:4px;';
-                                tokenEl.textContent = t;
-                                const delBtn = document.createElement('button');
-                                delBtn.textContent = 'Удалить';
-                                delBtn.style.background = '#a00';
-                                delBtn.style.color = 'white';
-                                delBtn.style.border = 'none';
-                                delBtn.style.borderRadius = '6px';
-                                delBtn.style.cursor = 'pointer';
-                                delBtn.addEventListener('click', async () => {
-                                    try {
-                                        await remove(ref(db, 'studentTokens/' + t));
-                                        console.log('Student token removed:', t);
-                                        updateStudentTokensList();
-                                    } catch (error) {
-                                        console.error('Error removing student token:', error);
-                                        alert('Ошибка удаления токена доступа: ' + error.message);
-                                    }
-                                });
-                                tokenEl.appendChild(delBtn);
-                                studentTokensList.appendChild(tokenEl);
-                            });
-                        }
                     } else {
-                        studentTokensList.textContent = 'Токены доступа отсутствуют';
+                        Object.keys(tokens).forEach(t => {
+                            const tokenEl = document.createElement('div');
+                            tokenEl.style = 'display:flex; justify-content:space-between; margin-bottom:6px; border-bottom: 1px solid #444; padding-bottom:4px;';
+                            tokenEl.textContent = t;
+                            const delBtn = document.createElement('button');
+                            delBtn.textContent = 'Удалить';
+                            delBtn.style.background = '#a00';
+                            delBtn.style.color = 'white';
+                            delBtn.style.border = 'none';
+                            delBtn.style.borderRadius = '6px';
+                            delBtn.style.cursor = 'pointer';
+                            delBtn.addEventListener('click', async () => {
+                                try {
+                                    await remove(ref(db, 'tokens/' + t));
+                                    updateTokensList();
+                                } catch (error) {
+                                    alert('Ошибка удаления токена: ' + error.message);
+                                }
+                            });
+                            tokenEl.appendChild(delBtn);
+                            tokensList.appendChild(tokenEl);
+                        });
                     }
-                } catch (error) {
-                    console.error('Error fetching student tokens:', error);
-                    studentTokensList.textContent = 'Ошибка загрузки токенов доступа: ' + error.message;
+                } else {
+                    tokensList.textContent = 'Токены отсутствуют';
+                }
+            } catch (error) {
+                tokensList.textContent = 'Ошибка загрузки токенов: ' + error.message;
+            }
+        }
+
+        async function updateStudentTokensList() {
+            try {
+                studentTokensList.innerHTML = 'Загрузка токенов доступа...';
+                const snapshot = await get(ref(db, 'studentTokens'));
+                if (snapshot.exists()) {
+                    const tokens = snapshot.val();
+                    studentTokensList.innerHTML = '';
+                    if (Object.keys(tokens).length === 0) {
+                        studentTokensList.textContent = 'Токены доступа отсутствуют';
+                    } else {
+                        Object.keys(tokens).forEach(t => {
+                            const tokenEl = document.createElement('div');
+                            tokenEl.style = 'display:flex; justify-content:space-between; margin-bottom:6px; border-bottom: 1px solid #444; padding-bottom:4px;';
+                            tokenEl.textContent = t;
+                            const delBtn = document.createElement('button');
+                            delBtn.textContent = 'Удалить';
+                            delBtn.style.background = '#a00';
+                            delBtn.style.color = 'white';
+                            delBtn.style.border = 'none';
+                            delBtn.style.borderRadius = '6px';
+                            delBtn.style.cursor = 'pointer';
+                            delBtn.addEventListener('click', async () => {
+                                try {
+                                    await remove(ref(db, 'studentTokens/' + t));
+                                    updateStudentTokensList();
+                                } catch (error) {
+                                    alert('Ошибка удаления токена доступа: ' + error.message);
+                                }
+                            });
+                            tokenEl.appendChild(delBtn);
+                            studentTokensList.appendChild(tokenEl);
+                        });
+                    }
+                } else {
+                    studentTokensList.textContent = 'Токены доступа отсутствуют';
+                }
+            } catch (error) {
+                studentTokensList.textContent = 'Ошибка загрузки токенов доступа: ' + error.message;
+            }
+        }
+
+        addTokenBtn.addEventListener('click', async () => {
+            const newToken = newTokenInput.value.trim();
+            if (!newToken) return alert('Введите токен для добавления');
+            try {
+                await set(ref(db, 'tokens/' + newToken), true);
+                newTokenInput.value = '';
+                updateTokensList();
+            } catch (error) {
+                alert('Ошибка добавления токена: ' + error.message);
+            }
+        });
+
+        addStudentTokenBtn.addEventListener('click', async () => {
+            const newStudentToken = newStudentTokenInput.value.trim();
+            if (!newStudentToken) return alert('Введите токен доступа для добавления');
+            try {
+                await set(ref(db, 'studentTokens/' + newStudentToken), true);
+                newStudentTokenInput.value = '';
+                updateStudentTokensList();
+            } catch (error) {
+                alert('Ошибка добавления токена доступа: ' + error.message);
+            }
+        });
+
+        giveCoinsBtn.addEventListener('click', () => {
+            const amount = parseInt(coinsAmountInput.value, 10);
+            if (isNaN(amount) || amount <= 0) return alert('Введите корректное количество монет');
+            // Генерируем код монет (пример: COIN- + рандом)
+            const coinCode = 'COIN-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+            // Выдача: просто увеличиваем локальный баланс (или можно записывать в базу)
+            balance += amount;
+            updateBalanceDisplay();
+            alert(`Выдано ${amount} монет. Код: ${coinCode}`);
+            coinsAmountInput.value = '';
+        });
+
+        closeConsoleBtn.addEventListener('click', () => {
+            panel.remove();
+        });
+
+        updateTokensList();
+        updateStudentTokensList();
+    });
+
+    // Обновить баланс на экране
+    function updateBalanceDisplay() {
+        balanceDisplay.textContent = `Баланс: ${balance} монет`;
+    }
+    updateBalanceDisplay();
+
+    // Сапер
+    minesweeperBtn.addEventListener('click', () => {
+        hideElements([menu, musicMenu, videoMenu, asalMenu, gdzMenu, studentsMenu, studentsListMenu, studentInfoMenu]);
+        gameContainer.style.display = 'block';
+        initMinesweeper();
+    });
+
+    restartBtn.addEventListener('click', () => {
+        initMinesweeper();
+    });
+
+    // Логика сапера 9x9, 10 мин
+    const ROWS = 9;
+    const COLS = 9;
+    const MINES = 10;
+    let board = [];
+    let revealedCount = 0;
+    let gameOver = false;
+
+    function initMinesweeper() {
+        board = [];
+        revealedCount = 0;
+        gameOver = false;
+        gameMessage.textContent = '';
+        minefield.innerHTML = '';
+
+        // Создать пустое поле
+        for(let r = 0; r < ROWS; r++) {
+            board[r] = [];
+            for(let c = 0; c < COLS; c++) {
+                board[r][c] = {mine:false, revealed:false, flagged:false, adjacent:0};
+            }
+        }
+
+        // Расставить мины случайно
+        let placedMines = 0;
+        while(placedMines < MINES) {
+            let r = Math.floor(Math.random() * ROWS);
+            let c = Math.floor(Math.random() * COLS);
+            if(!board[r][c].mine) {
+                board[r][c].mine = true;
+                placedMines++;
+            }
+        }
+
+        // Посчитать соседние мины
+        for(let r = 0; r < ROWS; r++) {
+            for(let c = 0; c < COLS; c++) {
+                if(board[r][c].mine) continue;
+                let count = 0;
+                for(let dr=-1; dr<=1; dr++) {
+                    for(let dc=-1; dc<=1; dc++) {
+                        if(dr===0 && dc===0) continue;
+                        let nr = r + dr;
+                        let nc = c + dc;
+                        if(nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+                            if(board[nr][nc].mine) count++;
+                        }
+                    }
+                }
+                board[r][c].adjacent = count;
+            }
+        }
+
+        // Создать DOM клетки
+        for(let r=0; r < ROWS; r++) {
+            for(let c=0; c < COLS; c++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.r = r;
+                cell.dataset.c = c;
+                cell.textContent = '';
+                cell.addEventListener('click', onCellClick);
+                minefield.appendChild(cell);
+            }
+        }
+    }
+
+    function onCellClick(e) {
+        if(gameOver) return;
+        const cell = e.currentTarget;
+        const r = parseInt(cell.dataset.r, 10);
+        const c = parseInt(cell.dataset.c, 10);
+        const cellData = board[r][c];
+        if(cellData.revealed) return;
+
+        revealCell(r, c);
+        updateMinefield();
+
+        if(cellData.mine) {
+            gameOver = true;
+            gameMessage.textContent = 'Вы проиграли!';
+            revealAllMines();
+        } else if(revealedCount === ROWS*COLS - MINES) {
+            gameOver = true;
+            gameMessage.textContent = 'Вы выиграли!';
+            balance += 5; // например, +5 монет за победу
+            updateBalanceDisplay();
+        }
+    }
+
+    function revealCell(r, c) {
+        const cell = board[r][c];
+        if(cell.revealed) return;
+        cell.revealed = true;
+        revealedCount++;
+        if(cell.adjacent === 0 && !cell.mine) {
+            // Рекурсивно открыть соседние пустые клетки
+            for(let dr=-1; dr<=1; dr++) {
+                for(let dc=-1; dc<=1; dc++) {
+                    if(dr===0 && dc===0) continue;
+                    const nr = r+dr;
+                    const nc = c+dc;
+                    if(nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+                        if(!board[nr][nc].mine && !board[nr][nc].revealed) {
+                            revealCell(nr, nc);
+                        }
+                    }
                 }
             }
+        }
+    }
 
-            addTokenBtn.addEventListener('click', async () => {
-                const newToken = newTokenInput.value.trim();
-                if (!newToken) return alert('Введите токен для добавления');
-                try {
-                    await set(ref(db, 'tokens/' + newToken), true);
-                    console.log('Token added:', newToken);
-                    newTokenInput.value = '';
-                    updateTokensList();
-                } catch (error) {
-                    console.error('Error adding token:', error);
-                    alert('Ошибка добавления токена: ' + error.message);
+    function updateMinefield() {
+        const cells = minefield.children;
+        for(let i=0; i<cells.length; i++) {
+            const cell = cells[i];
+            const r = parseInt(cell.dataset.r, 10);
+            const c = parseInt(cell.dataset.c, 10);
+            const data = board[r][c];
+            cell.classList.toggle('revealed', data.revealed);
+            if(data.revealed) {
+                if(data.mine) {
+                    cell.classList.add('mine');
+                    cell.textContent = '💣';
+                } else if(data.adjacent > 0) {
+                    cell.textContent = data.adjacent;
+                } else {
+                    cell.textContent = '';
                 }
-            });
+            } else {
+                cell.classList.remove('mine');
+                cell.textContent = '';
+            }
+        }
+    }
 
-            addStudentTokenBtn.addEventListener('click', async () => {
-                const newStudentToken = newStudentTokenInput.value.trim();
-                if (!newStudentToken) return alert('Введите токен доступа для добавления');
-                try {
-                    await set(ref(db, 'studentTokens/' + newStudentToken), true);
-                    console.log('Student token added:', newStudentToken);
-                    newStudentTokenInput.value = '';
-                    updateStudentTokensList();
-                } catch (error) {
-                    console.error('Error adding student token:', error);
-                    alert('Ошибка добавления токена доступа: ' + error.message);
-                }
-            });
+    function revealAllMines() {
+        for(let r=0; r < ROWS; r++) {
+            for(let c=0; c < COLS; c++) {
+                if(board[r][c].mine) board[r][c].revealed = true;
+            }
+        }
+        updateMinefield();
+    }
 
-            closeConsoleBtn.addEventListener('click', () => {
-                panel.remove();
-            });
-
-            updateTokensList();
-            updateStudentTokensList();
-        });
-
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const intro = document.getElementById('intro');
-                intro.style.display = 'none';
-                showElement(auth);
-            }, 4000);
-        });
-    </script>
+    // Загрузка анимации исчезновения intro и показ auth
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const intro = document.getElementById('intro');
+            intro.style.display = 'none';
+            showElement(auth);
+        }, 4000);
+    });
+</script>
 </body>
 </html>
